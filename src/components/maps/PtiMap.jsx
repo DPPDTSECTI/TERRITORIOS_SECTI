@@ -64,7 +64,8 @@ export default function PtiMap({
   selectedTerritory = null,
   onSelectTerritory = () => {},
   semiaridoMunicipios = [],
-  onToggleSemiarido = null
+  onToggleSemiarido = null,
+  hideLayerControls = false
 }) {
   const { isDark } = useTheme();
   const mapPalette = useMapTheme(filtroSemiarido);
@@ -121,6 +122,7 @@ export default function PtiMap({
   const tooltipAtivosRef = useRef(null);
   const tooltipIfdmRef = useRef(null);
   const isTooltipVisibleRef = useRef(false);
+  const isTouchInteractionRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -469,6 +471,7 @@ export default function PtiMap({
 
   const showHoverTooltip = useCallback(
     (idTer, munId, clientX, clientY) => {
+      if (isTouchInteractionRef.current) return;
       const { territoriosData: tData, filtroSemiarido: semi, territoryHeatColorMap: heatMap } = stateRef.current;
       const hoveredData = idTer ? tData.find((t) => Number(t.id_territorio) === idTer) : null;
       const fallbackName = idTer ? uniqueTerritories.find((t) => t.id === idTer)?.nome || '' : '';
@@ -599,6 +602,7 @@ export default function PtiMap({
           hideHoverTooltip();
         },
         click: (e) => {
+          hideHoverTooltip();
           L.DomEvent.stopPropagation(e);
           const { filtroSemiarido: semi } = stateRef.current;
           const isSemi =
@@ -640,6 +644,7 @@ export default function PtiMap({
           hideHoverTooltip();
         },
         click: (e) => {
+          hideHoverTooltip();
           L.DomEvent.stopPropagation(e);
           if (mapRef.current && e.target && typeof e.target.getBounds === 'function') {
             const b = e.target.getBounds();
@@ -774,6 +779,23 @@ export default function PtiMap({
     <div
       ref={mapContainerRef}
       className="tour-map relative isolate w-full h-full min-h-0 flex items-center justify-center bg-surface dark:bg-surface-sunken rounded-card overflow-hidden select-none z-10"
+      onTouchStart={() => {
+        isTouchInteractionRef.current = true;
+        hideHoverTooltip();
+      }}
+      onPointerDown={(e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+          isTouchInteractionRef.current = true;
+          hideHoverTooltip();
+        } else if (e.pointerType === 'mouse') {
+          isTouchInteractionRef.current = false;
+        }
+      }}
+      onPointerMove={(e) => {
+        if (e.pointerType === 'mouse') {
+          isTouchInteractionRef.current = false;
+        }
+      }}
       onMouseEnter={() => {
         if (mapContainerRef.current) {
           containerRectRef.current = mapContainerRef.current.getBoundingClientRect();
@@ -817,6 +839,8 @@ export default function PtiMap({
           zoomControl={false}
           attributionControl={false}
           scrollWheelZoom={false}
+          touchZoom={true}
+          dragging={true}
           doubleClickZoom={true}
           className="w-full h-full outline-none z-10"
           style={{ background: 'transparent' }}
@@ -1045,42 +1069,44 @@ export default function PtiMap({
       </div>
 
       {/* ================= BARRA DE CAMADAS (CANTO SUPERIOR DIREITO) ================= */}
-      <div className="absolute top-3 right-3 z-[400] flex items-center gap-1.5">
-        <button
-          type="button"
-          onClick={toggleModoGeografico}
-          title={
-            modoGeografico
-              ? 'Voltar para malha cartográfica dos Territórios'
-              : 'Alternar para mapa geográfico com ruas e relevo'
-          }
-          className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
-            modoGeografico
-              ? filtroSemiarido
-                ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                : 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 shadow-xs'
-              : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
-          }`}
-        >
-          <Globe size={13} strokeWidth={2} />
-          <span className="truncate">Geográfico</span>
-        </button>
-
-        {Boolean(onToggleSemiarido) && (
+      {!hideLayerControls && (
+        <div className="absolute top-3 right-3 z-[400] flex items-center gap-1.5">
           <button
             type="button"
-            onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
-            title={filtroSemiarido ? 'Voltar ao Modo Normal (27 Territórios)' : 'Filtrar municípios do Semiárido'}
-            className={`tour-toggle-semiarido inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
-              filtroSemiarido
-                ? 'bg-amber-500 text-white border-amber-600 shadow-xs ring-2 ring-amber-400/30'
+            onClick={toggleModoGeografico}
+            title={
+              modoGeografico
+                ? 'Voltar para malha cartográfica dos Territórios'
+                : 'Alternar para mapa geográfico com ruas e relevo'
+            }
+            className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
+              modoGeografico
+                ? filtroSemiarido
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                  : 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100 shadow-xs'
                 : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
             }`}
           >
-            <span className="truncate">Semiárido</span>
+            <Globe size={13} strokeWidth={2} />
+            <span className="truncate">Geográfico</span>
           </button>
-        )}
-      </div>
+
+          {Boolean(onToggleSemiarido) && (
+            <button
+              type="button"
+              onClick={() => onToggleSemiarido && onToggleSemiarido(!filtroSemiarido)}
+              title={filtroSemiarido ? 'Voltar ao Modo Normal (27 Territórios)' : 'Filtrar municípios do Semiárido'}
+              className={`tour-toggle-semiarido inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer border select-none backdrop-blur-md active:scale-[0.99] ${
+                filtroSemiarido
+                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs ring-2 ring-amber-400/30'
+                  : 'bg-white/90 dark:bg-zinc-900/90 border-zinc-200/80 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 shadow-sm'
+              }`}
+            >
+              <span className="truncate">Semiárido</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* ================= CONTROLES DE ZOOM E ENQUADRAMENTO (CANTO INFERIOR DIREITO) ================= */}
       <div className="absolute bottom-3 right-3 z-[400] flex flex-col items-end gap-1.5">
@@ -1099,10 +1125,10 @@ export default function PtiMap({
               mapRef.current?.flyTo([-12.8, -41.2], 5.8, { duration: 0.45 });
             }}
             aria-label="Enquadrar toda a Bahia"
-            title="Enquadrar toda a Bahia (Esc)"
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800 shadow-sm text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 transition-all duration-150 ease-out active:scale-[0.99] cursor-pointer"
+            title="Enquadrar toda a Bahia"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800 shadow-sm text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 transition-all duration-150 ease-out active:scale-[0.99] cursor-pointer touch-manipulation"
           >
-            {selectedTerritory ? <RotateCcw size={14} /> : <Maximize2 size={14} />}
+            {selectedTerritory ? <RotateCcw size={15} /> : <Maximize2 size={15} />}
           </button>
         )}
 
@@ -1112,8 +1138,8 @@ export default function PtiMap({
             onClick={() => mapRef.current?.zoomIn(0.5)}
             disabled={currentZoom >= (modoGeografico ? 18 : 10.5)}
             aria-label="Aproximar mapa"
-            className="w-9 h-8 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            title="Aproximar (+)"
+            className="w-10 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer touch-manipulation"
+            title="Aproximar"
           >
             <span className="text-base font-medium leading-none">+</span>
           </button>
@@ -1130,8 +1156,8 @@ export default function PtiMap({
             onClick={() => mapRef.current?.zoomOut(0.5)}
             disabled={currentZoom <= (modoGeografico ? 4.5 : 5.25)}
             aria-label="Afastar mapa"
-            className="w-9 h-8 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            title="Afastar (−)"
+            className="w-10 h-9 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100/80 dark:hover:bg-zinc-800/70 transition-all duration-150 ease-out active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none cursor-pointer touch-manipulation"
+            title="Afastar"
           >
             <span className="text-base font-medium leading-none">−</span>
           </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Home,
   LayoutGrid,
@@ -48,8 +48,22 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
     }
   });
   const [isHovered, setIsHovered] = useState(false);
+  const asideRef = useRef(null);
 
   const isExpanded = isPinned || isHovered;
+
+  useEffect(() => {
+    if (!isHovered || isPinned) return undefined;
+    const handleOutsidePointerDown = (e) => {
+      if (asideRef.current && !asideRef.current.contains(e.target)) {
+        setIsHovered(false);
+      }
+    };
+    document.addEventListener('pointerdown', handleOutsidePointerDown, true);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsidePointerDown, true);
+    };
+  }, [isHovered, isPinned]);
 
   const togglePin = () => {
     setIsPinned((prev) => {
@@ -109,6 +123,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         <Link
           to={item.path}
           title={!isExpanded ? item.label : undefined}
+          onClick={() => {
+            if (!isPinned) setIsHovered(false);
+          }}
           className={cn(
             'relative w-full h-10 flex items-center rounded-full transition-all duration-150 group focus-visible:outline-none focus-visible:ring-2',
             filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-carbon dark:focus-visible:ring-primary-500',
@@ -195,6 +212,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
       )}
     >
       <aside
+        ref={asideRef}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
@@ -207,9 +225,21 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
       >
         {/* ================= TOPO: LOGO & PIN BUTTON ================= */}
         <div className="w-full h-10 flex items-center mb-3 shrink-0">
-          <div className="w-10 h-10 flex items-center justify-center shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              if (!isPinned) setIsHovered((prev) => !prev);
+            }}
+            aria-label={!isPinned ? (isExpanded ? 'Recolher menu lateral' : 'Expandir menu lateral') : undefined}
+            title={!isPinned ? (isExpanded ? 'Recolher barra' : 'Expandir menu') : undefined}
+            className={cn(
+              'w-10 h-10 flex items-center justify-center shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2',
+              !isPinned ? 'cursor-pointer hover:bg-surface-soft/80 dark:hover:bg-surface-raised/60 active:scale-[0.97]' : 'cursor-default',
+              filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500'
+            )}
+          >
             <PanelMark className="w-7 h-7" />
-          </div>
+          </button>
 
           <span
             className={cn(
@@ -295,14 +325,14 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               title="Governo do Estado da Bahia — SECTI"
             >
               <img
-                src="/img/brasao_preto.webp"
-                alt="Governo do Estado da Bahia"
-                className="h-12 w-auto max-w-[170px] object-contain block dark:hidden select-none"
+                src="/img/secti-govba-horizontal.svg"
+                alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
+                className="h-12 w-auto max-w-[175px] object-contain block dark:hidden select-none"
               />
               <img
-                src="/img/Brasao-Horizontal_Branco.webp"
-                alt="Governo do Estado da Bahia"
-                className="h-12 w-auto max-w-[170px] object-contain hidden dark:block select-none"
+                src="/img/secti-govba-horizontal-branco.svg"
+                alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
+                className="h-12 w-auto max-w-[175px] object-contain hidden dark:block select-none"
               />
             </div>
           </div>

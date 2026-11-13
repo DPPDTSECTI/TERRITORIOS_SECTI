@@ -10,7 +10,10 @@ import {
   Wifi,
   Award,
   Sun,
-  Moon
+  Moon,
+  GraduationCap,
+  Database,
+  Sparkles
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -290,6 +293,8 @@ export default function RelatorioEnsinoPage() {
     const munSet = new Set();
     const munSemiSet = new Set();
     const terrSet = new Set();
+    const iesSet = new Set();
+    const areaCounts = {};
 
     filteredCursos.forEach(c => {
       if (c.municipio) {
@@ -301,6 +306,25 @@ export default function RelatorioEnsinoPage() {
       }
       const terr = c.territorio_identidade || c.territorio;
       if (terr) terrSet.add(normalizeName(terr));
+
+      const iesNome = c.sigla ? String(c.sigla).trim().toUpperCase() : String(c.entidade || c.instituicao || '').trim();
+      if (iesNome) iesSet.add(iesNome);
+
+      const areaName = formatAreaConhecimento(c.categoria || c.tipo || 'Outras Áreas');
+      areaCounts[areaName] = (areaCounts[areaName] || 0) + 1;
+    });
+
+    let topArea = null;
+    let maxAreaCount = 0;
+    Object.entries(areaCounts).forEach(([name, count]) => {
+      if (count > maxAreaCount) {
+        maxAreaCount = count;
+        topArea = {
+          name,
+          count,
+          percent: totalCursos > 0 ? ((count / totalCursos) * 100).toFixed(0) : '0'
+        };
+      }
     });
 
     let campiRnpCount = 0;
@@ -339,6 +363,8 @@ export default function RelatorioEnsinoPage() {
       taxaTerr,
       municipiosSemiComCursos: munSemiSet.size,
       territoriosComCursos: terrSet.size,
+      totalIesUnicas: iesSet.size,
+      topArea,
       campiRnpCount,
       rnpTaxa,
       campiRnpSemiCount
@@ -507,45 +533,51 @@ export default function RelatorioEnsinoPage() {
   }, [filteredAtivos]);
 
   // Configuração dos 5 KPIs unificada
+  // Configuração dos 5 KPIs idêntica ao CursosPage.jsx
   const kpiCards = [
     {
-      label: isSemiarido ? 'Cursos no Semiárido' : 'Cursos CT&I Mapeados',
+      label: isSemiarido
+        ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido')
+        : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos Presenciais de CT&I'),
       value: loadingStats ? '...' : statsCursosKpis.totalCursos,
-      suffix: null,
-      badge: isSemiarido ? `${statsCursosKpis.pctCursosBahia}% da Bahia` : 'Graduação & Pós',
-      icon: BookOpen,
+      percent: isSemiarido ? `${statsCursosKpis.pctCursosBahia}% do total` : null,
+      icon: GraduationCap,
       isHero: true
     },
     {
-      label: 'Campi Ofertantes',
-      value: loadingStats ? '...' : statsCursosKpis.totalCampi,
-      suffix: null,
-      badge: isSemiarido ? `${statsCursosKpis.pctCampiBahia}% da Bahia` : 'Polos & Universidades',
-      icon: Building2,
-      isHero: false
-    },
-    {
-      label: 'Municípios com Cursos',
-      value: loadingStats ? '...' : statsCursosKpis.municipiosComCursos,
-      suffix: `/ ${statsCursosKpis.totalMunUniverso}`,
-      badge: `${statsCursosKpis.taxaMun}% de cobertura`,
+      label: isSemiarido ? 'Territórios com Oferta (Semiárido)' : 'Territórios com Oferta',
+      value: loadingStats
+        ? '...'
+        : (isSemiarido
+            ? `${statsCursosKpis.territoriosComCursos} territórios`
+            : `${statsCursosKpis.territoriosComCursos} / ${territoriosData.length || 27}`),
+      percent: null,
       icon: MapPin,
       isHero: false
     },
     {
-      label: 'Campi com Rede RNP',
-      value: loadingStats ? '...' : statsCursosKpis.campiRnpCount,
-      suffix: null,
-      badge: `${statsCursosKpis.rnpTaxa}% com RNP`,
-      icon: Wifi,
+      label: isSemiarido ? 'IES com Oferta no Semiárido' : 'Instituições Ofertantes',
+      value: loadingStats ? '...' : statsCursosKpis.totalIesUnicas,
+      percent: null,
+      icon: Building2,
       isHero: false
     },
     {
-      label: 'Territórios com Oferta',
-      value: loadingStats ? '...' : (selectedTerritory ? '1' : statsCursosKpis.territoriosComCursos),
-      suffix: `/ ${statsCursosKpis.totalTerrUniverso}`,
-      badge: selectedTerritory ? 'Território Selecionado' : `${statsCursosKpis.taxaTerr}% dos territórios`,
-      icon: Layers,
+      label: isSemiarido ? 'Municípios com Oferta' : 'Cursos no Semiárido',
+      value: loadingStats
+        ? '...'
+        : (isSemiarido ? `${statsCursosKpis.municipiosComCursos} munic.` : statsCursosKpis.semiaridoCount),
+      percent: null,
+      icon: Database,
+      isHero: false
+    },
+    {
+      label: statsCursosKpis.topArea
+        ? (isSemiarido ? `Principal: ${statsCursosKpis.topArea.name}` : statsCursosKpis.topArea.name)
+        : 'Principal Área',
+      value: loadingStats ? '...' : (statsCursosKpis.topArea ? `${statsCursosKpis.topArea.percent}%` : '-'),
+      percent: null,
+      icon: Sparkles,
       isHero: false
     }
   ];
@@ -577,94 +609,21 @@ export default function RelatorioEnsinoPage() {
       {/* CABEÇALHO */}
       <header className="flex items-center justify-between w-full shrink-0 relative z-10">
         <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
-              Relatório Executivo de Ensino Superior em CT&I
-            </h1>
-
-            {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                Recorte Oficial: Semiárido Baiano (278 Municípios)
-              </span>
-            ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
-                Recorte: {territoryName}
-                <button
-                  type="button"
-                  onClick={() => setSelectedTerritory(null)}
-                  className="text-primary-600 hover:text-rose-500 transition-colors ml-0.5 cursor-pointer print:hidden"
-                  title="Limpar seleção territorial"
-                >
-                  <X size={12} />
-                </button>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <span className="w-2 h-2 rounded-full bg-primary-600" />
-                Cenário Geral: Estado da Bahia (417 Municípios)
-              </span>
-            )}
-          </div>
-
+          <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
+            Relatório Executivo de Ensino Superior em CT&amp;I
+          </h1>
           <p className="text-body-sm text-text-secondary mt-1 font-medium">
             {isSemiarido
               ? 'Diagnóstico territorial da oferta presencial de ensino superior em CT&I nos 278 municípios do Semiárido'
               : 'Diagnóstico territorial exclusivo da oferta presencial de ensino superior voltada a CT&I na Bahia'}
           </p>
-          <div className={`divider-territorial w-48 mt-2 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              const next = !isSemiarido;
-              setFiltroSemiarido?.(next);
-              const newParams = new URLSearchParams(searchParams);
-              if (next) {
-                newParams.set('modo', 'semiarido');
-              } else {
-                newParams.delete('modo');
-              }
-              navigate(`?${newParams.toString()}`, { replace: true });
-            }}
-            title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
-              isSemiarido
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
-                : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
-            }`}
-          >
-            <span className={`w-2 h-2 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-slate-400'}`} />
-            <span>Semiárido</span>
-          </button>
-
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
-            <Award size={14} className="text-primary-600 dark:text-primary-400" />
-            Dados Oficiais SECTI/BA
-          </span>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            className="w-8 h-8 rounded-full bg-surface-soft text-text-secondary hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 print:hidden cursor-pointer"
-          >
-            {isDark ? (
-              <Sun size={15} strokeWidth={2} className="text-amber-400" />
-            ) : (
-              <Moon size={15} strokeWidth={2} className="text-neutral-600" />
-            )}
-          </button>
+          <div className={`divider-territorial w-56 mt-3 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
         </div>
       </header>
 
-      {/* GRID DE KPIS UNIFICADO (5 CARDS) */}
+      {/* GRID DE KPIS UNIFICADO (5 CARDS NO PADRÃO DO CURSOSPAGE.JSX) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5 items-stretch w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpiCards.map((kpi, index) => {
             const isHero = kpi.isHero;
             const IconComp = kpi.icon;
@@ -672,22 +631,25 @@ export default function RelatorioEnsinoPage() {
             return (
               <div
                 key={index}
-                className={`p-4 flex flex-col justify-between h-[98px] rounded-card cursor-default overflow-hidden select-none ${
+                className={`p-4 sm:p-5 flex flex-col justify-between h-[100px] min-h-[100px] max-h-[100px] rounded-card cursor-default overflow-hidden select-none ${
                   isHero
                     ? (isSemiarido
-                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                        ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                         : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                     : (isSemiarido
-                        ? 'bg-surface-soft border border-amber-200/60 dark:border-amber-500/30 text-text-primary'
+                        ? 'bg-white/90 dark:bg-zinc-900/90 border border-amber-200/70 dark:border-amber-700/35 shadow-2xs text-text-primary'
                         : 'bg-surface-soft border border-border/70 text-text-primary')
                 }`}
               >
                 {/* LINHA SUPERIOR: LABEL + ÍCONE CIRCULAR À DIREITA */}
-                <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                <div className="flex items-center justify-between gap-2 w-full min-w-0">
                   <span
                     className={`text-[13px] font-medium leading-tight truncate ${
-                      isHero ? (isSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                      isHero
+                        ? (isSemiarido ? 'text-amber-100' : 'text-white/85')
+                        : (isSemiarido ? 'text-amber-900/85 dark:text-amber-200/90' : 'text-text-secondary')
                     }`}
+                    title={kpi.label}
                   >
                     {kpi.label}
                   </span>
@@ -696,47 +658,38 @@ export default function RelatorioEnsinoPage() {
                     className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
                       isHero
                         ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
-                        : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                        : (isSemiarido
+                            ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300/70 dark:border-amber-600/50 text-amber-700 dark:text-amber-300 shadow-2xs'
+                            : 'bg-surface border border-border/80 text-text-secondary shadow-2xs')
                     }`}
                   >
                     <IconComp size={15} strokeWidth={2} />
                   </div>
                 </div>
 
-                {/* LINHA INFERIOR: VALOR GRANDE + BADGE PILL */}
+                {/* LINHA INFERIOR: VALOR GRANDE + PERCENTUAL OPCIONAL NO SEMIÁRIDO */}
                 <div className="flex items-baseline justify-between gap-2 w-full min-w-0 pt-0.5">
-                  <div className="flex items-baseline gap-1 min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                     <span
-                      className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
-                        isHero ? 'text-white' : 'text-text-primary'
+                      className={`text-[28px] sm:text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
+                        isHero
+                          ? 'text-white'
+                          : (isSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                       }`}
                     >
                       {kpi.value}
                     </span>
-                    {kpi.suffix && (
+
+                    {isSemiarido && kpi.percent && (
                       <span
-                        className={`text-caption font-semibold tnum ${
-                          isHero ? 'text-white/75' : 'text-text-muted'
+                        className={`text-caption font-semibold tabular-nums truncate shrink-0 ${
+                          isHero ? 'text-white/80' : 'text-amber-700 dark:text-amber-400'
                         }`}
                       >
-                        {kpi.suffix}
+                        ({kpi.percent})
                       </span>
                     )}
                   </div>
-
-                  {kpi.badge && (
-                    <span
-                      className={`text-caption font-semibold px-2 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
-                        isHero
-                          ? 'bg-white/15 text-white border border-white/20'
-                          : (isSemiarido
-                              ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
-                              : 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60')
-                      }`}
-                    >
-                      {kpi.badge}
-                    </span>
-                  )}
                 </div>
               </div>
             );
@@ -744,10 +697,27 @@ export default function RelatorioEnsinoPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: 4 GRÁFICOS (2x2 SIMÉTRICO) + SIDEMAP */}
+      {/* GRID PRINCIPAL: SIDEMAP À ESQUERDA (30%) + 4 GRÁFICOS (2x2 À DIREITA) — PADRÃO DO PAINEL */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 min-h-0 w-full overflow-hidden">
 
-        {/* COLUNA ESQUERDA: GRID 2x2 */}
+        {/* COLUNA ESQUERDA: SIDEMAP INTEGRADO */}
+        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col min-h-0 ${
+          isSemiarido
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+            : 'border-border'
+        }`}>
+          <SideMap
+            key={`map-cursos-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
+            mode="cursos"
+            cursosData={filteredCursos}
+            selectedTerritory={selectedTerritory}
+            onSelectTerritory={setSelectedTerritory}
+            filtroSemiarido={isSemiarido}
+            hideLayerControls={true}
+          />
+        </div>
+
+        {/* COLUNA DIREITA: GRID 2x2 */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
 
           {/* GRÁFICO 1: ÁREAS DE CONHECIMENTO (PROPORTIONBARCHART NATIVO) */}
@@ -802,7 +772,7 @@ export default function RelatorioEnsinoPage() {
                 title={isSemiarido ? "Concentração no Semiárido" : "Concentração por Território"}
                 subtitle={isSemiarido ? "Territórios do Semiárido líderes em cursos" : "Top 10 Territórios da Bahia por Rede de Ensino"}
                 allowToggleView={false}
-                showTopBadge={true}
+                showTopBadge={false}
                 isSemiarido={isSemiarido}
               />
             )}
@@ -892,18 +862,6 @@ export default function RelatorioEnsinoPage() {
             />
           </div>
 
-        </div>
-
-        {/* COLUNA DIREITA: SIDEMAP INTEGRADO */}
-        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} shadow-card relative overflow-hidden flex flex-col min-h-0`}>
-          <SideMap
-            key={`map-cursos-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
-            mode="cursos"
-            cursosData={filteredCursos}
-            selectedTerritory={selectedTerritory}
-            onSelectTerritory={setSelectedTerritory}
-            filtroSemiarido={isSemiarido}
-          />
         </div>
 
       </div>

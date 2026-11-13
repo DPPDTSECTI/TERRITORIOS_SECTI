@@ -8,7 +8,11 @@ import {
   Wifi,
   Award,
   Sun,
-  Moon
+  Moon,
+  Database,
+  GraduationCap,
+  Network,
+  Sparkles
 } from 'lucide-react';
 
 import { DataContext } from '../../context/DataContext';
@@ -326,8 +330,20 @@ export default function RelatorioAtivosPage() {
     const terrSet = new Set();
     let rnpTotal = 0;
     let rnpSemi = 0;
+    let totalEnsinoPesquisa = 0;
 
     filteredAtivos.forEach(a => {
+      const t = String(a.tipo || '').toLowerCase();
+      if (
+        t.includes('universidade') ||
+        t.includes('faculdade') ||
+        t.includes('instituto federal') ||
+        t.includes('ict') ||
+        t.includes('pesquisa')
+      ) {
+        totalEnsinoPesquisa += 1;
+      }
+
       if (a.municipio) {
         const mKey = normalizeName(a.municipio);
         munSet.add(mKey);
@@ -364,7 +380,8 @@ export default function RelatorioAtivosPage() {
       taxaTerr,
       rnpTotal,
       rnpTaxa,
-      rnpSemi
+      rnpSemi,
+      totalEnsinoPesquisa
     };
   }, [filteredAtivos, isSemiarido, selectedTerritory, totalAtivosBahia, territoriosData]);
 
@@ -522,38 +539,48 @@ export default function RelatorioAtivosPage() {
       .sort((a, b) => b.total - a.total);
   }, [filteredAtivos]);
 
-  // Lista de KPIs com a mesma arquitetura visual de AtivosPage.jsx e DashboardPainel.jsx
+  // Lista de 5 KPIs idêntica ao AtivosPage.jsx
+  const topCategoria = categoriasEmpilhadasData[0] || null;
   const kpiCards = [
     {
-      label: isSemiarido ? 'Ativos no Semiárido' : 'Ativos de CT&I Mapeados',
+      label: isSemiarido
+        ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido')
+        : (selectedTerritory ? `Ativos em ${territoryName}` : 'Total de Ativos CT&I'),
       value: loadingStats ? '...' : statsKpis.total,
-      suffix: null,
-      badge: isSemiarido ? `${statsKpis.pctBahia}% da Bahia` : `${statsKpis.rnpTotal} com RNP (${statsKpis.rnpTaxa}%)`,
-      icon: Building2,
+      percent: isSemiarido ? `${statsKpis.pctBahia}% do total` : null,
+      icon: Database,
       isHero: true
     },
     {
-      label: 'Municípios com Presença',
-      value: loadingStats ? '...' : statsKpis.municipiosAtendidos,
-      suffix: `/ ${statsKpis.totalMunUniverso}`,
-      badge: `${statsKpis.taxaMun}% de cobertura`,
+      label: isSemiarido ? 'Ensino & Pesquisa (Semiárido)' : 'Ensino & Pesquisa (ICTs)',
+      value: loadingStats ? '...' : statsKpis.totalEnsinoPesquisa,
+      percent: null,
+      icon: GraduationCap,
+      isHero: false
+    },
+    {
+      label: isSemiarido ? 'Ativos com RNP (Semiárido)' : 'Ativos com RNP',
+      value: loadingStats ? '...' : statsKpis.rnpTotal,
+      percent: null,
+      icon: Network,
+      isHero: false
+    },
+    {
+      label: isSemiarido ? 'Municípios com Ativos' : (selectedTerritory ? 'Municípios com Ativos' : 'Territórios Cobertos'),
+      value: loadingStats
+        ? '...'
+        : ((selectedTerritory || isSemiarido)
+            ? `${statsKpis.municipiosAtendidos} munic.`
+            : `${statsKpis.territoriosAtendidos} / ${territoriosData.length || 27}`),
+      percent: null,
       icon: MapPin,
       isHero: false
     },
     {
-      label: 'Ativos Conectados RNP',
-      value: loadingStats ? '...' : statsKpis.rnpTotal,
-      suffix: null,
-      badge: isSemiarido ? `${statsKpis.rnpTaxa}% conectados` : `${statsKpis.rnpTaxa}% do total`,
-      icon: Wifi,
-      isHero: false
-    },
-    {
-      label: 'Territórios Cobertos',
-      value: loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos),
-      suffix: `/ ${statsKpis.totalTerrUniverso}`,
-      badge: selectedTerritory ? 'Território Selecionado' : `${statsKpis.taxaTerr}% dos territórios`,
-      icon: Layers,
+      label: topCategoria ? (isSemiarido ? `Principal: ${topCategoria.name}` : topCategoria.name) : 'Principal Tipo',
+      value: loadingStats ? '...' : (topCategoria ? `${topCategoria.pctTotal}%` : '-'),
+      percent: null,
+      icon: Sparkles,
       isHero: false
     }
   ];
@@ -585,94 +612,21 @@ export default function RelatorioAtivosPage() {
       {/* CABEÇALHO DO PAINEL */}
       <header className="flex items-center justify-between w-full shrink-0 relative z-10">
         <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
-              Relatório Executivo de Ativos de CT&I
-            </h1>
-
-            {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                Recorte Oficial: Semiárido Baiano (278 Municípios)
-              </span>
-            ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
-                Recorte: {territoryName}
-                <button
-                  type="button"
-                  onClick={() => setSelectedTerritory(null)}
-                  className="text-primary-600 hover:text-rose-500 transition-colors ml-0.5 cursor-pointer print:hidden"
-                  title="Limpar seleção territorial"
-                >
-                  <X size={12} />
-                </button>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <span className="w-2 h-2 rounded-full bg-primary-600" />
-                Cenário Geral: Estado da Bahia (417 Municípios)
-              </span>
-            )}
-          </div>
-
+          <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
+            Relatório Executivo de Ativos de CT&amp;I
+          </h1>
           <p className="text-body-sm text-text-secondary mt-1 font-medium">
             {isSemiarido
               ? 'Diagnóstico territorial e mapeamento estrutural dos ativos de CT&I nos 278 municípios do Semiárido'
               : 'Diagnóstico territorial e mapeamento estrutural dos ativos de ciência, tecnologia e inovação na Bahia'}
           </p>
-          <div className={`divider-territorial w-48 mt-2 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              const next = !isSemiarido;
-              setFiltroSemiarido?.(next);
-              const newParams = new URLSearchParams(searchParams);
-              if (next) {
-                newParams.set('modo', 'semiarido');
-              } else {
-                newParams.delete('modo');
-              }
-              navigate(`?${newParams.toString()}`, { replace: true });
-            }}
-            title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
-              isSemiarido
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
-                : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
-            }`}
-          >
-            <span className={`w-2 h-2 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-slate-400'}`} />
-            <span>Semiárido</span>
-          </button>
-
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
-            <Award size={14} className="text-primary-600 dark:text-primary-400" />
-            Dados Oficiais SECTI/BA
-          </span>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            className="w-8 h-8 rounded-full bg-surface-soft text-text-secondary hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 print:hidden cursor-pointer"
-          >
-            {isDark ? (
-              <Sun size={15} strokeWidth={2} className="text-amber-400" />
-            ) : (
-              <Moon size={15} strokeWidth={2} className="text-neutral-600" />
-            )}
-          </button>
+          <div className={`divider-territorial w-56 mt-3 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
         </div>
       </header>
 
-      {/* GRID DE KPIS (IDÊNTICO AO ATIVOSPAGE / DASHBOARDPAINEL) */}
+      {/* GRID DE 5 KPIS (IDÊNTICO AO ATIVOSPAGE.JSX) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpiCards.map((kpi, index) => {
             const isHero = kpi.isHero;
             const IconComp = kpi.icon;
@@ -680,22 +634,25 @@ export default function RelatorioAtivosPage() {
             return (
               <div
                 key={index}
-                className={`p-4 flex flex-col justify-between h-[98px] rounded-card cursor-default overflow-hidden select-none ${
+                className={`p-4 sm:p-5 flex flex-col justify-between h-[100px] min-h-[100px] max-h-[100px] rounded-card cursor-default overflow-hidden select-none ${
                   isHero
                     ? (isSemiarido
-                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                        ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                         : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                     : (isSemiarido
-                        ? 'bg-surface-soft border border-amber-200/60 dark:border-amber-500/30 text-text-primary'
+                        ? 'bg-white/90 dark:bg-zinc-900/90 border border-amber-200/70 dark:border-amber-700/35 shadow-2xs text-text-primary'
                         : 'bg-surface-soft border border-border/70 text-text-primary')
                 }`}
               >
                 {/* LINHA SUPERIOR: LABEL + ÍCONE CIRCULAR À DIREITA */}
-                <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                <div className="flex items-center justify-between gap-2 w-full min-w-0">
                   <span
                     className={`text-[13px] font-medium leading-tight truncate ${
-                      isHero ? (isSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                      isHero
+                        ? (isSemiarido ? 'text-amber-100' : 'text-white/85')
+                        : (isSemiarido ? 'text-amber-900/85 dark:text-amber-200/90' : 'text-text-secondary')
                     }`}
+                    title={kpi.label}
                   >
                     {kpi.label}
                   </span>
@@ -704,47 +661,38 @@ export default function RelatorioAtivosPage() {
                     className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
                       isHero
                         ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
-                        : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                        : (isSemiarido
+                            ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300/70 dark:border-amber-600/50 text-amber-700 dark:text-amber-300 shadow-2xs'
+                            : 'bg-surface border border-border/80 text-text-secondary shadow-2xs')
                     }`}
                   >
                     <IconComp size={15} strokeWidth={2} />
                   </div>
                 </div>
 
-                {/* LINHA INFERIOR: VALOR GRANDE + BADGE PILL */}
+                {/* LINHA INFERIOR: VALOR GRANDE + PERCENTUAL OPCIONAL NO SEMIÁRIDO */}
                 <div className="flex items-baseline justify-between gap-2 w-full min-w-0 pt-0.5">
-                  <div className="flex items-baseline gap-1 min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                     <span
-                      className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
-                        isHero ? 'text-white' : 'text-text-primary'
+                      className={`text-[28px] sm:text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
+                        isHero
+                          ? 'text-white'
+                          : (isSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                       }`}
                     >
                       {kpi.value}
                     </span>
-                    {kpi.suffix && (
+
+                    {isSemiarido && kpi.percent && (
                       <span
-                        className={`text-caption font-semibold tnum ${
-                          isHero ? 'text-white/75' : 'text-text-muted'
+                        className={`text-caption font-semibold tabular-nums truncate shrink-0 ${
+                          isHero ? 'text-white/80' : 'text-amber-700 dark:text-amber-400'
                         }`}
                       >
-                        {kpi.suffix}
+                        ({kpi.percent})
                       </span>
                     )}
                   </div>
-
-                  {kpi.badge && (
-                    <span
-                      className={`text-caption font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
-                        isHero
-                          ? 'bg-white/15 text-white border border-white/20'
-                          : (isSemiarido
-                              ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
-                              : 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60')
-                      }`}
-                    >
-                      {kpi.badge}
-                    </span>
-                  )}
                 </div>
               </div>
             );
@@ -752,14 +700,32 @@ export default function RelatorioAtivosPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: 4 GRÁFICOS (2x2 SIMÉTRICO) + SIDEMAP */}
+      {/* GRID PRINCIPAL: SIDEMAP À ESQUERDA (30%) + 4 GRÁFICOS (2x2 À DIREITA) — PADRÃO DO PAINEL */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 min-h-0 w-full overflow-hidden">
 
-        {/* COLUNA ESQUERDA: GRID 2x2 DE COMPONENTES DO PAINEL */}
+        {/* COLUNA ESQUERDA: SIDEMAP INTEGRADO NO MODO ATIVOS */}
+        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col min-h-0 ${
+          isSemiarido
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+            : 'border-border'
+        }`}>
+          <SideMap
+            key={`map-ativos-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
+            mode="ativos"
+            processedAtivos={filteredAtivos}
+            selectedTerritory={selectedTerritory}
+            onSelectTerritory={setSelectedTerritory}
+            focusedAsset={focusedAsset}
+            filtroSemiarido={isSemiarido}
+            hideLayerControls={true}
+          />
+        </div>
+
+        {/* COLUNA DIREITA: GRID 2x2 DE COMPONENTES DO PAINEL */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
 
           {/* GRÁFICO 1: TOP 10 ENTIDADES POR SIGLA (ESTILO PÍLULAS DO CUSTOMPIECHART) */}
-          <div className={`bg-surface rounded-card p-4 border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} flex flex-col justify-between min-h-0 h-full overflow-hidden`}>
+          <div className={`bg-surface rounded-card p-4 border ${isSemiarido ? 'border-amber-200/70 dark:border-amber-700/35' : 'border-border/80'} shadow-card flex flex-col justify-between min-h-0 h-full overflow-hidden`}>
             <div className="flex items-start justify-between gap-2 mb-1.5 shrink-0">
               <div className="flex flex-col min-w-0">
                 <h2 className="text-text-primary font-semibold text-subtitle tracking-tight truncate">
@@ -792,7 +758,7 @@ export default function RelatorioAtivosPage() {
                     title={`${item.sigla} (${item.redeInfo.label}): ${item.total} ativos`}
                     className="flex flex-col gap-0.5 w-full min-w-0"
                   >
-                    {/* LINHA DE TÍTULO: POSIÇÃO + SIGLA + BADGE DA REDE */}
+                    {/* LINHA DE TÍTULO: POSIÇÃO + SIGLA */}
                     <div className="flex items-center justify-between gap-1.5 px-0.5 leading-tight">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span className="text-[11px] font-bold text-text-muted tabular-nums shrink-0">
@@ -802,9 +768,6 @@ export default function RelatorioAtivosPage() {
                           {item.sigla}
                         </span>
                       </div>
-                      <span className={`text-[9.5px] font-semibold px-1.5 py-0.5 rounded-full leading-none shrink-0 ${item.redeInfo.badgeClass}`}>
-                        {item.redeInfo.rede}
-                      </span>
                     </div>
 
                     {/* BARRA DE PÍLULAS PROPORCIONAIS (PÍLULA DE COR SÓLIDA + PÍLULA COMPLEMENTAR) */}
@@ -850,6 +813,7 @@ export default function RelatorioAtivosPage() {
               subtitle={isSemiarido ? 'Principais territórios do Semiárido' : 'Top 4 categorias + Outros'}
               allowToggleView={false}
               showTotalLabel={true}
+              showTopBadge={false}
               isSemiarido={isSemiarido}
             />
           </div>
@@ -867,15 +831,6 @@ export default function RelatorioAtivosPage() {
                   {isSemiarido ? 'Principais categorias instaladas no Semiárido' : 'Volume de ativos por categoria na Bahia'}
                 </p>
               </div>
-
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-semibold shrink-0 border ${
-                isSemiarido
-                  ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
-                  : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border-primary-200/60 dark:border-primary-800/60'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`} />
-                {isSemiarido ? 'Recorte Semiárido' : 'Top 5 Categorias'}
-              </span>
             </div>
 
             <div className="w-full h-px bg-border/70 mb-1.5 shrink-0" />
@@ -952,19 +907,6 @@ export default function RelatorioAtivosPage() {
             />
           </div>
 
-        </div>
-
-        {/* COLUNA DIREITA: SIDEMAP INTEGRADO NO MODO ATIVOS */}
-        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} shadow-card relative overflow-hidden flex flex-col min-h-0`}>
-          <SideMap
-            key={`map-ativos-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
-            mode="ativos"
-            processedAtivos={filteredAtivos}
-            selectedTerritory={selectedTerritory}
-            onSelectTerritory={setSelectedTerritory}
-            focusedAsset={focusedAsset}
-            filtroSemiarido={isSemiarido}
-          />
         </div>
 
       </div>

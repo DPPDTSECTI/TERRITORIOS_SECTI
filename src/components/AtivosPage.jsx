@@ -556,11 +556,11 @@ export default function AtivosPage() {
         ];
 
         const extraSection = outrosAtivosMunicipio.length > 0 ? (
-            <div className="rounded-xl bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
+            <div className="rounded-subcard bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Outros ativos em {selectedAsset.municipio} ({outrosAtivosMunicipio.length})
                 </span>
-                <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1">
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                     {outrosAtivosMunicipio.slice(0, 12).map((outro) => (
                         <button
                             key={outro.id}
@@ -579,7 +579,7 @@ export default function AtivosPage() {
                                 }
                             }}
                             title={outro.nome}
-                            className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 truncate max-w-full transition-colors cursor-pointer"
+                            className="text-[11px] font-medium px-2.5 py-1 rounded-pill bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 truncate max-w-full transition-colors cursor-pointer"
                         >
                             {outro.sigla || outro.nome}
                         </button>
@@ -1207,11 +1207,6 @@ export default function AtivosPage() {
                                                             <span className="flex items-center gap-1.5">
                                                                 <Layers size={13} />
                                                                 Tipo de Ativo
-                                                            </span>
-                                                            <span className={`text-caption font-semibold transition-opacity duration-150 ${
-                                                                filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-primary-700 dark:text-primary-300'
-                                                            } ${selectedTipos.length > 0 ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
-                                                                {selectedTipos.length} selecionado(s)
                                                             </span>
                                                         </label>
 

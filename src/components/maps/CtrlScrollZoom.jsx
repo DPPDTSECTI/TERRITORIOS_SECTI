@@ -1,15 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 
 /**
- * Controlador de zoom com roda do mouse protegida por tecla modificadora (Ctrl / Cmd).
- * Sem modificador, o evento de rolagem atravessa normalmente para o container da página
- * e um aviso discreto aparece temporariamente no mapa sem deslocar nenhum componente.
+ * Controlador de zoom suave com roda do mouse ou gesto de pinça/scroll em tela sensível ao toque,
+ * sem exigir tecla modificadora (Ctrl / Cmd) para uso livre em telões e quiosques.
  */
 export function CtrlScrollZoom() {
   const map = useMap();
-  const [showHint, setShowHint] = useState(false);
-  const hideTimerRef = useRef(null);
   const accDeltaRef = useRef(0);
   const lastWheelTsRef = useRef(0);
 
@@ -22,20 +19,7 @@ export function CtrlScrollZoom() {
       map.scrollWheelZoom.disable();
     }
 
-    const triggerHint = () => {
-      setShowHint(true);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-      hideTimerRef.current = setTimeout(() => {
-        setShowHint(false);
-      }, 1500);
-    };
-
     const handleWheel = (e) => {
-      if (!(e.ctrlKey || e.metaKey)) {
-        triggerHint();
-        return;
-      }
-
       e.preventDefault();
       e.stopPropagation();
 
@@ -66,25 +50,10 @@ export function CtrlScrollZoom() {
     container.addEventListener('wheel', handleWheel, { capture: true, passive: false });
     return () => {
       container.removeEventListener('wheel', handleWheel, { capture: true });
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
     };
   }, [map]);
 
-  if (!showHint) return null;
-
-  const isMac = typeof navigator !== 'undefined' && /mac/i.test(navigator.platform || '');
-
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="pointer-events-none absolute inset-x-0 bottom-4 z-[550] flex justify-center px-3"
-    >
-      <div className="rounded-pill bg-neutral-950/85 dark:bg-surface/95 text-white dark:text-text-primary border border-white/15 dark:border-border px-3.5 py-1.5 text-caption font-medium shadow-card backdrop-blur-sm">
-        {isMac ? 'Use ⌘ + scroll para ampliar o mapa' : 'Use Ctrl + scroll para ampliar o mapa'}
-      </div>
-    </div>
-  );
+  return null;
 }
 
 export default CtrlScrollZoom;

@@ -10,7 +10,11 @@ import {
   Award,
   Compass,
   Sun,
-  Moon
+  Moon,
+  GitPullRequest,
+  CheckCircle2,
+  Building2,
+  Sparkles
 } from 'lucide-react';
 
 import { DataContext } from '../../context/DataContext';
@@ -472,6 +476,7 @@ export default function RelatorioCadeiasPage() {
       totalTerrUniverso,
       taxaTerr,
       territoriosAtendidos: terrSet.size,
+      qtdSegmentos: Object.keys(segmentosCount).length,
       maiorSegmento
     };
   }, [filteredCadeias, cadeiasSediadas, isSemiarido, selectedTerritory, totalCadeiasBahia, territoriosData]);
@@ -624,38 +629,49 @@ export default function RelatorioCadeiasPage() {
     return Object.values(stats).sort((a, b) => b.total - a.total);
   }, [filteredCadeias, cadeiasSediadas, selectedTerritory]);
 
-  // Configuração dos 4 KPIs
+  // Configuração dos 5 KPIs idêntica ao CadeiaPage.jsx
   const kpiCards = [
     {
-      label: isSemiarido ? 'Arranjos no Semiárido' : (selectedTerritory ? `Arranjos Sediados em ${territoryName}` : 'Arranjos & IGs Mapeados'),
-      value: loadingStats ? '...' : statsKpis.arranjosSediados,
-      suffix: null,
-      badge: isSemiarido ? `${statsKpis.pctCadeiasBahia}% da Bahia` : 'Ecossistema Produtivo',
-      icon: Boxes,
+      label: isSemiarido
+        ? (selectedTerritory ? `Arranjos no Semiárido · ${territoryName}` : 'Arranjos no Semiárido')
+        : (selectedTerritory ? `Arranjos em ${territoryName}` : 'Arranjos & IGs Mapeados'),
+      value: loadingStats ? '...' : filteredCadeias.length,
+      percent: isSemiarido ? `${statsKpis.pctCadeiasBahia}% do total` : null,
+      icon: GitPullRequest,
       isHero: true
     },
     {
-      label: selectedTerritory ? 'Maior Segmento Sediado' : 'Maior Segmento Produtivo',
-      value: loadingStats ? '...' : (statsKpis.maiorSegmento ? `${statsKpis.maiorSegmento.percent}%` : '-'),
-      suffix: null,
-      badge: statsKpis.maiorSegmento ? statsKpis.maiorSegmento.name : 'Sem dados',
-      icon: Wheat,
-      isHero: false
-    },
-    {
-      label: 'Municípios de Abrangência',
+      label: isSemiarido ? 'Municípios Beneficiados (Semiárido)' : 'Municípios Beneficiados',
       value: loadingStats ? '...' : statsKpis.municipiosBeneficiados,
-      suffix: `/ ${statsKpis.municipiosSede} sedes`,
-      badge: `${statsKpis.municipiosBeneficiados} municípios`,
-      icon: MapPin,
+      percent: null,
+      icon: CheckCircle2,
       isHero: false
     },
     {
-      label: 'Territórios com Arranjos',
-      value: loadingStats ? '...' : (selectedTerritory ? '1' : statsKpis.territoriosAtendidos),
-      suffix: `/ ${statsKpis.totalTerrUniverso}`,
-      badge: selectedTerritory ? 'Território Selecionado' : `${statsKpis.taxaTerr}% dos territórios`,
+      label: isSemiarido
+        ? (selectedTerritory ? 'Municípios Sede no Semiárido' : 'Territórios no Semiárido')
+        : (selectedTerritory ? 'Municípios Sede' : 'Territórios com Arranjos'),
+      value: loadingStats
+        ? '...'
+        : (selectedTerritory
+            ? `${statsKpis.municipiosSede} munic.`
+            : `${statsKpis.territoriosAtendidos} / ${territoriosData.length || 27}`),
+      percent: null,
+      icon: selectedTerritory ? Building2 : MapPin,
+      isHero: false
+    },
+    {
+      label: isSemiarido ? 'Segmentos no Semiárido' : 'Qtd. de Segmentos',
+      value: loadingStats ? '...' : statsKpis.qtdSegmentos,
+      percent: null,
       icon: Layers,
+      isHero: false
+    },
+    {
+      label: statsKpis.maiorSegmento ? `Principal: ${statsKpis.maiorSegmento.name}` : 'Maior Segmento',
+      value: loadingStats ? '...' : (statsKpis.maiorSegmento ? `${statsKpis.maiorSegmento.percent}%` : '-'),
+      percent: null,
+      icon: Sparkles,
       isHero: false
     }
   ];
@@ -687,94 +703,21 @@ export default function RelatorioCadeiasPage() {
       {/* CABEÇALHO */}
       <header className="flex items-center justify-between w-full shrink-0 relative z-10">
         <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
-              Relatório Executivo de Cadeias Produtivas & IGs
-            </h1>
-
-            {isSemiarido ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-700/50">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                Recorte Oficial: Semiárido Baiano (278 Municípios)
-              </span>
-            ) : selectedTerritory ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <MapPin size={13} className="text-primary-600 dark:text-primary-400" />
-                Recorte: {territoryName}
-                <button
-                  type="button"
-                  onClick={() => setSelectedTerritory(null)}
-                  className="text-primary-600 hover:text-rose-500 transition-colors ml-0.5 cursor-pointer print:hidden"
-                  title="Limpar seleção territorial"
-                >
-                  <X size={12} />
-                </button>
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-semibold bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60">
-                <span className="w-2 h-2 rounded-full bg-primary-600" />
-                Cenário Geral: Estado da Bahia (417 Municípios)
-              </span>
-            )}
-          </div>
-
+          <h1 className="text-headline font-bold text-text-primary tracking-tight leading-none">
+            Relatório Executivo de Cadeias Produtivas &amp; IGs
+          </h1>
           <p className="text-body-sm text-text-secondary mt-1 font-medium">
             {isSemiarido
               ? 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas nos 278 municípios do Semiárido'
               : 'Diagnóstico territorial de Arranjos Produtivos Locais (APLs) e Indicações Geográficas da Bahia'}
           </p>
-          <div className={`divider-territorial w-48 mt-2 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              const next = !isSemiarido;
-              setFiltroSemiarido?.(next);
-              const newParams = new URLSearchParams(searchParams);
-              if (next) {
-                newParams.set('modo', 'semiarido');
-              } else {
-                newParams.delete('modo');
-              }
-              navigate(`?${newParams.toString()}`, { replace: true });
-            }}
-            title={isSemiarido ? 'Desativar modo Semiárido' : 'Ativar modo Semiárido'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-semibold transition-all shadow-xs active:scale-95 print:hidden cursor-pointer border ${
-              isSemiarido
-                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/25'
-                : 'bg-surface-soft border-border/70 text-text-secondary hover:text-text-primary hover:bg-surface'
-            }`}
-          >
-            <span className={`w-2 h-2 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-slate-400'}`} />
-            <span>Semiárido</span>
-          </button>
-
-          <span className="text-caption font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-950/40 border border-primary-200/60 dark:border-primary-800/40 px-3.5 py-1.5 rounded-full inline-flex items-center gap-1.5">
-            <Award size={14} className="text-primary-600 dark:text-primary-400" />
-            Dados Oficiais SECTI/BA
-          </span>
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            aria-label={isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            className="w-8 h-8 rounded-full bg-surface-soft text-text-secondary hover:text-primary-600 hover:bg-surface border border-border/70 flex items-center justify-center transition-all duration-200 shadow-xs active:scale-95 print:hidden cursor-pointer"
-          >
-            {isDark ? (
-              <Sun size={15} strokeWidth={2} className="text-amber-400" />
-            ) : (
-              <Moon size={15} strokeWidth={2} className="text-neutral-600" />
-            )}
-          </button>
+          <div className={`divider-territorial w-56 mt-3 ${isSemiarido ? 'bg-gradient-to-r from-amber-500 via-amber-400 to-transparent' : ''}`} />
         </div>
       </header>
 
-      {/* GRID DE KPIS (4 CARDS) */}
+      {/* GRID DE 5 KPIS (IDÊNTICO AO CADEIAPAGE.JSX) */}
       <div className="w-full relative z-10 shrink-0">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 items-stretch w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch w-full">
           {kpiCards.map((kpi, index) => {
             const isHero = kpi.isHero;
             const IconComp = kpi.icon;
@@ -782,22 +725,25 @@ export default function RelatorioCadeiasPage() {
             return (
               <div
                 key={index}
-                className={`p-4 flex flex-col justify-between h-[98px] rounded-card cursor-default overflow-hidden select-none ${
+                className={`p-4 sm:p-5 flex flex-col justify-between h-[100px] min-h-[100px] max-h-[100px] rounded-card cursor-default overflow-hidden select-none ${
                   isHero
                     ? (isSemiarido
-                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white border border-amber-400/40 shadow-xs'
+                        ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
                         : 'bg-gradient-brand text-white border border-primary-500/40 shadow-xs')
                     : (isSemiarido
-                        ? 'bg-surface-soft border border-amber-200/60 dark:border-amber-500/30 text-text-primary'
+                        ? 'bg-white/90 dark:bg-zinc-900/90 border border-amber-200/70 dark:border-amber-700/35 shadow-2xs text-text-primary'
                         : 'bg-surface-soft border border-border/70 text-text-primary')
                 }`}
               >
                 {/* LINHA SUPERIOR: LABEL + ÍCONE CIRCULAR À DIREITA */}
-                <div className="flex items-start justify-between gap-2 w-full min-w-0">
+                <div className="flex items-center justify-between gap-2 w-full min-w-0">
                   <span
                     className={`text-[13px] font-medium leading-tight truncate ${
-                      isHero ? (isSemiarido ? 'text-amber-100' : 'text-white/85') : 'text-text-secondary'
+                      isHero
+                        ? (isSemiarido ? 'text-amber-100' : 'text-white/85')
+                        : (isSemiarido ? 'text-amber-900/85 dark:text-amber-200/90' : 'text-text-secondary')
                     }`}
+                    title={kpi.label}
                   >
                     {kpi.label}
                   </span>
@@ -806,47 +752,38 @@ export default function RelatorioCadeiasPage() {
                     className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${
                       isHero
                         ? 'bg-white/15 text-white border border-white/20 shadow-2xs'
-                        : 'bg-surface border border-border/80 text-text-secondary shadow-2xs'
+                        : (isSemiarido
+                            ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300/70 dark:border-amber-600/50 text-amber-700 dark:text-amber-300 shadow-2xs'
+                            : 'bg-surface border border-border/80 text-text-secondary shadow-2xs')
                     }`}
                   >
                     <IconComp size={15} strokeWidth={2} />
                   </div>
                 </div>
 
-                {/* LINHA INFERIOR: VALOR GRANDE + BADGE PILL */}
+                {/* LINHA INFERIOR: VALOR GRANDE + PERCENTUAL OPCIONAL NO SEMIÁRIDO */}
                 <div className="flex items-baseline justify-between gap-2 w-full min-w-0 pt-0.5">
-                  <div className="flex items-baseline gap-1 min-w-0">
+                  <div className="flex items-baseline gap-1.5 min-w-0 flex-1">
                     <span
-                      className={`text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
-                        isHero ? 'text-white' : 'text-text-primary'
+                      className={`text-[28px] sm:text-[30px] font-bold tracking-tight leading-none shrink-0 tnum ${
+                        isHero
+                          ? 'text-white'
+                          : (isSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary')
                       }`}
                     >
                       {kpi.value}
                     </span>
-                    {kpi.suffix && (
+
+                    {isSemiarido && kpi.percent && (
                       <span
-                        className={`text-caption font-semibold tnum ${
-                          isHero ? 'text-white/75' : 'text-text-muted'
+                        className={`text-caption font-semibold tabular-nums truncate shrink-0 ${
+                          isHero ? 'text-white/80' : 'text-amber-700 dark:text-amber-400'
                         }`}
                       >
-                        {kpi.suffix}
+                        ({kpi.percent})
                       </span>
                     )}
                   </div>
-
-                  {kpi.badge && (
-                    <span
-                      className={`text-caption font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center leading-none truncate shrink-0 ${
-                        isHero
-                          ? 'bg-white/15 text-white border border-white/20'
-                          : (isSemiarido
-                              ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800/60'
-                              : 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60')
-                      }`}
-                    >
-                      {kpi.badge}
-                    </span>
-                  )}
                 </div>
               </div>
             );
@@ -854,10 +791,28 @@ export default function RelatorioCadeiasPage() {
         </div>
       </div>
 
-      {/* GRID PRINCIPAL: 4 GRÁFICOS (2x2 SIMÉTRICO) + SIDEMAP */}
+      {/* GRID PRINCIPAL: SIDEMAP À ESQUERDA (30%) + 4 GRÁFICOS (2x2 À DIREITA) — PADRÃO DO PAINEL */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 min-h-0 w-full overflow-hidden">
 
-        {/* COLUNA ESQUERDA: GRID 2x2 */}
+        {/* COLUNA ESQUERDA: SIDEMAP INTEGRADO */}
+        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col min-h-0 ${
+          isSemiarido
+            ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
+            : 'border-border'
+        }`}>
+          <SideMap
+            key={`map-cadeias-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
+            mode="cadeias"
+            cadeiasData={filteredCadeias}
+            processedAtivos={filteredCadeias}
+            selectedTerritory={selectedTerritory}
+            onSelectTerritory={setSelectedTerritory}
+            filtroSemiarido={isSemiarido}
+            hideLayerControls={true}
+          />
+        </div>
+
+        {/* COLUNA DIREITA: GRID 2x2 */}
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
 
           {/* GRÁFICO 1: TOP 5 ARRANJOS & IGS (PÍLULAS PROPORCIONAIS SÓLIDAS) */}
@@ -871,15 +826,6 @@ export default function RelatorioCadeiasPage() {
                   {selectedTerritory ? `Arranjos com presença em ${territoryName}` : 'Maior extensão municipal de abrangência'}
                 </p>
               </div>
-
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-semibold shrink-0 border ${
-                isSemiarido
-                  ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
-                  : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/60'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`} />
-                Abrangência
-              </span>
             </div>
 
             <div className="w-full h-px bg-border/70 mb-1.5 shrink-0" />
@@ -957,7 +903,7 @@ export default function RelatorioCadeiasPage() {
                   : (isSemiarido ? "Territórios do Semiárido líderes em cadeias produtivas" : "Top 10 Territórios em Cadeias e APLs na Bahia")
               }
               allowToggleView={false}
-              showTopBadge={true}
+              showTopBadge={false}
               isSemiarido={isSemiarido}
             />
           </div>
@@ -977,15 +923,6 @@ export default function RelatorioCadeiasPage() {
                     : (isSemiarido ? "Top 5 Segmentos instalados no Semiárido" : "Top 5 Segmentos Produtivos na Bahia")}
                 </p>
               </div>
-
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-caption font-semibold shrink-0 border ${
-                isSemiarido
-                  ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800/60'
-                  : 'bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300 border-primary-200/60 dark:border-primary-800/60'
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${isSemiarido ? 'bg-amber-500' : 'bg-primary-600'}`} />
-                {isSemiarido ? 'Recorte Semiárido' : 'Top 5 Segmentos'}
-              </span>
             </div>
 
             <div className="w-full h-px bg-border/70 mb-1.5 shrink-0" />
@@ -1070,19 +1007,6 @@ export default function RelatorioCadeiasPage() {
             />
           </div>
 
-        </div>
-
-        {/* COLUNA DIREITA: SIDEMAP INTEGRADO */}
-        <div style={{ width: 'calc(30% - 12px)' }} className={`shrink-0 h-full bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} shadow-card relative overflow-hidden flex flex-col min-h-0`}>
-          <SideMap
-            key={`map-cadeias-${isSemiarido ? 'semi' : 'normal'}-${selectedTerritory?.id_territorio || 'all'}`}
-            mode="cadeias"
-            cadeiasData={filteredCadeias}
-            processedAtivos={filteredCadeias}
-            selectedTerritory={selectedTerritory}
-            onSelectTerritory={setSelectedTerritory}
-            filtroSemiarido={isSemiarido}
-          />
         </div>
 
       </div>

@@ -282,13 +282,13 @@ export default function LandingHero() {
           {/* Assinatura Institucional: Governo do Estado primeiro, depois marca do painel */}
           <div className="flex items-center gap-4 sm:gap-5 select-none">
             <img
-              src="/img/brasao_preto.webp"
-              alt="Governo do Estado da Bahia"
+              src="/img/secti-govba-horizontal.svg"
+              alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-11 sm:h-14 w-auto object-contain shrink-0 block dark:hidden"
             />
             <img
-              src="/img/Brasao-Horizontal_Branco.webp"
-              alt="Governo do Estado da Bahia"
+              src="/img/secti-govba-horizontal-branco.svg"
+              alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-11 sm:h-14 w-auto object-contain shrink-0 hidden dark:block"
             />
 
@@ -594,8 +594,8 @@ export default function LandingHero() {
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-caption text-text-muted">
           <div className="flex items-center gap-3">
             <img
-              src={isDark ? '/img/Brasao-Horizontal_Branco.webp' : '/img/brasao_preto.webp'}
-              alt="Governo do Estado da Bahia"
+              src={isDark ? '/img/secti-govba-horizontal-branco.svg' : '/img/secti-govba-horizontal.svg'}
+              alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-8 w-auto object-contain opacity-80"
             />
             <span>Secretaria de Ciência, Tecnologia e Inovação — Governo do Estado da Bahia</span>

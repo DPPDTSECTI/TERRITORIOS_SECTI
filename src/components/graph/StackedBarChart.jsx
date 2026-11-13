@@ -75,7 +75,13 @@ function StackedBarChart({
   }, [visibleData, maxScale]);
 
   return (
-    <div className={`bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
+    <div
+      onClick={() => {
+        setHoveredSlice(null);
+        setHoveredTotalTerritory(null);
+      }}
+      className={`bg-surface rounded-card border ${isSemiarido ? 'border-amber-200/60 dark:border-amber-500/30' : 'border-border'} p-4 relative flex flex-col justify-between h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}
+    >
 
       {/* CABEÇALHO DO CARD (IDÊNTICO AO PAINEL) */}
       <div className="flex items-start justify-between gap-2 mb-1.5 shrink-0">
@@ -238,6 +244,19 @@ function StackedBarChart({
                         segments: item.segments
                       });
                     }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHoveredSlice(null);
+                      setHoveredTotalTerritory((prev) =>
+                        prev && prev.label === item.label
+                          ? null
+                          : {
+                              label: item.label,
+                              total: totalVal,
+                              segments: item.segments
+                            }
+                      );
+                    }}
                     className={`flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-full bg-surface-soft border border-border text-[11px] tabular-nums font-semibold text-text-primary transition-all mb-1 select-none cursor-pointer leading-none shrink-0 shadow-2xs ${
                       isSemiarido
                         ? 'group-hover/bar:bg-amber-600 group-hover/bar:text-white group-hover/bar:border-amber-600'
@@ -275,6 +294,22 @@ function StackedBarChart({
                                 count,
                                 total: item.total
                               });
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHoveredTotalTerritory(null);
+                              setHoveredSlice((prev) =>
+                                prev && prev.label === item.label && prev.key === cat.key
+                                  ? null
+                                  : {
+                                      label: item.label,
+                                      key: cat.key,
+                                      segmentName: cat.shortLabel || cat.label,
+                                      colorHex: sliceColor,
+                                      count,
+                                      total: item.total
+                                    }
+                              );
                             }}
                             className={`w-full transition-all duration-150 cursor-pointer min-h-[5px] border-b-[1.5px] border-surface last:border-b-0 ${isThisSliceHovered ? 'brightness-125 saturate-150 ring-1 ring-white z-10' : 'hover:brightness-110'
                               }`}

@@ -11,13 +11,13 @@ export default function UserHeaderProfile() {
       {/* BRASÃO / LOGOMARCA COM TRANSIÇÃO CLARO/ESCURO */}
       <div className="flex items-center">
         <img
-          src="/img/brasao_preto.webp"
-          alt="Brasão do Estado da Bahia"
+          src="/img/secti-govba-horizontal.svg"
+          alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
           className="h-10 w-auto object-contain shrink-0 block dark:hidden select-none"
         />
         <img
-          src="/img/Brasao-Horizontal_Branco.webp"
-          alt="Brasão do Estado da Bahia"
+          src="/img/secti-govba-horizontal-branco.svg"
+          alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
           className="h-10 w-auto object-contain shrink-0 hidden dark:block select-none"
         />
       </div>

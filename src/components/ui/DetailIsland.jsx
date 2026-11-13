@@ -42,7 +42,7 @@ export function DetailIsland({
   return (
     <aside
       aria-label={`Detalhes de ${title}`}
-      className={`flex flex-col justify-between rounded-2xl bg-white dark:bg-zinc-900 border-2 ${
+      className={`flex flex-col justify-between rounded-panel bg-white dark:bg-zinc-900 border-2 ${
         filtroSemiarido
           ? 'border-amber-500/70 dark:border-amber-500/60 shadow-sm'
           : 'border-primary-500/70 dark:border-primary-400/60 shadow-sm'
@@ -93,7 +93,7 @@ export function DetailIsland({
           }}
           aria-label="Fechar detalhes"
           title="Fechar painel (Esc)"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50 bg-zinc-100/80 hover:bg-zinc-200/80 dark:bg-zinc-800/80 dark:hover:bg-zinc-700/80 border border-zinc-200/80 dark:border-zinc-700 transition-colors cursor-pointer shrink-0"
+          className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-control text-xs font-semibold text-zinc-600 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50 bg-zinc-100/80 hover:bg-zinc-200/80 dark:bg-zinc-800/80 dark:hover:bg-zinc-700/80 border border-zinc-200/80 dark:border-zinc-700 transition-colors cursor-pointer shrink-0"
         >
           <span>Fechar</span>
           <X size={15} strokeWidth={2.2} />
@@ -131,7 +131,7 @@ export function DetailIsland({
             {metrics.map((m, idx) => (
               <div
                 key={idx}
-                className={`rounded-xl bg-zinc-50/90 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col justify-between ${
+                className={`rounded-subcard bg-zinc-50/90 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col justify-between ${
                   m.fullWidth ? 'col-span-2 sm:col-span-3' : 'col-span-1'
                 }`}
               >
@@ -156,7 +156,7 @@ export function DetailIsland({
 
         {/* CITAÇÃO / REFERÊNCIA BIBLIOGRÁFICA */}
         {referenceQuote && (
-          <div className="rounded-xl bg-amber-500/10 dark:bg-amber-950/35 border border-amber-500/25 p-4">
+          <div className="rounded-subcard bg-amber-500/10 dark:bg-amber-950/35 border border-amber-500/25 p-4">
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 block mb-1.5">
               Referência / Citação do Artigo
             </span>
@@ -172,7 +172,7 @@ export function DetailIsland({
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-xl text-xs sm:text-sm font-medium border border-zinc-200 dark:border-zinc-700 bg-white hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+          className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-control text-xs sm:text-sm font-medium border border-zinc-200 dark:border-zinc-700 bg-white hover:bg-zinc-50 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
         >
           <ArrowLeft size={15} />
           <span>Voltar à lista</span>
@@ -183,7 +183,7 @@ export function DetailIsland({
             <button
               type="button"
               onClick={secondaryAction.onClick}
-              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold border border-zinc-200 dark:border-zinc-700 bg-zinc-100/80 hover:bg-zinc-200/70 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-control text-xs sm:text-sm font-semibold border border-zinc-200 dark:border-zinc-700 bg-zinc-100/80 hover:bg-zinc-200/70 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 transition-colors cursor-pointer"
             >
               {secondaryAction.icon || <MapPin size={15} />}
               <span className="truncate">{secondaryAction.label}</span>
@@ -194,7 +194,7 @@ export function DetailIsland({
               href={externalUrl}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white transition-colors shadow-xs ${
+              className={`inline-flex items-center justify-center gap-2 h-10 px-4 rounded-control text-xs sm:text-sm font-semibold text-white transition-colors shadow-xs ${
                 filtroSemiarido
                   ? 'bg-amber-600 hover:bg-amber-500'
                   : 'bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white'

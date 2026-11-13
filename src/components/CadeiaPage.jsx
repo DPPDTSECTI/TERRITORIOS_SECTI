@@ -719,18 +719,18 @@ export default function CadeiaPage() {
         ];
 
         const extraSection = (
-            <div className="rounded-xl bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
+            <div className="rounded-subcard bg-zinc-50/90 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800 p-3.5 flex flex-col gap-2 shrink-0">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                     Municípios de Abrangência ({munsList.length})
                 </span>
-                <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-1">
+                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
                     {munsList.map((m, i) => {
                         const isSede = normalizeName(m.nome_municipio) === normalizeName(selectedCadeia.municipio_sede);
                         return (
                             <span
                                 key={m.id_municipio || `${m.nome_municipio}-${i}`}
                                 title={isSede ? `${m.nome_municipio} (Sede)` : m.nome_municipio}
-                                className={`text-[11px] font-medium px-2 py-0.5 rounded-md border truncate max-w-full ${
+                                className={`text-[11px] font-medium px-2.5 py-1 rounded-pill border truncate max-w-full ${
                                     isSede
                                         ? 'bg-primary-500/15 text-primary-700 dark:text-primary-300 border-primary-500/30 font-semibold'
                                         : 'bg-white dark:bg-zinc-900 border-zinc-200/80 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300'

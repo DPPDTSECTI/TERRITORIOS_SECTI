@@ -44,6 +44,12 @@ export default function CustomPieChart({
     hoverTimeoutRef.current = setTimeout(() => setHoveredItem(null), 80);
   };
 
+  const handleToggleItem = (item) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    if (!item) return;
+    setHoveredItem((prev) => (prev && prev[labelKey] === item[labelKey] ? null : item));
+  };
+
   const normalizedData = data.map((d, index) => ({
     ...d,
     [labelKey]: d[labelKey] || 'Outros',
@@ -62,7 +68,10 @@ export default function CustomPieChart({
   const chartData = !isEmpty ? normalizedData : [{ [valueKey]: 1, fill: chartTheme.grid, [labelKey]: 'Sem dados' }];
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border p-3.5 sm:p-4 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
+    <div
+      onClick={() => setHoveredItem(null)}
+      className={`flex-1 bg-surface rounded-card border border-border p-3.5 sm:p-4 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}
+    >
 
       {/* CABEÇALHO COM ALTURA ESTÁVEL E TRUNCATE */}
       <div className="flex justify-between items-start mb-1.5 relative z-10 w-full shrink-0 min-w-0">
@@ -110,7 +119,10 @@ export default function CustomPieChart({
                   strokeWidth={0}
                   minAngle={6}
                   onMouseEnter={(entry) => handleMouseEnter(entry?.payload || entry)}
-                  onClick={(entry) => handleMouseEnter(entry?.payload || entry)}
+                  onClick={(entry, _idx, e) => {
+                    e?.stopPropagation?.();
+                    handleToggleItem(entry?.payload || entry);
+                  }}
                   shape={(props) => {
                     const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
                     const itemData = payload;
@@ -143,7 +155,10 @@ export default function CustomPieChart({
                           transition: 'opacity 0.15s ease-out'
                         }}
                         onMouseEnter={() => handleMouseEnter(itemData)}
-                        onClick={() => handleMouseEnter(itemData)}
+                        onClick={(e) => {
+                          e?.stopPropagation?.();
+                          handleToggleItem(itemData);
+                        }}
                       />
                     );
                   }}

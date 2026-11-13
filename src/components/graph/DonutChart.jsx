@@ -57,7 +57,10 @@ export default function DonutChart({
   const isEmpty = sortedData.length === 0 || totalValue === 0;
 
   return (
-    <div className={`flex-1 bg-surface rounded-card border border-border p-4 sm:p-5 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}>
+    <div
+      onClick={() => setHoveredIndex(null)}
+      className={`flex-1 bg-surface rounded-card border border-border p-4 sm:p-5 relative flex flex-col justify-start h-full group cursor-default min-h-0 overflow-hidden ${cardClassName}`}
+    >
 
       {/* HEADER COM ALTURA ESTÁVEL */}
       <div className="flex justify-between items-start mb-2 relative z-10 w-full shrink-0 min-w-0 h-[46px]">
@@ -101,6 +104,12 @@ export default function DonutChart({
                       key={index}
                       onMouseEnter={() => setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!item.isEmpty) {
+                          setHoveredIndex((prev) => (prev === index ? null : index));
+                        }
+                      }}
                       className={`outline-none ${item.isEmpty ? 'cursor-default' : 'cursor-pointer'}`}
                     >
                       <circle

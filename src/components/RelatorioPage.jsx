@@ -190,7 +190,7 @@ export default function RelatorioPage() {
 
   const territoryTitle = selectedTerritory
     ? (selectedTerritory.nome_territorio || selectedTerritory.territorio)
-    : (reportMode === 'semiarido' ? 'Semiárido Baiano (278 Municípios)' : 'Estado da Bahia (Toda a Bahia)');
+    : (reportMode === 'semiarido' ? 'Semiárido Baiano' : 'Estado da Bahia (Toda a Bahia)');
 
   // Lista dos 27 territórios ordenados alfabeticamente
   const sortedTerritorios = useMemo(() => {
@@ -1479,7 +1479,7 @@ export default function RelatorioPage() {
                     className="bg-transparent font-semibold text-text-primary truncate pr-14 py-1 focus:outline-none cursor-pointer appearance-none min-w-0 flex-1"
                   >
                     <option value="bahia" className="bg-surface text-text-primary">
-                      {reportMode === 'semiarido' ? 'Semiárido Baiano (278 Municípios)' : 'Toda a Bahia (27 Territórios)'}
+                      {reportMode === 'semiarido' ? 'Semiárido Baiano' : 'Toda a Bahia'}
                     </option>
                     {sortedTerritorios.map((t) => (
                       <option key={t.id_territorio} value={String(t.id_territorio)} className="bg-surface text-text-primary">
