@@ -5,9 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicon principal -->
-  <link rel="icon" type="image/webp" href="/img/favicon-96x96.webp" />
+  <!-- Favicon principal (Marca B reduzida · Rede Territorial CT&I) -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/webp" sizes="96x96" href="/img/favicon-96x96.webp" />
   <link rel="apple-touch-icon" href="/img/favicon-96x96.webp" />
 
   <script>
@@ -26,7 +26,7 @@
     })();
   </script>
 
-  <title>SECTI | Mapeamento dos Territórios de Identidade</title>
+  <title>Painel Territorial CT&I · SECTI</title>
   <meta name="description"
     content="SECTI | Mapeamento dos Territórios de Identidade - ferramenta governamental interativa de mapas e dados dos municípios da Bahia, fornecendo estatísticas, filtros e visualizações para apoiar pesquisas e decisões públicas do Governo do Estado da Bahia." />
   <meta name="keywords"
@@ -73,6 +73,19 @@
 <body class="antialiased">
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Widget VLibras (Acessibilidade em Libras - eMAG / Gov.br) -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script
+    defer
+    src="https://vlibras.gov.br/app/vlibras-plugin.js"
+    onload="window.VLibras && window.VLibras.Widget && new window.VLibras.Widget('https://vlibras.gov.br/app')"
+  ></script>
 </body>
 
 </html>

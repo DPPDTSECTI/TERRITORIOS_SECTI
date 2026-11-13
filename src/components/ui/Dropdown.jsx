@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '../../lib/cn';
 
 /**
- * Menu dropdown suspenso com navegação por teclado e suporte a divisores e ações destrutivas.
+ * Menu dropdown suspenso acessível (Radix DropdownMenu) com navegação por teclado e suporte a divisores e ações destrutivas.
  *
  * @component
  * @param {object} props
@@ -18,70 +19,7 @@ export function Dropdown({
   align = 'right',
   className,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(-1);
-  const containerRef = useRef(null);
-  const itemRefs = useRef([]);
-
-  // Filtrar itens selecionáveis
-  const selectableIndices = items
-    .map((item, idx) => (!item.divider && !item.disabled ? idx : null))
-    .filter((idx) => idx !== null);
-
-  const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
-    setFocusedIndex(-1);
-  };
-
-  const closeMenu = () => {
-    setIsOpen(false);
-    setFocusedIndex(-1);
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        closeMenu();
-      }
-    };
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        closeMenu();
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setFocusedIndex((prev) => {
-          const currentPos = selectableIndices.indexOf(prev);
-          const nextPos = (currentPos + 1) % selectableIndices.length;
-          return selectableIndices[nextPos];
-        });
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setFocusedIndex((prev) => {
-          const currentPos = selectableIndices.indexOf(prev);
-          const nextPos = (currentPos - 1 + selectableIndices.length) % selectableIndices.length;
-          return selectableIndices[nextPos];
-        });
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, selectableIndices]);
-
-  useEffect(() => {
-    if (focusedIndex >= 0 && itemRefs.current[focusedIndex]) {
-      itemRefs.current[focusedIndex].focus();
-    }
-  }, [focusedIndex]);
+  const [open, setOpen] = useState(false);
 
   const renderIcon = (icon) => {
     if (!icon) return null;
@@ -91,62 +29,72 @@ export function Dropdown({
   };
 
   return (
-    <div ref={containerRef} className="relative inline-flex items-center">
-      <div onClick={toggleOpen} className="inline-flex cursor-pointer select-none">
-        {trigger}
-      </div>
+    <RadixDropdown.Root open={open} onOpenChange={setOpen} modal={false}>
+      {React.isValidElement(trigger) ? (
+        <RadixDropdown.Trigger asChild>{trigger}</RadixDropdown.Trigger>
+      ) : (
+        <RadixDropdown.Trigger asChild>
+          <button type="button" className="inline-flex cursor-pointer select-none">
+            {trigger}
+          </button>
+        </RadixDropdown.Trigger>
+      )}
 
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            role="menu"
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0, transitionEnd: { transform: 'none' } }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.14, ease: 'easeOut' }}
-            className={cn(
-              'absolute top-full mt-1.5 min-w-[240px] w-max max-w-[320px] rounded-2xl bg-surface border border-border shadow-float p-1.5 z-[120] focus:outline-none',
-              align === 'left' ? 'left-0' : 'right-0',
-              className
-            )}
-          >
-            {items.map((item, index) => {
-              if (item.divider) {
-                return <div key={`div-${index}`} className="my-1 border-t border-border/70" />;
-              }
+        {open && (
+          <RadixDropdown.Portal forceMount>
+            <RadixDropdown.Content
+              asChild
+              forceMount
+              align={align === 'left' ? 'start' : 'end'}
+              sideOffset={6}
+              collisionPadding={12}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0, transitionEnd: { transform: 'none' } }}
+                exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                transition={{ duration: 0.14, ease: 'easeOut' }}
+                className={cn(
+                  'min-w-[240px] w-max max-w-[320px] rounded-2xl bg-surface border border-border shadow-float p-1.5 z-[120] focus:outline-none',
+                  className
+                )}
+              >
+                {items.map((item, index) => {
+                  if (item.divider) {
+                    return <RadixDropdown.Separator key={`div-${index}`} className="my-1 border-t border-border/70" />;
+                  }
 
-              const isDanger = item.danger;
-              const isDisabled = item.disabled;
+                  const isDanger = item.danger;
+                  const isDisabled = item.disabled;
 
-              return (
-                <button
-                  key={index}
-                  ref={(el) => (itemRefs.current[index] = el)}
-                  role="menuitem"
-                  type="button"
-                  disabled={isDisabled}
-                  onClick={() => {
-                    if (isDisabled) return;
-                    item.onClick?.();
-                    closeMenu();
-                  }}
-                  className={cn(
-                    'w-full text-left px-3 py-2 rounded-xl text-body-sm flex items-center gap-2.5 transition-colors duration-120 select-none cursor-pointer focus:outline-none focus:bg-surface-soft',
-                    isDanger
-                      ? 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/40 focus:bg-danger-50 dark:focus:bg-danger-950/40'
-                      : 'text-text-primary hover:bg-surface-soft',
-                    isDisabled && 'opacity-40 pointer-events-none'
-                  )}
-                >
-                  {renderIcon(item.icon)}
-                  <span className="truncate">{item.label}</span>
-                </button>
-              );
-            })}
-          </motion.div>
+                  return (
+                    <RadixDropdown.Item
+                      key={index}
+                      disabled={isDisabled}
+                      onSelect={() => {
+                        if (isDisabled) return;
+                        item.onClick?.();
+                      }}
+                      className={cn(
+                        'w-full text-left px-3 py-2 rounded-xl text-body-sm flex items-center gap-2.5 transition-colors duration-120 select-none cursor-pointer focus:outline-none',
+                        isDanger
+                          ? 'text-danger-600 data-[highlighted]:bg-danger-50 dark:data-[highlighted]:bg-danger-950/40 hover:bg-danger-50 dark:hover:bg-danger-950/40'
+                          : 'text-text-primary data-[highlighted]:bg-surface-soft hover:bg-surface-soft',
+                        isDisabled && 'opacity-40 pointer-events-none'
+                      )}
+                    >
+                      {renderIcon(item.icon)}
+                      <span className="truncate">{item.label}</span>
+                    </RadixDropdown.Item>
+                  );
+                })}
+              </motion.div>
+            </RadixDropdown.Content>
+          </RadixDropdown.Portal>
         )}
       </AnimatePresence>
-    </div>
+    </RadixDropdown.Root>
   );
 }
 

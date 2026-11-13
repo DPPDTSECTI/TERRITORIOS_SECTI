@@ -37,6 +37,7 @@ import { normalize } from '../utils/normalization';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
 import { getDynamicAssetTypeConfig } from '../constants/assetTypes';
+import { getSemanticColors } from './graph/chartTheme';
 
 const MUN_LOOKUP = (() => {
   const byId = {};
@@ -81,10 +82,11 @@ function findMunicipioCoords(nome) {
 }
 
 const getTipoCadeiaConfig = (nomeTipo) => {
+  const semantic = getSemanticColors();
   const str = String(nomeTipo || '').toLowerCase();
   if (str.includes('potencial')) {
     return {
-      corHex: '#F59E0B',
+      corHex: semantic.warning,
       label: 'IG Potencial',
       icone: Compass,
       iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`
@@ -92,14 +94,14 @@ const getTipoCadeiaConfig = (nomeTipo) => {
   }
   if (str.includes('ig') || str.includes('indica') || str.includes('geogr')) {
     return {
-      corHex: '#10B981',
+      corHex: semantic.success,
       label: 'IG Concedida',
       icone: Award,
       iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`
     };
   }
   return {
-    corHex: '#2563EB',
+    corHex: semantic.primaryBase,
     label: 'APL Mapeado',
     icone: Layers,
     iconSvg: `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`
@@ -1217,9 +1219,10 @@ export default function RelatorioPage() {
   }, [scopedCadeias, reportType]);
 
   const cursosPorModalidade = useMemo(() => {
+    const semantic = getSemanticColors();
     return [
-      { name: 'Presencial', value: statsSintese.presencialCursos, color: '#2563EB' },
-      { name: 'EaD', value: statsSintese.eadCursos, color: '#8B5CF6' }
+      { name: 'Presencial', value: statsSintese.presencialCursos, color: semantic.primaryBase },
+      { name: 'EaD', value: statsSintese.eadCursos, color: semantic.purple }
     ];
   }, [statsSintese]);
 

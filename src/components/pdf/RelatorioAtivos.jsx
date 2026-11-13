@@ -22,8 +22,9 @@ import { getDynamicAssetTypeConfig } from '../../constants/assetTypes';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import { getSemanticColors, LIGHT_CHART_PALETTE } from '../graph/chartTheme';
 
-const PALETTE = ['#2563EB', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#1D3557'];
+const PALETTE = LIGHT_CHART_PALETTE;
 
 function normalizeName(value) {
   if (!value) return '';
@@ -63,6 +64,7 @@ function formatTipoUnificado(tipoStr) {
 }
 
 function getRedeInfo(tipoStr, siglaStr) {
+  const semantic = getSemanticColors();
   const t = normalizeName(String(tipoStr || ''));
   const s = normalizeName(String(siglaStr || ''));
 
@@ -71,7 +73,7 @@ function getRedeInfo(tipoStr, siglaStr) {
     return {
       rede: 'Estadual',
       label: 'Univ. Pública Estadual',
-      corHex: '#2563EB',
+      corHex: semantic.primaryBase,
       fillBg: 'rgba(37, 99, 235, 0.18)',
       rankClass: 'bg-blue-600 text-white',
       badgeClass: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/25'
@@ -83,7 +85,7 @@ function getRedeInfo(tipoStr, siglaStr) {
     return {
       rede: 'Inst. Federal',
       label: 'Instituto Federal',
-      corHex: '#10B981',
+      corHex: semantic.success,
       fillBg: 'rgba(16, 185, 129, 0.20)',
       rankClass: 'bg-emerald-600 text-white',
       badgeClass: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25'
@@ -95,9 +97,9 @@ function getRedeInfo(tipoStr, siglaStr) {
     return {
       rede: 'Univ. Federal',
       label: 'Univ. Pública Federal',
-      corHex: '#1D3557',
+      corHex: semantic.primaryNavy,
       fillBg: 'rgba(29, 53, 87, 0.16)',
-      rankClass: 'bg-[#1D3557] text-white',
+      rankClass: 'bg-primary-900 text-white',
       badgeClass: 'bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-500/25'
     };
   }
@@ -107,7 +109,7 @@ function getRedeInfo(tipoStr, siglaStr) {
     return {
       rede: 'Univ. Privada',
       label: 'Univ. Privada',
-      corHex: '#F59E0B',
+      corHex: semantic.warning,
       fillBg: 'rgba(245, 158, 11, 0.22)',
       rankClass: 'bg-amber-500 text-white',
       badgeClass: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30'
@@ -118,7 +120,7 @@ function getRedeInfo(tipoStr, siglaStr) {
   return {
     rede: 'ICT / Outros',
     label: 'Outros / ICT',
-    corHex: '#8B5CF6',
+    corHex: semantic.purple,
     fillBg: 'rgba(139, 92, 246, 0.18)',
     rankClass: 'bg-purple-600 text-white',
     badgeClass: 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/25'
@@ -426,7 +428,7 @@ export default function RelatorioAtivosPage() {
       key: 'outros',
       label: 'Outras Tipologias',
       shortLabel: 'Outras Tipologias',
-      colorHex: '#94A3B8'
+      colorHex: getSemanticColors().textMuted
     });
 
     return { top4TiposSet: top4Set, tipologiaCategories: categories };
@@ -471,7 +473,7 @@ export default function RelatorioAtivosPage() {
         stats[tipoUnified] = {
           name: tipoUnified,
           total: 0,
-          corHex: cfg.corHex || '#2563EB'
+          corHex: cfg.corHex || getSemanticColors().primaryBase
         };
       }
       stats[tipoUnified].total += 1;
@@ -482,7 +484,7 @@ export default function RelatorioAtivosPage() {
       .slice(0, 5)
       .map((item, idx) => ({
         ...item,
-        corHex: isSemiarido ? '#D97706' : (PALETTE[idx % PALETTE.length] || item.corHex),
+        corHex: isSemiarido ? getSemanticColors().warningDeep : (PALETTE[idx % PALETTE.length] || item.corHex),
         remaining: Math.max(0, totalGeral - item.total),
         pctTotal: ((item.total / totalGeral) * 100).toFixed(1)
       }));
@@ -768,10 +770,10 @@ export default function RelatorioAtivosPage() {
                 </p>
               </div>
               <div className="flex items-center gap-2 text-[11px] font-semibold text-text-secondary shrink-0 pt-0.5">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Est.</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#10B981]"></span>IF</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#1D3557]"></span>Fed.</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Priv.</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary-600"></span>Est.</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>IF</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary-900"></span>Fed.</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-warning-500"></span>Priv.</span>
               </div>
             </div>
 
@@ -812,7 +814,7 @@ export default function RelatorioAtivosPage() {
                         style={{
                           flexGrow: item.total,
                           flexBasis: 0,
-                          backgroundColor: isSemiarido ? '#D97706' : item.redeInfo.corHex,
+                          backgroundColor: isSemiarido ? getSemanticColors().warningDeep : item.redeInfo.corHex,
                           minWidth: '38px'
                         }}
                       >

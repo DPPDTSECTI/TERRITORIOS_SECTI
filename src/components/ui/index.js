@@ -3,6 +3,7 @@ export { Card } from './Card';
 export { Button, IconButton } from './Button';
 export { Chip, Badge } from './Chip';
 export { Input, SearchInput, Select } from './Input';
+export { PanelMark } from './PanelMark';
 
 // Navegação e Seleção
 export { Tabs } from './Tabs';

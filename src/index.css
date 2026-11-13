@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    /* BRAND INSTITUCIONAL (Azul Bahia - Identidade Territorial CT&I) */
+    --color-brand: 4 75 141;           /* #044B8D */
+
     /* PRIMARY (Royal Blue SaaS Accent - 10%) */
     --color-primary-950: 23 37 84;     /* #172554 */
     --color-primary-900: 30 58 138;    /* #1E3A8A */
@@ -81,18 +84,27 @@
     --color-danger-100: 254 226 226;  /* #FEE2E2 */
     --color-danger-50: 254 242 242;
 
-    /* ACCENT (Dourado / Âmbar Bahia mantido para tags de semiárido) */
-    --color-accent-950: 52 30 6;
-    --color-accent-900: 78 46 10;
-    --color-accent-800: 115 68 15;
-    --color-accent-700: 161 110 18;
-    --color-accent-600: 192 138 28;
-    --color-accent-500: 214 162 48;
-    --color-accent-400: 234 186 78;
-    --color-accent-300: 245 208 115;
-    --color-accent-200: 248 225 165;
-    --color-accent-100: 250 240 212;
-    --color-accent-50: 253 249 237;
+    /* ACCENT (Amarelo Bahia · Identidade Institucional - Semiárido / Destaques) */
+    --color-accent-950: 46 33 0;
+    --color-accent-900: 87 62 0;
+    --color-accent-800: 127 91 2;
+    --color-accent-700: 168 122 5;
+    --color-accent-600: 212 155 10;
+    --color-accent-500: 247 184 24;   /* #F7B818 - Amarelo Bahia */
+    --color-accent-400: 250 198 61;
+    --color-accent-300: 252 214 110;
+    --color-accent-200: 253 230 164;
+    --color-accent-100: 254 242 204;
+    --color-accent-50: 254 248 231;
+
+    /* ESTADOS SEMÂNTICOS WCAG AA (Guia Identidade Visual v0.4) */
+    --status-ok: 21 127 59;            /* #157F3B */
+    --status-warn: 154 91 0;           /* #9A5B00 */
+    --status-crit: 196 12 23;          /* #C40C17 */
+
+    /* PALETAS DE DADOS CANÔNICAS (Categórica 6 cores & Sequencial 5 azuis) */
+    --chart-cat: #2A6BB5, #E8780A, #1FA3A6, #E0A100, #D3127A, #6FA41C;
+    --chart-seq: #DCE9F7, #A9C8EA, #6FA2D8, #2F73B8, #044B8D;
 
     /* TEXT, BORDERS & RING */
     --color-text-primary: 9 13 22;     /* #090D16 */
@@ -112,22 +124,22 @@
     --shadow-kpi-blue: none;
     --shadow-float: 0 12px 30px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
 
-    /* DATA VISUALIZATION (Bento Grid SaaS: Alto Contraste em Cards Brancos) */
-    --color-chart-1: 37 99 235;        /* #2563EB - Royal Blue 600 */
-    --color-chart-2: 2 132 199;        /* #0284C7 - Cerulean Blue 600 */
-    --color-chart-3: 13 148 136;       /* #0D9488 - Teal 600 */
-    --color-chart-4: 67 56 202;        /* #4338CA - Indigo 700 */
-    --color-chart-5: 217 119 6;        /* #D97706 - Amber 600 */
-    --color-chart-6: 5 150 105;        /* #059669 - Emerald 600 */
-    --color-chart-7: 124 58 237;       /* #7C3AED - Violet 600 */
-    --color-chart-8: 220 38 38;        /* #DC2626 - Red 600 */
+    /* DATA VISUALIZATION (Paleta Categórica Canônica 6 Cores · Guia Identidade v0.4) */
+    --color-chart-1: 42 107 181;       /* #2A6BB5 - Azul */
+    --color-chart-2: 232 120 10;       /* #E8780A - Laranja */
+    --color-chart-3: 31 163 166;       /* #1FA3A6 - Ciano */
+    --color-chart-4: 224 161 0;        /* #E0A100 - Amarelo */
+    --color-chart-5: 211 18 122;       /* #D3127A - Magenta */
+    --color-chart-6: 111 164 28;       /* #6FA41C - Verde */
+    --color-chart-7: 4 75 141;         /* #044B8D - Azul Bahia */
+    --color-chart-8: 100 116 139;      /* #64748B - Neutro Slate */
 
-    /* MAPS COROPLÉTICO (Escala de Azul: de claro a profundo) */
-    --color-map-1: 30 58 138;         /* #1E3A8A - Nível 1: Azul profundo (máximo) */
-    --color-map-2: 37 99 235;         /* #2563EB - Nível 2: Azul Royal */
-    --color-map-3: 96 165 250;        /* #60A5FA - Nível 3: Azul Médio */
-    --color-map-4: 147 197 253;       /* #93C5FD - Nível 4: Azul Claro */
-    --color-map-5: 219 234 254;       /* #DBEAFE - Nível 5: Azul Ultra Claro (mínimo) */
+    /* MAPS COROPLÉTICO (Escala Sequencial Azul Bahia · 5 classes) */
+    --color-map-1: 4 75 141;          /* #044B8D - Nível 1: Azul Bahia (máximo) */
+    --color-map-2: 47 115 184;        /* #2F73B8 - Nível 2 */
+    --color-map-3: 111 162 216;       /* #6FA2D8 - Nível 3 */
+    --color-map-4: 169 200 234;       /* #A9C8EA - Nível 4 */
+    --color-map-5: 220 233 247;       /* #DCE9F7 - Nível 5: Claro (mínimo) */
     --color-map-neutral: 241 245 249; /* #F1F5F9 - Sem dados / neutro */
 
     /* ASSET TYPES (13 Tipologias CT&I) */
@@ -148,6 +160,9 @@
   }
 
   .dark {
+    /* BRAND INSTITUCIONAL */
+    --color-brand: 4 75 141;
+
     /* PRIMARY (Royal Blue em destaque no escuro) */
     --color-primary-950: 15 23 42;
     --color-primary-900: 23 37 84;
@@ -238,6 +253,15 @@
     --color-accent-100: 120 53 15;
     --color-accent-50: 45 20 7;
 
+    /* ESTADOS SEMÂNTICOS WCAG AA (Tema Escuro) */
+    --status-ok: 76 194 122;           /* #4CC27A */
+    --status-warn: 245 183 64;         /* #F5B740 */
+    --status-crit: 255 107 107;        /* #FF6B6B */
+
+    /* PALETAS DE DADOS CANÔNICAS (Tema Escuro) */
+    --chart-cat: #4A8AD4, #D46F12, #1FA0A3, #BE8A00, #E0408E, #66991F;
+    --chart-seq: #1A2C45, #1F4C80, #2F6DB5, #5B97DA, #A9CBF0;
+
     /* TEXT, BORDERS & RING */
     --color-text-primary: 248 250 252;   /* #F8FAFC */
     --color-text-secondary: 148 163 184; /* #94A3B8 */
@@ -256,22 +280,22 @@
     --shadow-kpi-blue: none;
     --shadow-float: 0 12px 30px -4px rgba(0, 0, 0, 0.5);
 
-    /* DATA VISUALIZATION (Luminoso no Tema Escuro: Alto Contraste em Cards Carbono) */
-    --color-chart-1: 56 189 248;       /* #38BDF8 - Sky Blue 400 */
-    --color-chart-2: 96 165 250;       /* #60A5FA - Royal Light 400 */
-    --color-chart-3: 52 211 153;       /* #34D399 - Emerald 400 */
-    --color-chart-4: 129 140 248;      /* #818CF8 - Indigo 400 */
-    --color-chart-5: 244 114 182;      /* #F472B6 - Pink 400 */
-    --color-chart-6: 45 212 191;       /* #2DD4BF - Aqua 400 */
-    --color-chart-7: 251 191 36;       /* #FBBF24 - Amber 400 */
-    --color-chart-8: 167 139 250;      /* #A78BFA - Purple 400 */
+    /* DATA VISUALIZATION (Paleta Categórica Canônica 6 Cores · Tema Escuro) */
+    --color-chart-1: 74 138 212;       /* #4A8AD4 - Azul */
+    --color-chart-2: 212 111 18;       /* #D46F12 - Laranja */
+    --color-chart-3: 31 160 163;       /* #1FA0A3 - Ciano */
+    --color-chart-4: 190 138 0;        /* #BE8A00 - Amarelo */
+    --color-chart-5: 224 64 142;       /* #E0408E - Magenta */
+    --color-chart-6: 102 153 31;       /* #66991F - Verde */
+    --color-chart-7: 91 151 218;       /* #5B97DA - Azul Médio Dark */
+    --color-chart-8: 148 163 184;      /* #94A3B8 - Neutro Slate */
 
-    /* MAPS COROPLÉTICO NO ESCURO */
-    --color-map-1: 96 165 250;        /* #60A5FA - Nível 1: Azul vibrante no dark */
-    --color-map-2: 59 130 246;        /* #3B82F6 - Nível 2 */
-    --color-map-3: 37 99 235;         /* #2563EB - Nível 3 */
-    --color-map-4: 30 58 138;         /* #1E3A8A - Nível 4 */
-    --color-map-5: 23 37 84;          /* #172554 - Nível 5 */
+    /* MAPS COROPLÉTICO NO ESCURO (Escala Invertida: valor alto mais claro) */
+    --color-map-1: 169 203 240;       /* #A9CBF0 - Nível 1: Máximo luminoso no dark */
+    --color-map-2: 91 151 218;        /* #5B97DA - Nível 2 */
+    --color-map-3: 47 109 181;        /* #2F6DB5 - Nível 3 */
+    --color-map-4: 31 76 128;         /* #1F4C80 - Nível 4 */
+    --color-map-5: 26 44 69;          /* #1A2C45 - Nível 5: Mínimo */
     --color-map-neutral: 30 41 59;    /* #1E293B - Sem dados / neutro */
 
     /* ASSET TYPES (13 Tipologias CT&I no Escuro) */
@@ -292,9 +316,26 @@
   }
 
   html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    scrollbar-gutter: stable;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   body {
@@ -316,9 +357,21 @@
   background-image: var(--gradient-brand);
 }
 
-/* A escala "kpi" é sempre tabular (fontSize do Tailwind não define font-variant) */
+/* A escala display/headline/kpi usa Lexend Variable e kpi é sempre tabular */
+.text-display,
+.text-headline,
+.text-kpi {
+  font-family: "Lexend Variable", "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
 .text-kpi {
   font-variant-numeric: tabular-nums;
+}
+
+/* Containers internos com rolagem isolada */
+.scroll-area {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Firefox Scrollbar using Design Tokens (sem desativar ::-webkit-scrollbar no Chromium) */
@@ -930,7 +983,52 @@ input[type="checkbox"] {
   .print-hidden,
   [data-html2canvas-ignore="true"],
   .leaflet-control-zoom,
-  .leaflet-control-attribution {
+  .leaflet-control-attribution,
+  div[vw],
+  div[vw].enabled,
+  .vw-plugin-wrapper,
+  #vlibras-access-wrapper,
+  #vlibras-app-root {
     display: none !important;
   }
+}
+
+/* ================= ACESSIBILIDADE eMAG: ALTO CONTRASTE E IMPRESSÃO VLIBRAS ================= */
+html.high-contrast {
+  --color-background: 255 255 255;
+  --color-surface: 255 255 255;
+  --color-surface-raised: 255 255 255;
+  --color-surface-soft: 241 245 249;
+  --color-surface-sunken: 241 245 249;
+  --color-text-primary: 0 0 0;
+  --color-text-secondary: 15 23 42;
+  --color-text-muted: 30 41 59;
+  --color-border: 15 23 42;
+  --color-border-strong: 0 0 0;
+}
+
+html.high-contrast.dark {
+  --color-background: 0 0 0;
+  --color-surface: 9 9 11;
+  --color-surface-raised: 18 18 22;
+  --color-surface-soft: 24 24 27;
+  --color-surface-sunken: 18 18 22;
+  --color-text-primary: 255 255 255;
+  --color-text-secondary: 244 244 245;
+  --color-text-muted: 228 228 231;
+  --color-border: 244 244 245;
+  --color-border-strong: 255 255 255;
+}
+
+html.high-contrast *:focus-visible {
+  outline: 2px solid rgb(var(--color-ring)) !important;
+  outline-offset: 2px !important;
+}
+
+body.route-print div[vw],
+body.route-print div[vw].enabled,
+body.route-print .vw-plugin-wrapper,
+body.route-print #vlibras-access-wrapper,
+body.route-print #vlibras-app-root {
+  display: none !important;
 }

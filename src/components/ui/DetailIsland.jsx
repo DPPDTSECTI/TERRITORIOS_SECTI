@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, ExternalLink, MapPin, ArrowLeft } from 'lucide-react';
+import { getSemanticColors } from '../graph/chartTheme';
 
 /**
  * Ilha flutuante de detalhes ("aba/ilha flutuante") exibida por cima dos componentes
@@ -12,7 +13,7 @@ export function DetailIsland({
   title,
   subtitle,
   badgeText,
-  accentColor = '#2563EB',
+  accentColor = getSemanticColors().primaryBase,
   icon: Icon,
   statusPills = [],
   metrics = [],

@@ -10,6 +10,9 @@ import { isMunicipioSemiarido } from '../../constants/semiarido';
 import { DataContext } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useMapTheme } from './mapTheme';
+import { getRelativeHeatColor } from './side/mapHeatScale';
+import CtrlScrollZoom from './CtrlScrollZoom';
+import { getSemanticColors } from '../graph/chartTheme';
 import { getCachedBahiaTopologia, loadBahiaTopologia } from './bahiaTopologiaCache';
 import { normalizeName } from './side/mapGeoUtils';
 
@@ -20,78 +23,6 @@ if (typeof L !== 'undefined' && L.Renderer) {
   if (L.Canvas) L.Canvas.prototype.options.padding = 0.65;
 }
 
-// Paleta Soft Blue & Teal com Alto Contraste Geográfico entre Territórios Vizinhos (Modo Normal)
-const TERRITORY_COLORS = [
-  '#1D3557', // 0: Bacia do Rio Grande (Deep Navy)
-  '#38BDF8', // 1: Bacia do Rio Corrente (Sky Blue vibrante - contrasta com o 0)
-  '#0D9488', // 2: Velho Chico (Teal rico - contrasta com 0 e 1)
-  '#1E40AF', // 3: Sertão do São Francisco (Royal Blue profundo)
-  '#7DD3FC', // 4: Piemonte Norte do Itapicuru (Celeste suave)
-  '#0F766E', // 5: Itaparica (Teal floresta profundo)
-  '#2563EB', // 6: Irecê (Cobalto vibrante)
-  '#A8DADC', // 7: Chapada Diamantina (Teal pastel luminoso)
-  '#334155', // 8: Piemonte da Diamantina (Slate escuro elegante)
-  '#0284C7', // 9: Sisal (Azul Oceano)
-  '#93C5FD', // 10: Bacia do Jacuípe (Azul Gelo suave)
-  '#1E293B', // 11: Semiárido Nordeste II (Grafite Navy profundo)
-  '#14B8A6', // 12: Litoral Norte e Agreste Baiano (Teal vibrante)
-  '#38BDF8', // 13: Portal do Sertão (Céu luminoso)
-  '#1D3557', // 14: Metropolitano de Salvador (Navy imponente)
-  '#5EEAD4', // 15: Recôncavo (Turquesa suave)
-  '#1E40AF', // 16: Baixo Sul (Safira profundo)
-  '#93C5FD', // 17: Vale do Jiquiriçá (Azul suave)
-  '#475569', // 18: Piemonte do Paraguaçu (Slate intermediário)
-  '#0284C7', // 19: Médio Rio de Contas (Azul Mediterrâneo)
-  '#1E293B', // 20: Sudoeste Baiano (Azul Meia-Noite)
-  '#38BDF8', // 21: Sertão Produtivo (Azul Céu claro - contrasta com 20 e 2)
-  '#0D9488', // 22: Bacia do Paramirim (Teal Médio)
-  '#60A5FA', // 23: Médio Sudoeste da Bahia (Azul Real luminoso)
-  '#0F766E', // 24: Litoral Sul (Teal profundo)
-  '#38BDF8', // 25: Costa do Descobrimento (Azul Mar claro)
-  '#1D3557'  // 26: Extremo Sul (Deep Navy)
-];
-
-// Paleta Ampliada e Contrastante de Tons de Amarelo, Dourado, Âmbar e Ocre para o Semiárido
-const SEMIARIDO_TERRITORY_COLORS = [
-  '#F6E05E', // 0: Bacia do Rio Grande (amarelo quente)
-  '#B85D19', // 1: Bacia do Rio Corrente (âmbar acobreado)
-  '#EAB308', // 2: Velho Chico (girassol vibrante)
-  '#78350F', // 3: Sertão do São Francisco (castanho âmbar profundo)
-  '#FEE140', // 4: Piemonte Norte do Itapicuru (amarelo citrino)
-  '#CA8A04', // 5: Itaparica (ouro envelhecido)
-  '#C67800', // 6: Irecê (açafrão escuro)
-  '#FDE68A', // 7: Chapada Diamantina (amarelo pastel iluminado)
-  '#F59E0B', // 8: Piemonte da Diamantina (âmbar clássico)
-  '#C2410C', // 9: Sisal (âmbar terracota)
-  '#FFF59D', // 10: Bacia do Jacuípe (amarelo creme suave)
-  '#FDE047', // 11: Semiárido Nordeste II (amarelo canário)
-  '#B8860B', // 12: Litoral Norte e Agreste Baiano (goldenrod escuro)
-  '#FACC15', // 13: Portal do Sertão (amarelo ouro vibrante)
-  '#92400E', // 14: Metropolitano de Salvador (castanho âmbar)
-  '#FEF08A', // 15: Recôncavo (amarelo manteiga suave)
-  '#CD7F32', // 16: Baixo Sul (bronze dourado)
-  '#FBBF24', // 17: Vale do Jiquiriçá (calêndula / ouro solar)
-  '#A16207', // 18: Piemonte do Paraguaçu (ocre dourado)
-  '#854D0E', // 19: Médio Rio de Contas (ocre escuro)
-  '#ECC94B', // 20: Sudoeste Baiano (trigo dourado)
-  '#D97706', // 21: Sertão Produtivo (ouro mostarda)
-  '#9A3412', // 22: Bacia do Paramirim (caramelo tostado)
-  '#D48806', // 23: Médio Sudoeste da Bahia (mel queimado)
-  '#F5D061', // 24: Litoral Sul (ouro areia)
-  '#B45309', // 25: Costa do Descobrimento (âmbar conhaque)
-  '#FCD34D'  // 26: Extremo Sul (damasco dourado)
-];
-
-const GEOGRAPHICAL_ORDER = [
-  'Bacia do Rio Grande', 'Bacia do Rio Corrente', 'Velho Chico', 'Sertão do São Francisco',
-  'Piemonte Norte do Itapicuru', 'Itaparica', 'Irecê', 'Chapada Diamantina',
-  'Piemonte da Diamantina', 'Sisal', 'Bacia do Jacuípe', 'Semiárido Nordeste II',
-  'Litoral Norte e Agreste Baiano', 'Portal do Sertão', 'Metropolitano de Salvador',
-  'Recôncavo', 'Baixo Sul', 'Vale do Jiquiriçá', 'Piemonte do Paraguaçu',
-  'Médio Rio de Contas', 'Sudoeste Baiano', 'Sertão Produtivo', 'Bacia do Paramirim',
-  'Médio Sudoeste da Bahia', 'Litoral Sul', 'Costa do Descobrimento', 'Extremo Sul'
-];
-
 const uniqueTerritories = Object.values(
   municipiosDB.reduce((acc, row) => {
     if (!acc[row.id_territorio]) {
@@ -99,20 +30,7 @@ const uniqueTerritories = Object.values(
     }
     return acc;
   }, {})
-).sort((a, b) => {
-  const indexA = GEOGRAPHICAL_ORDER.indexOf(a.nome);
-  const indexB = GEOGRAPHICAL_ORDER.indexOf(b.nome);
-  if (indexA === -1) return 1;
-  if (indexB === -1) return -1;
-  return indexA - indexB;
-});
-
-const territoryColorMap = {};
-const semiaridoTerritoryColorMap = {};
-uniqueTerritories.forEach((territorio, index) => {
-  territoryColorMap[territorio.id] = TERRITORY_COLORS[index] || '#333333';
-  semiaridoTerritoryColorMap[territorio.id] = SEMIARIDO_TERRITORY_COLORS[index] || '#F59E0B';
-});
+);
 
 const municipioByIdMap = municipiosDB.reduce((acc, m) => {
   acc[m.id_municipio] = m;
@@ -263,11 +181,41 @@ export default function PtiMap({
   const allMunicipiosMesh = topologia?.allMunicipiosMesh || null;
   const municipiosByTerritory = topologia?.municipiosByTerritory || {};
 
+  // Escala sequencial canônica de 5 classes (--color-map-1..5 / --chart-seq) para os 27 territórios
+  const territoryHeatColorMap = useMemo(() => {
+    const countsByTer = {};
+    let maxVal = 0;
+
+    uniqueTerritories.forEach((ter) => {
+      const idTer = Number(ter.id);
+      const dyn = territoriesDynamicStats?.[idTer];
+      const rawData = territoriosData.find((t) => Number(t.id_territorio) === idTer);
+      const val = Number(
+        dyn?.capacidadeCti ??
+          rawData?.ativos_cti ??
+          0
+      );
+      countsByTer[idTer] = val;
+      if (val > maxVal) maxVal = val;
+    });
+
+    const colorMap = {};
+    uniqueTerritories.forEach((ter) => {
+      const idTer = Number(ter.id);
+      const val = countsByTer[idTer] || 0;
+      colorMap[idTer] = maxVal > 0
+        ? getRelativeHeatColor(val, maxVal, filtroSemiarido, isDark)
+        : mapPalette.choropleth.level5;
+    });
+    return colorMap;
+  }, [territoriosData, territoriesDynamicStats, filtroSemiarido, isDark, mapPalette]);
+
   // Estilo da camada base (Territórios mesclados ou Municípios quando em zoom profundo sem seleção)
   const styleBaseFeature = useCallback(
     (feature) => {
+      const semantic = getSemanticColors(isDark);
       const idTer = Number(feature.properties.id_territorio);
-      if (!idTer) return { fillOpacity: 0.1, stroke: false, fillColor: '#fee2e2' };
+      if (!idTer) return { fillOpacity: 0.1, stroke: false, fillColor: semantic.dangerTint };
 
       const neutralFill = mapPalette.choropleth.zero;
       const strokeColor = mapPalette.stroke.default;
@@ -287,7 +235,7 @@ export default function PtiMap({
             );
           if (!isSemi) {
             return {
-              fillColor: '#000000',
+              fillColor: 'rgb(0, 0, 0)',
               fillOpacity: 0,
               stroke: false,
               weight: 0,
@@ -298,7 +246,7 @@ export default function PtiMap({
         if (selectedTerritory) {
           if (isSelectedMap) {
             return {
-              fillColor: filtroSemiarido ? '#F59E0B' : '#3B82F6',
+              fillColor: filtroSemiarido ? semantic.warning : semantic.primarySoft,
               fillOpacity: 0.04,
               stroke: false,
               weight: 0,
@@ -306,7 +254,7 @@ export default function PtiMap({
             };
           }
           return {
-            fillColor: '#000000',
+            fillColor: 'rgb(0, 0, 0)',
             fillOpacity: 0.002,
             stroke: false,
             weight: 0,
@@ -314,7 +262,7 @@ export default function PtiMap({
           };
         }
         return {
-          fillColor: '#000000',
+          fillColor: 'rgb(0, 0, 0)',
           fillOpacity: 0.002,
           stroke: false,
           weight: 0,
@@ -356,7 +304,7 @@ export default function PtiMap({
             );
           if (isMunSemi) {
             return {
-              fillColor: semiaridoTerritoryColorMap[idTer] || '#F59E0B',
+              fillColor: territoryHeatColorMap[idTer] || mapPalette.choropleth.level3,
               stroke: true,
               weight: 1.0,
               color: strokeColor,
@@ -377,7 +325,7 @@ export default function PtiMap({
         const dStats = territoriesDynamicStats[idTer];
         const matchesFilters = dStats ? dStats.matchesFilters : true;
         return {
-          fillColor: matchesFilters ? territoryColorMap[idTer] || '#D6EAF8' : neutralFill,
+          fillColor: matchesFilters ? territoryHeatColorMap[idTer] || mapPalette.choropleth.level4 : neutralFill,
           stroke: true,
           weight: 1.0,
           color: strokeColor,
@@ -390,7 +338,7 @@ export default function PtiMap({
       if (filtroSemiarido) {
         const isSemi = feature.properties.is_semiarido;
         return {
-          fillColor: isSemi ? semiaridoTerritoryColorMap[idTer] || '#F59E0B' : neutralFill,
+          fillColor: isSemi ? territoryHeatColorMap[idTer] || mapPalette.choropleth.level3 : neutralFill,
           stroke: true,
           weight: 1.2,
           color: strokeColor,
@@ -404,7 +352,7 @@ export default function PtiMap({
       const dStats = territoriesDynamicStats[idTer];
       const matchesFilters = dStats ? dStats.matchesFilters : true;
       return {
-        fillColor: matchesFilters ? territoryColorMap[idTer] || '#D6EAF8' : neutralFill,
+        fillColor: matchesFilters ? territoryHeatColorMap[idTer] || mapPalette.choropleth.level4 : neutralFill,
         stroke: true,
         weight: 1.4,
         color: strokeColor,
@@ -415,7 +363,7 @@ export default function PtiMap({
         className: 'outline-none cursor-pointer'
       };
     },
-    [selectedTerritory, isZoomedIn, filtroSemiarido, modoGeografico, territoriesDynamicStats, mapPalette, isDark]
+    [selectedTerritory, isZoomedIn, filtroSemiarido, modoGeografico, territoriesDynamicStats, territoryHeatColorMap, mapPalette, isDark]
   );
 
   // Estilo exclusivo para os municípios do território selecionado (~15 polígonos em vez de 417)
@@ -431,12 +379,12 @@ export default function PtiMap({
             ''
         );
 
-      let fillColor = territoryColorMap[idTer] || '#D6EAF8';
+      let fillColor = territoryHeatColorMap[idTer] || mapPalette.choropleth.level3;
       let opacity = 0.95;
 
       if (filtroSemiarido) {
         if (isMunSemi) {
-          fillColor = semiaridoTerritoryColorMap[idTer] || '#F59E0B';
+          fillColor = territoryHeatColorMap[idTer] || mapPalette.choropleth.level2;
         } else {
           fillColor = mapPalette.choropleth.zero;
           opacity = 0.38;
@@ -454,7 +402,7 @@ export default function PtiMap({
         className: 'outline-none cursor-pointer'
       };
     },
-    [filtroSemiarido, mapPalette]
+    [filtroSemiarido, mapPalette, territoryHeatColorMap]
   );
 
   // Atualiza estilos imperativamente quando filtros ou seleção mudam sem destruir o GeoJSON
@@ -480,6 +428,7 @@ export default function PtiMap({
     territoriosData,
     onSelectTerritory,
     mapPalette,
+    territoryHeatColorMap,
     styleBaseFeature,
     styleSelectedMunicipio
   });
@@ -493,6 +442,7 @@ export default function PtiMap({
       territoriosData,
       onSelectTerritory,
       mapPalette,
+      territoryHeatColorMap,
       styleBaseFeature,
       styleSelectedMunicipio
     };
@@ -519,15 +469,15 @@ export default function PtiMap({
 
   const showHoverTooltip = useCallback(
     (idTer, munId, clientX, clientY) => {
-      const { territoriosData: tData, filtroSemiarido: semi } = stateRef.current;
+      const { territoriosData: tData, filtroSemiarido: semi, territoryHeatColorMap: heatMap } = stateRef.current;
       const hoveredData = idTer ? tData.find((t) => Number(t.id_territorio) === idTer) : null;
       const fallbackName = idTer ? uniqueTerritories.find((t) => t.id === idTer)?.nome || '' : '';
       const munName = munId ? municipioByIdMap[munId]?.nome_municipio || '' : '';
 
       if (tooltipAccentRef.current) {
-        tooltipAccentRef.current.style.backgroundColor = semi
-          ? semiaridoTerritoryColorMap[idTer] || '#F59E0B'
-          : territoryColorMap[idTer] || 'rgb(var(--color-primary-600))';
+        tooltipAccentRef.current.style.backgroundColor = heatMap?.[idTer] || (semi
+          ? getSemanticColors().warning
+          : 'rgb(var(--color-brand))');
       }
       if (tooltipMunRef.current) {
         if (munName) {
@@ -609,9 +559,10 @@ export default function PtiMap({
           if (modoGeo) {
             showHoverTooltip(idTer, zoomed ? (feature.properties.id_municipio || null) : null, cx, cy);
             if (!isSelectedMap) {
+              const hoverSemantic = getSemanticColors(stateRef.current.isDark);
               layersByTerritory.current[idTer]?.forEach((l) => {
                 l.setStyle({
-                  fillColor: semi ? '#F59E0B' : '#3B82F6',
+                  fillColor: semi ? hoverSemantic.warning : hoverSemantic.primarySoft,
                   fillOpacity: 0.08,
                   stroke: false,
                   weight: 0
@@ -865,11 +816,12 @@ export default function PtiMap({
           maxBoundsViscosity={0.9}
           zoomControl={false}
           attributionControl={false}
-          scrollWheelZoom={true}
+          scrollWheelZoom={false}
           doubleClickZoom={true}
           className="w-full h-full outline-none z-10"
           style={{ background: 'transparent' }}
         >
+          <CtrlScrollZoom />
           <MapInteractionTracker
             onZoomChange={setCurrentZoom}
           />
@@ -916,7 +868,7 @@ export default function PtiMap({
               key={`all-mun-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}`}
               data={allMunicipiosMesh}
               style={{
-                color: filtroSemiarido ? (isDark ? '#F59E0B' : '#92400E') : isDark ? '#334666' : '#FFFFFF',
+                color: filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : isDark ? getSemanticColors(true).slateBorder : getSemanticColors(false).white,
                 weight: 0.75,
                 opacity: 0.55,
                 fill: false,
@@ -945,8 +897,8 @@ export default function PtiMap({
               data={allTerritoryMesh}
               style={{
                 color: modoGeografico
-                  ? (filtroSemiarido ? (isDark ? '#F59E0B' : '#92400E') : '#64748B')
-                  : (filtroSemiarido ? (isDark ? '#F59E0B' : '#78350F') : isDark ? '#334666' : '#FFFFFF'),
+                  ? (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : getSemanticColors(isDark).slateMuted)
+                  : (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : isDark ? getSemanticColors(true).slateBorder : getSemanticColors(false).white),
                 weight: modoGeografico ? 0.75 : (filtroSemiarido ? 1.6 : 1.8),
                 opacity: modoGeografico ? (selectedTerritory ? 0.25 : 0.38) : (filtroSemiarido ? 0.7 : isDark ? 0.85 : 0.95),
                 fill: false,
@@ -963,7 +915,7 @@ export default function PtiMap({
               key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'normal'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}`}
               data={stateBoundaryMesh}
               style={{
-                color: filtroSemiarido ? '#92400E' : isDark ? '#4a6288' : (modoGeografico ? '#64748B' : '#FFFFFF'),
+                color: filtroSemiarido ? getSemanticColors(isDark).warningWarm : isDark ? getSemanticColors(true).slateDeep : (modoGeografico ? getSemanticColors(false).slateMuted : getSemanticColors(false).white),
                 weight: modoGeografico ? 1.1 : 2.2,
                 opacity: modoGeografico ? 0.45 : 1,
                 fill: false,
@@ -980,7 +932,7 @@ export default function PtiMap({
               key={`selected-mesh-${selectedTerritory.id_territorio}-${filtroSemiarido ? '1' : '0'}-${modoGeografico ? 'geo' : 'carto'}`}
               data={territoryMeshes[selectedTerritory.id_territorio]}
               style={{
-                color: filtroSemiarido ? '#78350F' : isDark ? '#60A5FA' : (modoGeografico ? '#2563EB' : '#1D3557'),
+                color: filtroSemiarido ? getSemanticColors(isDark).warningWarm : isDark ? getSemanticColors(true).primaryLight : (modoGeografico ? getSemanticColors(false).primaryBase : getSemanticColors(false).primaryNavy),
                 weight: modoGeografico ? 1.35 : 3.0,
                 opacity: modoGeografico ? 0.75 : 1,
                 fill: false,

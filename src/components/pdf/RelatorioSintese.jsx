@@ -600,12 +600,12 @@ export default function RelatorioSintese() {
                 {/* Estadual */}
                 <div className="flex flex-col gap-0.5 w-full">
                   <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
-                    <span className="text-[#2563EB] font-semibold">Rede Pública Estadual</span>
+                    <span className="text-primary-600 font-semibold">Rede Pública Estadual</span>
                     <span className="tabular-nums font-semibold">{stats.estadualCursos} ({stats.estadualTaxa}%)</span>
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#2563EB] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-full bg-primary-600 flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.estadualCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.estadualCursos}</span>
@@ -620,12 +620,12 @@ export default function RelatorioSintese() {
                 {/* Federal */}
                 <div className="flex flex-col gap-0.5 w-full">
                   <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
-                    <span className="text-[#10B981] font-semibold">Rede Pública Federal</span>
+                    <span className="text-emerald-500 font-semibold">Rede Pública Federal</span>
                     <span className="tabular-nums font-semibold">{stats.federalCursos} ({stats.federalTaxa}%)</span>
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#10B981] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-full bg-emerald-500 flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.federalCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.federalCursos}</span>
@@ -640,12 +640,12 @@ export default function RelatorioSintese() {
                 {/* Privada */}
                 <div className="flex flex-col gap-0.5 w-full">
                   <div className="flex justify-between items-center text-caption font-medium text-text-primary px-0.5">
-                    <span className="text-[#F59E0B] font-semibold">Rede Privada / Outros</span>
+                    <span className="text-warning-500 font-semibold">Rede Privada / Outros</span>
                     <span className="tabular-nums font-semibold">{stats.privadaCursos} ({stats.privadaTaxa}%)</span>
                   </div>
                   <div className="flex items-center gap-1.5 w-full">
                     <div
-                      className="h-[18px] rounded-full bg-[#F59E0B] flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
+                      className="h-[18px] rounded-full bg-warning-500 flex items-center justify-center px-2 text-white shadow-2xs whitespace-nowrap"
                       style={{ flexGrow: Math.max(1, stats.privadaCursos), flexBasis: 0, minWidth: '32px' }}
                     >
                       <span className="text-[10px] font-bold tabular-nums leading-none">{stats.privadaCursos}</span>

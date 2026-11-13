@@ -30,9 +30,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1793299646.5334132,
-    "seen": 1794507358.3044078,
-    "ast_hash": "8af78b44710fc8e4b8aff9a81cf9e9b9",
+    "mtime": 1794511047.4984343,
+    "seen": 1794511237.5258033,
+    "ast_hash": "948bcedf1d769106e5c8c601fcee224c",
     "semantic_hash": ""
   },
   "postcss.config.js": {
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1794317820.2438602,
-    "seen": 1794507358.3044078,
-    "ast_hash": "b6fadbef8da0dd19c5d5146d9b8394e0",
+    "mtime": 1794512190.7671049,
+    "seen": 1794512301.4000525,
+    "ast_hash": "fbe764ae0e48575de6ee281c7b00c3ff",
     "semantic_hash": ""
   },
   "src/__tests__/lib/format.test.js": {
@@ -150,32 +150,32 @@
     "semantic_hash": ""
   },
   "src/components/AdminPage.jsx": {
-    "mtime": 1794509118.699688,
-    "seen": 1794509152.722616,
+    "mtime": 1794512449.836911,
+    "seen": 1794512493.7911477,
     "ast_hash": "cad3ae4b0a6e5e17fb671d0e6bf53873",
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1794507342.3313522,
-    "seen": 1794507358.3044078,
-    "ast_hash": "13cbb6a56e2a2fae654f11591a8af8c0",
+    "mtime": 1794512421.9951265,
+    "seen": 1794512493.7911477,
+    "ast_hash": "9efb4028629fb7b3fc7243fc2832cf5b",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1794507342.3346338,
-    "seen": 1794507358.3044078,
-    "ast_hash": "ecad128ec33de93cf387b3a4b99cf6f9",
+    "mtime": 1794512434.733291,
+    "seen": 1794512493.7911477,
+    "ast_hash": "c7d11a36ee904b0c5ae21ef981247dee",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1794507342.3375635,
-    "seen": 1794507358.3044078,
-    "ast_hash": "83f53c5c2e8a2655889b11236198e35f",
+    "mtime": 1794512438.2241328,
+    "seen": 1794512493.7911477,
+    "ast_hash": "dec59c4459a822a3fd7b233373a58340",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
-    "mtime": 1794317820.262764,
-    "seen": 1794507358.3044078,
+    "mtime": 1794512418.1211503,
+    "seen": 1794512493.7911477,
     "ast_hash": "46199eef7ed09ea61b1520d55e1acd98",
     "semantic_hash": ""
   },
@@ -186,27 +186,27 @@
     "semantic_hash": ""
   },
   "src/components/RelatorioPage.jsx": {
-    "mtime": 1793986556.961684,
-    "seen": 1794507358.3044078,
-    "ast_hash": "d025d5ec9fce417ef50918ac55f33842",
+    "mtime": 1794512441.9009018,
+    "seen": 1794512493.7911477,
+    "ast_hash": "3cea36580ca87b4cd08b0c25d7c7b424",
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1794507684.8404944,
-    "seen": 1794507821.85287,
-    "ast_hash": "848e8771e64dbdefb47069fd261c9e71",
+    "mtime": 1794512207.282123,
+    "seen": 1794512301.4000525,
+    "ast_hash": "dfb443f0b71fb6b6228144e6de02e766",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
-    "mtime": 1793986556.9692466,
-    "seen": 1794507358.3044078,
+    "mtime": 1794512446.0716796,
+    "seen": 1794512493.7911477,
     "ast_hash": "e62fb3b04b74bc4ef491fa9a6ee2c7e6",
     "semantic_hash": ""
   },
   "src/components/TourGuide.jsx": {
-    "mtime": 1793299646.7097332,
-    "seen": 1794507358.3044078,
-    "ast_hash": "e2f5fa0b295daff0266c692990430276",
+    "mtime": 1794510282.5179086,
+    "seen": 1794510613.8857682,
+    "ast_hash": "38b05018ca02b44e91be613a437a4aff",
     "semantic_hash": ""
   },
   "src/components/UserHeaderProfile.jsx": {
@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "src/components/graph/CardLista.jsx": {
-    "mtime": 1793299646.7097332,
-    "seen": 1794507358.3044078,
-    "ast_hash": "462b994da5b76e0b48017b33095a1ab4",
+    "mtime": 1794510278.6827018,
+    "seen": 1794510613.8857682,
+    "ast_hash": "f103b625e0e48d7edf201abfabb12b94",
     "semantic_hash": ""
   },
   "src/components/graph/CustomPieChart.jsx": {
@@ -252,27 +252,27 @@
     "semantic_hash": ""
   },
   "src/components/graph/chartTheme.js": {
-    "mtime": 1793986556.9825907,
-    "seen": 1794507358.3044078,
-    "ast_hash": "3cecc8642e5715d0696948c886afcec1",
+    "mtime": 1794510878.4677975,
+    "seen": 1794510971.826815,
+    "ast_hash": "f338a178644ae9e41e8f2c7b9442cb2f",
     "semantic_hash": ""
   },
   "src/components/hero.jsx": {
-    "mtime": 1793986556.9831038,
-    "seen": 1794507358.3044078,
-    "ast_hash": "2a433e51fbfe06466ea76adcec85da40",
+    "mtime": 1794512453.663821,
+    "seen": 1794512493.7911477,
+    "ast_hash": "50081c94c4a84b3e9113e5b923041502",
     "semantic_hash": ""
   },
   "src/components/maps/PtiMap.jsx": {
-    "mtime": 1794317820.2663882,
-    "seen": 1794507358.3044078,
-    "ast_hash": "9ad9d7cd49f226136a7436faec652bbc",
+    "mtime": 1794510932.4056168,
+    "seen": 1794510971.826815,
+    "ast_hash": "9b2db0f98977551815dab76d96ca2f29",
     "semantic_hash": ""
   },
   "src/components/maps/SideMap.jsx": {
-    "mtime": 1794317820.2663882,
-    "seen": 1794507358.3044078,
-    "ast_hash": "c6619c099055aa2f4d538a930c4046d1",
+    "mtime": 1794510888.8977945,
+    "seen": 1794510971.826815,
+    "ast_hash": "efb0bddf4c515405894965148a869d92",
     "semantic_hash": ""
   },
   "src/components/maps/bahiaTopologiaCache.js": {
@@ -282,9 +282,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/mapTheme.js": {
-    "mtime": 1793299646.7726152,
-    "seen": 1794507358.3044078,
-    "ast_hash": "afeb11b063d7674f634bde44283150b7",
+    "mtime": 1794510842.9102614,
+    "seen": 1794510971.826815,
+    "ast_hash": "5ced05958a5045cedd738324c9942d20",
     "semantic_hash": ""
   },
   "src/components/maps/side/MapControllers.jsx": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/side/MapMarkersAndPopups.jsx": {
-    "mtime": 1793993794.1109588,
-    "seen": 1794507358.3044078,
-    "ast_hash": "3f87d5cd8eb7e831de1a7327aef705e1",
+    "mtime": 1794510298.5678284,
+    "seen": 1794510613.8857682,
+    "ast_hash": "ba61acc4a59552759319d33b9f24543a",
     "semantic_hash": ""
   },
   "src/components/maps/side/mapGeoUtils.js": {
@@ -306,9 +306,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/side/mapHeatScale.js": {
-    "mtime": 1793299646.7791326,
-    "seen": 1794507358.3044078,
-    "ast_hash": "e8a269ad7f4f2f4857207b8244328fcb",
+    "mtime": 1794510844.895462,
+    "seen": 1794510971.826815,
+    "ast_hash": "be8145b90b4a1f4e8fe24161b218d093",
     "semantic_hash": ""
   },
   "src/components/maps/side/mapIcons.js": {
@@ -318,9 +318,9 @@
     "semantic_hash": ""
   },
   "src/components/pdf/ExportPdfButton.jsx": {
-    "mtime": 1792081288.9433181,
-    "seen": 1794507358.3044078,
-    "ast_hash": "b4a373bf3898287209c07260a41edbb7",
+    "mtime": 1794510272.4338436,
+    "seen": 1794510613.8857682,
+    "ast_hash": "52ec003741abadf0176ce3446c26fd4c",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioAnalise.jsx": {
@@ -330,27 +330,27 @@
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioAtivos.jsx": {
-    "mtime": 1793986557.0019832,
-    "seen": 1794507358.3044078,
-    "ast_hash": "010c29b7e62cad9fce6824da3ad18b6d",
+    "mtime": 1794510879.9762359,
+    "seen": 1794510971.826815,
+    "ast_hash": "ec81762900ac3335b4d823e7edb0ec37",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioCadeias.jsx": {
-    "mtime": 1793986557.0047274,
-    "seen": 1794507358.3044078,
-    "ast_hash": "d3e29478db6dbd04749fac0aff3350af",
+    "mtime": 1794510881.5716243,
+    "seen": 1794510971.826815,
+    "ast_hash": "1b9e358d150172f9484d5be1e884e542",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioEnsino.jsx": {
-    "mtime": 1793986557.0047274,
-    "seen": 1794507358.3044078,
-    "ast_hash": "205f70f42137e7410f37e9e99c7bc7c2",
+    "mtime": 1794510883.5060036,
+    "seen": 1794510971.826815,
+    "ast_hash": "a22d905db94924fde4874974382f51d6",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioSintese.jsx": {
-    "mtime": 1793986557.0099213,
-    "seen": 1794507358.3044078,
-    "ast_hash": "842cd6a2108355756cc6e7c2c11cd995",
+    "mtime": 1794510513.052523,
+    "seen": 1794510613.8857682,
+    "ast_hash": "c0c572495da13368425f6c739f97a909",
     "semantic_hash": ""
   },
   "src/components/ui/Button.jsx": {
@@ -366,33 +366,33 @@
     "semantic_hash": ""
   },
   "src/components/ui/Chip.jsx": {
-    "mtime": 1793986557.0099213,
-    "seen": 1794507358.3044078,
-    "ast_hash": "ba87feb2cfd8e2f711c3c2077aaeba77",
+    "mtime": 1794510270.1719763,
+    "seen": 1794510613.8857682,
+    "ast_hash": "e0c53d85a59f6a2a6c2ea5b5d06bc475",
     "semantic_hash": ""
   },
   "src/components/ui/DetailIsland.jsx": {
-    "mtime": 1794507342.3414361,
-    "seen": 1794507358.3044078,
-    "ast_hash": "e78b043c648cbb807df469fa3a1f8126",
+    "mtime": 1794510274.1979218,
+    "seen": 1794510613.8857682,
+    "ast_hash": "9134721db589e4a6e9f4bd58c8430090",
     "semantic_hash": ""
   },
   "src/components/ui/Dialog.jsx": {
-    "mtime": 1793986557.015295,
-    "seen": 1794507358.3044078,
-    "ast_hash": "319a1fee4133aba4accef061bbd7959a",
+    "mtime": 1794511120.5644379,
+    "seen": 1794511237.5258033,
+    "ast_hash": "71882e84b40584d3196d97a63a8edf41",
     "semantic_hash": ""
   },
   "src/components/ui/Drawer.jsx": {
-    "mtime": 1793986557.0172951,
-    "seen": 1794507358.3044078,
-    "ast_hash": "e9ed82ac9150b24ebe28710b6c42ead6",
+    "mtime": 1794511122.7998087,
+    "seen": 1794511237.5258033,
+    "ast_hash": "d522e79a0afff23b20c86ce9c25e3b8f",
     "semantic_hash": ""
   },
   "src/components/ui/Dropdown.jsx": {
-    "mtime": 1793986557.0182972,
-    "seen": 1794507358.3044078,
-    "ast_hash": "2ea71ff5951fd1f719d38044ccf2a3f4",
+    "mtime": 1794511124.785629,
+    "seen": 1794511237.5258033,
+    "ast_hash": "e4f9a9f5ca38c394f0027f3c534ceba6",
     "semantic_hash": ""
   },
   "src/components/ui/EmptyState.jsx": {
@@ -408,15 +408,15 @@
     "semantic_hash": ""
   },
   "src/components/ui/KpiCard.jsx": {
-    "mtime": 1793986557.0206852,
-    "seen": 1794507358.3044078,
-    "ast_hash": "047b74786fffea99a570042b471174d1",
+    "mtime": 1794509963.48058,
+    "seen": 1794510028.7076464,
+    "ast_hash": "90d4bfd633fe62ad8066f3429a82e9e7",
     "semantic_hash": ""
   },
   "src/components/ui/PageHeader.jsx": {
-    "mtime": 1793299646.8243842,
-    "seen": 1794507358.3044078,
-    "ast_hash": "bc216f89a5122b0698c85aee10cb1bf4",
+    "mtime": 1794509961.4262605,
+    "seen": 1794510028.7076464,
+    "ast_hash": "40ea6fe3c1065fb4e5a060bb0c3c2df8",
     "semantic_hash": ""
   },
   "src/components/ui/PillBar.jsx": {
@@ -468,9 +468,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/Tooltip.jsx": {
-    "mtime": 1793986557.0206852,
-    "seen": 1794507358.3044078,
-    "ast_hash": "fe83fb5efb84249823de2ae6a8d14660",
+    "mtime": 1794511127.2663193,
+    "seen": 1794511237.5258033,
+    "ast_hash": "3b83b1ac3414f0aa890a0179a13113d3",
     "semantic_hash": ""
   },
   "src/components/ui/UiShowcasePage.jsx": {
@@ -480,9 +480,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/index.js": {
-    "mtime": 1794507342.3481922,
-    "seen": 1794507358.3044078,
-    "ast_hash": "9eb5a43c12c29d499b7b61104235534c",
+    "mtime": 1794511374.3782454,
+    "seen": 1794511455.1184978,
+    "ast_hash": "7e850a0da4807ec55927acbbf5785118",
     "semantic_hash": ""
   },
   "src/constants/assetTypes.js": {
@@ -552,9 +552,9 @@
     "semantic_hash": ""
   },
   "src/main.jsx": {
-    "mtime": 1793299646.8398178,
-    "seen": 1794507358.3044078,
-    "ast_hash": "8752e73c947b05e0fab97c5b0d65011d",
+    "mtime": 1794509953.8005028,
+    "seen": 1794510028.7076464,
+    "ast_hash": "fe2592b8afe50761c3dba4de0467b42d",
     "semantic_hash": ""
   },
   "src/services/supabase.js": {
@@ -594,9 +594,9 @@
     "semantic_hash": ""
   },
   "tailwind.config.js": {
-    "mtime": 1793299646.854301,
-    "seen": 1794507358.3044078,
-    "ast_hash": "577dae7d3eb29f049a4dd67545a08697",
+    "mtime": 1794509957.4221613,
+    "seen": 1794510028.7076464,
+    "ast_hash": "7c6cb7be7c72ceaabaab3131ee46a7bb",
     "semantic_hash": ""
   },
   "vercel.json": {
@@ -654,9 +654,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1793299646.5334132,
-    "seen": 1794507358.3044078,
-    "ast_hash": "8e161ad4f16d118b2204d9a2f8fd3fb8",
+    "mtime": 1794511375.974349,
+    "seen": 1794511455.1184978,
+    "ast_hash": "270e3f09bc0b0d3c54df38b0158083cc",
     "semantic_hash": ""
   },
   "public/robots.txt": {
@@ -690,9 +690,9 @@
     "semantic_hash": ""
   },
   "public/favicon.svg": {
-    "mtime": 1790188651.0656989,
-    "seen": 1794507358.3044078,
-    "ast_hash": "0e00395a9c58cbb62baf7acd090a896c",
+    "mtime": 1794511370.9913118,
+    "seen": 1794511455.1184978,
+    "ast_hash": "a52f6248c81a5189a4779288ad900112",
     "semantic_hash": ""
   },
   "public/img/Brasao-Horizontal_Branco.webp": {
@@ -737,10 +737,28 @@
     "ast_hash": "793c6b5cf91690faf32580b5a4daa8bb",
     "semantic_hash": ""
   },
+  "src/components/maps/CtrlScrollZoom.jsx": {
+    "mtime": 1794510985.0509462,
+    "seen": 1794511237.5258033,
+    "ast_hash": "b332a2c13830883674fb76eb9b1bcb1f",
+    "semantic_hash": ""
+  },
+  "src/components/AccessibilityBar.jsx": {
+    "mtime": 1794512800.3337474,
+    "seen": 1794512842.5488694,
+    "ast_hash": "2a932200eb509b0996e6f47fea9f27a2",
+    "semantic_hash": ""
+  },
+  "src/components/ui/PanelMark.jsx": {
+    "mtime": 1794511466.4819021,
+    "seen": 1794511791.9175742,
+    "ast_hash": "2fcbdb44deb44a9a7895fed5ca293dd9",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
-    "mtime": 1793299646.5334132,
-    "seen": 1794507358.3044078,
-    "ast_hash": "7e51639d2fdd73183501fea9e401bdd0",
+    "mtime": 1794511047.659013,
+    "seen": 1794511237.5258033,
+    "ast_hash": "6b42be4032035a6c1dc581af9dadd39a",
     "semantic_hash": ""
   }
 }

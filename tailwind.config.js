@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Lexend Variable"', '"Plus Jakarta Sans Variable"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         'micro': ['12px', { lineHeight: '16px', fontWeight: '500' }],
@@ -41,6 +42,12 @@ module.exports = {
         emphasized: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
       colors: {
+        brand: 'rgb(var(--color-brand) / <alpha-value>)',
+        status: {
+          ok: 'rgb(var(--status-ok) / <alpha-value>)',
+          warn: 'rgb(var(--status-warn) / <alpha-value>)',
+          crit: 'rgb(var(--status-crit) / <alpha-value>)',
+        },
         primary: {
           50: 'rgb(var(--color-primary-50) / <alpha-value>)',
           100: 'rgb(var(--color-primary-100) / <alpha-value>)',

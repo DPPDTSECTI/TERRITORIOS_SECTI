@@ -27,6 +27,8 @@ import {
 } from './side/mapGeoUtils';
 
 import { useMapTheme } from './mapTheme';
+import CtrlScrollZoom from './CtrlScrollZoom';
+import { getSemanticColors, LIGHT_CHART_PALETTE, DARK_CHART_PALETTE } from '../graph/chartTheme';
 import {
   HEAT_LEVELS,
   SEMIARIDO_HEAT_LEVELS,
@@ -202,7 +204,7 @@ export default function SideMap({
         map[tipo] = {
           key: tipo,
           label: a.shortTipo || tipo,
-          corHex: a.corHex || '#2563EB',
+          corHex: a.corHex || getSemanticColors().primaryBase,
           icone: a.icone,
           count: 0
         };
@@ -215,7 +217,7 @@ export default function SideMap({
   const allCursosCategories = useMemo(() => {
     if (mode !== 'cursos') return [];
     const map = {};
-    const colors = ['#2563EB', '#10B981', '#06B6D4', '#F59E0B', '#8B5CF6', '#EC4899'];
+    const colors = isDark ? DARK_CHART_PALETTE : LIGHT_CHART_PALETTE;
     let colorIdx = 0;
 
     cursosData.forEach((c) => {
@@ -232,15 +234,16 @@ export default function SideMap({
       map[cat].count += 1;
     });
     return Object.values(map).sort((a, b) => b.count - a.count);
-  }, [cursosData, mode]);
+  }, [cursosData, mode, isDark]);
 
   const allCadeiasCategories = useMemo(() => {
     if (mode !== 'cadeias') return [];
+    const semantic = getSemanticColors();
     const map = {};
     const colors = {
-      'APL': '#2563EB',
-      'IG': '#10B981',
-      'IG POTENCIAL': '#F59E0B'
+      'APL': semantic.primaryBase,
+      'IG': semantic.success,
+      'IG POTENCIAL': semantic.warning
     };
 
     cadeiasData.forEach((c) => {
@@ -249,7 +252,7 @@ export default function SideMap({
         map[tipo] = {
           key: tipo,
           label: tipo === 'APL' ? 'APL' : tipo === 'IG' ? 'IG' : tipo,
-          corHex: colors[tipo] || '#6366F1',
+          corHex: colors[tipo] || semantic.indigo,
           count: 0
         };
       }
@@ -346,8 +349,8 @@ export default function SideMap({
           tipo: c.categoria || 'Curso CT&I',
           shortTipo: c.ies ? `${c.ies} · ${c.categoria || 'Curso'}` : (c.categoria || 'Curso'),
           territorio: c.territorio_identidade || c.territorio,
-          corHex: '#2563EB',
-          corHexDark: '#60A5FA',
+          corHex: getSemanticColors().primaryBase,
+          corHexDark: getSemanticColors(true).primaryLight,
           lat,
           lng
         };
@@ -427,10 +430,11 @@ export default function SideMap({
       if (!isInsideBahia(cLat, cLng)) return [];
 
       const origin = [cLat, cLng];
+      const semantic = getSemanticColors(isDark);
       const lineColor =
         (getSegmentColor && activeFocusCadeia.segmento
           ? getSegmentColor(activeFocusCadeia.segmento)
-          : activeFocusCadeia.corHex) || (filtroSemiarido ? '#D97706' : '#2563EB');
+          : activeFocusCadeia.corHex) || (filtroSemiarido ? semantic.warningDeep : semantic.primaryBase);
 
       (activeFocusCadeia.municipios_cobertos || []).forEach((mun) => {
         let mLat = mun.lat ? Number(mun.lat) : null;
@@ -480,9 +484,10 @@ export default function SideMap({
         if (!isInsideBahia(cLat, cLng)) return;
 
         const origin = [cLat, cLng];
+        const semantic = getSemanticColors(isDark);
         const lineColor =
           (getSegmentColor && c.segmento ? getSegmentColor(c.segmento) : c.corHex) ||
-          (filtroSemiarido ? '#F59E0B' : '#3B82F6');
+          (filtroSemiarido ? semantic.warning : semantic.primarySoft);
 
         (c.municipios_cobertos || []).forEach((mun) => {
           let mLat = mun.lat ? Number(mun.lat) : null;
@@ -851,10 +856,12 @@ export default function SideMap({
       normalizeName(selectedTerritory.nome_territorio || selectedTerritory.territorio) === norm
     );
 
+    const semantic = getSemanticColors(isDark);
+
     if (modoGeografico) {
       if (filtroSemiarido && !isTerrSemiarido) {
         return {
-          fillColor: '#000000',
+          fillColor: 'rgb(0, 0, 0)',
           fillOpacity: 0,
           stroke: false,
           weight: 0,
@@ -866,7 +873,7 @@ export default function SideMap({
       if (selectedTerritory) {
         if (isSelected) {
           return {
-            fillColor: filtroSemiarido ? '#F59E0B' : '#3B82F6',
+            fillColor: filtroSemiarido ? semantic.warning : semantic.primarySoft,
             fillOpacity: 0.04,
             stroke: false,
             weight: 0,
@@ -875,7 +882,7 @@ export default function SideMap({
           };
         }
         return {
-          fillColor: '#000000',
+          fillColor: 'rgb(0, 0, 0)',
           fillOpacity: 0.002,
           stroke: false,
           weight: 0,
@@ -885,7 +892,7 @@ export default function SideMap({
       }
 
       return {
-        fillColor: '#000000',
+        fillColor: 'rgb(0, 0, 0)',
         fillOpacity: 0.002,
         stroke: false,
         weight: 0,
@@ -926,7 +933,7 @@ export default function SideMap({
           };
         }
         return {
-          fillColor: isDark ? '#141c2c' : '#CBD5E1',
+          fillColor: isDark ? semantic.slateSurface : semantic.slateBorder,
           fillOpacity: isDark ? 0.40 : 0.55,
           color: mapPalette.stroke.default,
           weight: 0.8,
@@ -966,7 +973,7 @@ export default function SideMap({
     if (selectedTerritory) {
       if (isSelected) {
         return {
-          fillColor: filtroSemiarido ? (isDark ? '#78350F40' : '#FEF3C7') : (isDark ? 'rgba(30, 58, 138, 0.3)' : '#EFF6FF'),
+          fillColor: filtroSemiarido ? (isDark ? 'rgba(120, 53, 15, 0.25)' : semantic.warningTint) : (isDark ? 'rgba(30, 58, 138, 0.3)' : semantic.primarySurface),
           fillOpacity: 1,
           color: mapPalette.stroke.selected,
           weight: 2.2,
@@ -977,9 +984,9 @@ export default function SideMap({
         };
       }
       return {
-        fillColor: isDark ? '#101726' : '#F8FAFC',
+        fillColor: isDark ? semantic.surface : semantic.slateSurface,
         fillOpacity: isDark ? 0.70 : 0.85,
-        color: isDark ? '#1e283c' : '#E2E8F0',
+        color: isDark ? semantic.border : semantic.border,
         weight: 0.8,
         opacity: 0.9,
         lineCap: 'round',
@@ -989,9 +996,9 @@ export default function SideMap({
     }
 
     return {
-      fillColor: filtroSemiarido ? (isDark ? '#1c1917' : '#FFFBEB') : (isDark ? '#141d2e' : '#FFFFFF'),
+      fillColor: filtroSemiarido ? (isDark ? semantic.surface : semantic.warningSurface) : (isDark ? semantic.surface : semantic.white),
       fillOpacity: 1,
-      color: filtroSemiarido ? (isDark ? '#92400E' : '#F59E0B') : (isDark ? '#26364d' : '#CBD5E1'),
+      color: filtroSemiarido ? (isDark ? semantic.warningWarm : semantic.warning) : (isDark ? semantic.borderStrong : semantic.slateBorder),
       weight: 0.9,
       opacity: 1,
       lineCap: 'round',
@@ -1016,6 +1023,8 @@ export default function SideMap({
       (targetTerrNorm && (terrNorm === targetTerrNorm || terrNorm.includes(targetTerrNorm)))
     );
 
+    const semantic = getSemanticColors(isDark);
+
     if (!isInsideSelectedTerritory) {
       return {
         fillColor: 'transparent',
@@ -1028,9 +1037,9 @@ export default function SideMap({
 
     if (filtroSemiarido && !isMunicipioSemiarido(munNome)) {
       return {
-        fillColor: '#E2E8F0',
+        fillColor: semantic.border,
         fillOpacity: 0.35,
-        color: '#CBD5E1',
+        color: semantic.slateBorder,
         weight: 0.6,
         opacity: 0.8,
         stroke: true
@@ -1041,9 +1050,9 @@ export default function SideMap({
       const munStat = mode === 'ativos' ? ativosStatsByMunicipio[munNorm] : cadeiasStatsByMunicipio[munNorm];
       const count = munStat ? munStat.count : 0;
       return {
-        fillColor: count > 0 ? (filtroSemiarido ? '#FFFBEB' : '#F0F9FF') : 'transparent',
+        fillColor: count > 0 ? (filtroSemiarido ? semantic.warningSurface : semantic.primarySurface) : 'transparent',
         fillOpacity: count > 0 ? 0.4 : 0,
-        color: count > 0 ? (filtroSemiarido ? '#D9770680' : '#38BDF8') : (isDark ? '#334155' : '#CBD5E1'),
+        color: count > 0 ? (filtroSemiarido ? `${semantic.warningDeep}80` : semantic.infoCyan) : (isDark ? semantic.borderStrong : semantic.slateBorder),
         weight: 0.8,
         opacity: 0.9,
         lineCap: 'round',
@@ -1059,7 +1068,7 @@ export default function SideMap({
     return {
       fillColor: relativeHeatColor,
       fillOpacity: 0.95,
-      color: isDark ? mapPalette.stroke.default : '#FFFFFF',
+      color: isDark ? mapPalette.stroke.default : semantic.white,
       weight: 1.2,
       opacity: 1,
       lineCap: 'round',
@@ -1175,9 +1184,10 @@ export default function SideMap({
           e.originalEvent?.clientY
         );
         if (!selTer) {
+          const hoverColors = getSemanticColors(dark);
           if (modoGeo) {
             e.target.setStyle({
-              fillColor: semi ? '#F59E0B' : '#3B82F6',
+              fillColor: semi ? hoverColors.warning : hoverColors.primarySoft,
               fillOpacity: 0.08,
               stroke: false,
               weight: 0
@@ -1188,7 +1198,7 @@ export default function SideMap({
             });
           } else {
             e.target.setStyle({
-              fillColor: semi ? (dark ? '#78350F35' : '#FEF3C7') : (dark ? '#1e293b' : '#EFF6FF'),
+              fillColor: semi ? (dark ? 'rgba(120, 53, 15, 0.21)' : hoverColors.warningTint) : (dark ? hoverColors.slateSurface : hoverColors.primarySurface),
               fillOpacity: 1
             });
           }
@@ -1344,7 +1354,7 @@ export default function SideMap({
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={hideHoverTooltip}
-      className={`relative isolate w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-[#FFFDF7] dark:bg-surface-sunken' : 'bg-surface dark:bg-surface-sunken'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}
+      className={`relative isolate w-full h-full min-h-0 flex items-center justify-center ${filtroSemiarido ? 'bg-warning-50/70 dark:bg-surface-sunken' : 'bg-surface dark:bg-surface-sunken'} bg-carto-grid rounded-panel overflow-hidden select-none z-10 flex-1`}
     >
 
       <MapContainer
@@ -1365,13 +1375,14 @@ export default function SideMap({
           [-7.5, -36.5]
         ]}
         maxBoundsViscosity={0.9}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
         doubleClickZoom={true}
         className="w-full h-full z-10 flex-1 min-h-0 outline-none"
         style={{ background: 'transparent' }}
         zoomControl={false}
         attributionControl={false}
       >
+        <CtrlScrollZoom />
         <MapPaneManager />
         <MapResizeHandler isExpanded={isExpanded} />
         <MapZoomWatcher
@@ -1458,8 +1469,8 @@ export default function SideMap({
               data={allTerritoryMesh}
               style={{
                 color: modoGeografico
-                  ? (filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#64748B' : '#64748B'))
-                  : (filtroSemiarido ? (isDark ? '#F59E0B' : '#B45309') : (isDark ? '#334666' : '#CBD5E1')),
+                  ? (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningDark) : getSemanticColors(isDark).slateMuted)
+                  : (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningDark) : (isDark ? getSemanticColors(true).slateBorder : getSemanticColors(false).slateBorder)),
                 weight: modoGeografico ? 0.75 : (filtroSemiarido ? 1.5 : 1.2),
                 opacity: modoGeografico ? (selectedTerritory ? 0.25 : 0.38) : (filtroSemiarido ? 0.85 : 0.95),
                 fill: false,
@@ -1476,7 +1487,7 @@ export default function SideMap({
               key={`state-boundary-mesh-${filtroSemiarido ? 'semi' : 'norm'}-${isDark ? 'dark' : 'light'}-${modoGeografico ? 'geo' : 'carto'}`}
               data={stateBoundaryMesh}
               style={{
-                color: filtroSemiarido ? '#92400E' : (isDark ? '#475569' : '#64748B'),
+                color: filtroSemiarido ? getSemanticColors(isDark).warningWarm : (isDark ? getSemanticColors(true).slateDeep : getSemanticColors(false).slateMuted),
                 weight: modoGeografico ? 1.1 : 1.8,
                 opacity: modoGeografico ? 0.45 : 1,
                 fill: false,
@@ -1494,8 +1505,8 @@ export default function SideMap({
               data={selectedTerritoryMesh}
               style={{
                 color: filtroSemiarido
-                  ? (isDark ? '#F59E0B' : '#D97706')
-                  : (isDark ? '#60A5FA' : '#1D4ED8'),
+                  ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningDeep)
+                  : (isDark ? getSemanticColors(true).primaryLight : getSemanticColors(false).primaryDeep),
                 weight: modoGeografico ? 1.35 : 2.8,
                 opacity: modoGeografico ? 0.75 : 1,
                 fill: false,
@@ -1531,8 +1542,8 @@ export default function SideMap({
                   positions={line.positions}
                   pathOptions={{
                     color: line.color || (line.isSelected
-                      ? (filtroSemiarido ? '#B45309' : '#2563EB')
-                      : (filtroSemiarido ? '#F59E0B' : '#3B82F6')),
+                      ? (filtroSemiarido ? getSemanticColors(isDark).warningDark : getSemanticColors(isDark).primaryBase)
+                      : (filtroSemiarido ? getSemanticColors(isDark).warning : getSemanticColors(isDark).primarySoft)),
                     weight: adaptiveWeight,
                     opacity: adaptiveOpacity,
                     lineCap: 'round',

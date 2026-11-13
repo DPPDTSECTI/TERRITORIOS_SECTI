@@ -8,6 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 
 import Sidebar from './components/Sidebar';
 import TourGuide from './components/TourGuide';
+import AccessibilityBar from './components/AccessibilityBar';
 import { ToastProvider, Skeleton, KpiSkeleton } from './components/ui';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
@@ -231,8 +232,16 @@ function AnimatedRoutes() {
   const isPrintPage = location.pathname.startsWith('/relatorio/');
   const hideNavigation = isHome || isPrintPage;
 
+  useEffect(() => {
+    document.body.classList.toggle('route-print', isPrintPage);
+    return () => {
+      document.body.classList.remove('route-print');
+    };
+  }, [isPrintPage]);
+
   return (
     <div className={`flex w-full relative ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
+      {!isPrintPage && <AccessibilityBar showFloatingButton={isHome} />}
       {/* ATMOSFERA GLOBAL: ESFERAS ALEATORIZADAS ESTILO LANTERNA DE MAGMA */}
       {!hideNavigation && <MagmaLampBackground filtroSemiarido={filtroSemiarido} />}
       {/* SIDEBAR GLOBAL */}
@@ -289,7 +298,7 @@ function MainApp() {
   return (
     <>
       <Helmet>
-        <title>Painel Territorial CT&I | Governo da Bahia</title>
+        <title>Painel Territorial CT&I · SECTI</title>
       </Helmet>
 
       <TourGuide />

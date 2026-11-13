@@ -6,15 +6,17 @@ import { MapPin, Building, Layers, BookOpen } from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
 import { normalizeName } from './mapGeoUtils';
 import { createClusterIcon, createSingleAssetIconWithSvg, getSemiaridoPointColor } from './mapIcons';
+import { getSemanticColors } from '../../graph/chartTheme';
 
 export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
   const { isDark } = useTheme();
   if (!ativo) return null;
 
+  const semantic = getSemanticColors(isDark);
   const IconComp = ativo.icone;
   const iconColor = filtroSemiarido
     ? getSemiaridoPointColor(isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome, isDark)
-    : (isDark ? (ativo.corHexDark || ativo.corHex || '#60A5FA') : (ativo.corHex || '#2563EB'));
+    : (isDark ? (ativo.corHexDark || ativo.corHex || semantic.primaryLight) : (ativo.corHex || semantic.primaryBase));
 
   return (
     <div className="p-3.5 min-w-[230px] max-w-[280px] flex flex-col gap-2.5 font-sans bg-surface text-text-primary">
@@ -68,7 +70,7 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
   if (!cadeia) return null;
   const badgeColor = filtroSemiarido
     ? getSemiaridoPointColor(cadeia.corHex, cadeia.tipo || cadeia.shortTipo || cadeia.nome)
-    : (cadeia.corHex || '#2563EB');
+    : (cadeia.corHex || getSemanticColors().primaryBase);
 
   const corSegmento = cadeia?.corSegmento || (getSegmentColor && cadeia?.segmento ? getSegmentColor(cadeia.segmento) : null);
 

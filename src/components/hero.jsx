@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
+import React, { useRef, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import {
@@ -28,6 +28,8 @@ import { Card } from './ui/Card';
 import { Button, IconButton } from './ui/Button';
 import { Badge } from './ui/Chip';
 import { AnimatedNumber } from './ui/KpiCard';
+import { PanelMark } from './ui/PanelMark';
+import { Skeleton } from './ui/Skeleton';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
 // ================= DADOS DOS MÓDULOS DA PLATAFORMA =================
@@ -162,7 +164,7 @@ const indicadoresEstrategicos = [
 ];
 
 // ================= CARD DE MÉTRICA COM ANIMAÇÃO EM VIEWPORT =================
-function StatKpiCard({ title, subtitle, value, format = 'int', icon: Icon }) {
+function StatKpiCard({ title, subtitle, value, format = 'int', icon: Icon, loading = false }) {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: '-20px' });
 
@@ -180,13 +182,17 @@ function StatKpiCard({ title, subtitle, value, format = 'int', icon: Icon }) {
       </div>
 
       <div className="my-1">
-        <div className="text-kpi font-bold text-text-primary tnum tracking-tight leading-none">
-          {isInView ? (
-            <AnimatedNumber value={value} format={format} duration={1200} />
-          ) : (
-            '0'
-          )}
-        </div>
+        {loading || value === undefined ? (
+          <Skeleton className="h-8 sm:h-9 w-16 rounded-control" />
+        ) : (
+          <div className="font-display text-kpi font-bold text-text-primary tnum tracking-tight leading-none">
+            {isInView ? (
+              <AnimatedNumber value={value} format={format} duration={1200} />
+            ) : (
+              '0'
+            )}
+          </div>
+        )}
       </div>
 
       <p className="text-caption text-text-muted mt-1 leading-snug">
@@ -200,41 +206,24 @@ function StatKpiCard({ title, subtitle, value, format = 'int', icon: Icon }) {
 export default function LandingHero() {
   const navigate = useNavigate();
   const introRef = useRef(null);
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
 
   const {
     territoriosData = [],
     ativosData = [],
     cursosData = [],
     listaCadeias = [],
-    distribuicaoCadeias = []
+    loadingStats = false,
   } = useContext(DataContext);
 
-  const qtdTerritorios = territoriosData?.length || 27;
+  const qtdTerritorios = territoriosData?.length || (loadingStats ? undefined : 27);
   const qtdMunicipios = 417;
-  const qtdAtivos = ativosData?.length || 1850;
-  const qtdCursos = cursosData?.length || 1280;
-  const qtdCadeias = (distribuicaoCadeias && distribuicaoCadeias.length > 0)
-    ? 88
-    : (listaCadeias?.length || 88);
+  const qtdAtivos = ativosData?.length > 0 ? ativosData.length : (loadingStats ? undefined : 0);
+  const qtdCursos = cursosData?.length > 0 ? cursosData.length : (loadingStats ? undefined : 0);
+  const qtdCadeias = listaCadeias?.length > 0 ? listaCadeias.length : (loadingStats ? undefined : 0);
 
-  // Efeito de digitação suave no subtítulo
-  const subtitleText = "Uma plataforma de inteligência territorial desenvolvida pela SECTI para consolidar, analisar e dar transparência aos dados de Ciência, Tecnologia e Inovação nos 27 Territórios de Identidade da Bahia.";
-  const [typedText, setTypedText] = useState("");
-
-  useEffect(() => {
-    let i = 0;
-    const typingInterval = setInterval(() => {
-      if (i < subtitleText.length) {
-        setTypedText(subtitleText.slice(0, i + 1));
-        i++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, 18);
-
-    return () => clearInterval(typingInterval);
-  }, []);
+  const subtitleText =
+    'Uma plataforma de inteligência territorial desenvolvida pela SECTI para consolidar, analisar e dar transparência aos dados de Ciência, Tecnologia e Inovação nos 27 Territórios de Identidade da Bahia.';
 
   return (
     <main className="w-full min-h-screen font-sans relative text-text-primary scroll-smooth bg-background overflow-x-hidden transition-colors duration-300">
@@ -261,10 +250,6 @@ export default function LandingHero() {
               0% { stroke-dashoffset: 100; opacity: 0; }
               100% { stroke-dashoffset: 0; opacity: 0.12; }
             }
-            @keyframes breatheSilhouette {
-              0%, 100% { opacity: 0.12; }
-              50% { opacity: 0.05; }
-            }
             @media (prefers-reduced-motion: reduce) {
               .bahia-silhouette {
                 animation: none !important;
@@ -275,7 +260,7 @@ export default function LandingHero() {
             .bahia-silhouette {
               stroke-dasharray: 100;
               stroke-dashoffset: 100;
-              animation: drawSilhouette 2.5s ease-out forwards, breatheSilhouette 10s ease-in-out infinite 2.5s;
+              animation: drawSilhouette 2.5s ease-out forwards;
             }
           `}</style>
           <svg viewBox="0 0 800 845" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-full h-auto text-primary-900 dark:text-primary-300">
@@ -294,21 +279,8 @@ export default function LandingHero() {
       <header className="relative z-50 w-full bg-transparent">
         <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-12 h-24 sm:h-28 flex items-center justify-between">
 
-          {/* Identidade + Brasão do Estado */}
+          {/* Assinatura Institucional: Governo do Estado primeiro, depois marca do painel */}
           <div className="flex items-center gap-4 sm:gap-5 select-none">
-            <div className="flex items-center gap-3 sm:gap-3.5">
-              <img
-                src="/img/favicon-96x96.webp"
-                alt="Painel Territorial CT&I"
-                className="h-9 sm:h-11 w-auto object-contain shrink-0"
-              />
-              <span className="font-bold text-subtitle sm:text-title tracking-tight text-text-primary">
-                Painel Territorial CT&I
-              </span>
-            </div>
-
-            <div className="hidden sm:block h-7 w-px bg-border-strong/70" aria-hidden="true" />
-
             <img
               src="/img/brasao_preto.webp"
               alt="Governo do Estado da Bahia"
@@ -319,6 +291,15 @@ export default function LandingHero() {
               alt="Governo do Estado da Bahia"
               className="h-11 sm:h-14 w-auto object-contain shrink-0 hidden dark:block"
             />
+
+            <div className="hidden sm:block h-7 w-px bg-border-strong/70" aria-hidden="true" />
+
+            <div className="flex items-center gap-3 sm:gap-3.5">
+              <PanelMark className="h-9 sm:h-11 w-auto" />
+              <span className="font-display font-bold text-subtitle sm:text-title tracking-tight text-text-primary">
+                Painel Territorial CT&I
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -327,16 +308,15 @@ export default function LandingHero() {
       <section className="relative w-full min-h-[calc(100dvh-72px)] flex flex-col justify-between px-6 sm:px-10 lg:px-12 pt-8 sm:pt-14 pb-12 sm:pb-16 z-10 max-w-[1600px] mx-auto">
         <div className="w-full flex-1 flex flex-col justify-center max-w-4xl lg:max-w-5xl py-6 sm:py-12">
           
-          <h1 className="text-display font-bold text-text-primary tracking-tight leading-[1.06] mb-5 sm:mb-6 text-left">
+          <h1 className="font-display text-display font-bold text-text-primary tracking-tight leading-[1.06] mb-5 sm:mb-6 text-left">
             Ciência, Tecnologia <br />
             <span className="text-primary-600 dark:text-primary-400">
               & Inovação na Bahia
             </span>
           </h1>
 
-          <p className="text-subtitle text-text-secondary font-normal leading-relaxed mb-8 sm:mb-10 min-h-[56px] max-w-3xl text-left">
-            {typedText}
-            <span className="inline-block w-1.5 h-4 ml-1 bg-primary-600 dark:bg-primary-400 animate-pulse align-middle" />
+          <p className="text-subtitle text-text-secondary font-normal leading-relaxed mb-8 sm:mb-10 max-w-3xl text-left">
+            {subtitleText}
           </p>
 
           <div className="flex flex-wrap items-center gap-3.5">
@@ -377,6 +357,7 @@ export default function LandingHero() {
               subtitle="27 Territórios de Identidade"
               value={qtdTerritorios}
               icon={MapPin}
+              loading={loadingStats && !territoriosData?.length}
             />
             <StatKpiCard
               title="Municípios"
@@ -389,18 +370,21 @@ export default function LandingHero() {
               subtitle="Estruturas e polos mapeados"
               value={qtdAtivos}
               icon={Building2}
+              loading={loadingStats && !ativosData?.length}
             />
             <StatKpiCard
               title="Cursos Superiores"
               subtitle="Graduação e pós em CT&I"
               value={qtdCursos}
               icon={GraduationCap}
+              loading={loadingStats && !cursosData?.length}
             />
             <StatKpiCard
               title="Cadeias & APLs"
               subtitle="Matrizes produtivas e IGs"
               value={qtdCadeias}
               icon={Milestone}
+              loading={loadingStats && !listaCadeias?.length}
             />
           </div>
         </div>
@@ -414,7 +398,7 @@ export default function LandingHero() {
             <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Sobre a Iniciativa · SECTI Bahia
             </span>
-            <h2 className="text-headline font-bold tracking-tight text-text-primary leading-tight">
+            <h2 className="font-display text-headline font-bold tracking-tight text-text-primary leading-tight">
               O que é o Painel Territorial?
             </h2>
 
@@ -486,7 +470,7 @@ export default function LandingHero() {
             <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Arquitetura & Navegação
             </span>
-            <h2 className="text-headline font-bold tracking-tight text-text-primary">
+            <h2 className="font-display text-headline font-bold tracking-tight text-text-primary">
               Módulos da Plataforma
             </h2>
             <p className="text-body-sm text-text-secondary font-normal leading-relaxed">
@@ -565,7 +549,7 @@ export default function LandingHero() {
             <span className="text-caption font-medium text-primary-600 dark:text-primary-400">
               Métricas & Dados Territoriais
             </span>
-            <h2 className="text-headline font-bold tracking-tight text-text-primary">
+            <h2 className="font-display text-headline font-bold tracking-tight text-text-primary">
               Indicadores Estratégicos
             </h2>
             <p className="text-body-sm text-text-secondary font-normal leading-relaxed">

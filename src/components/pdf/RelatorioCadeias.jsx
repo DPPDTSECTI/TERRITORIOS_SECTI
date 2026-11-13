@@ -23,8 +23,9 @@ import { MUNICIPIOS_COORDS } from '../../data/municipiosCoords';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import { getSemanticColors, LIGHT_BLUE_PALETTE } from '../graph/chartTheme';
 
-const PALETTE = ['#2563EB', '#1D4ED8', '#0284C7', '#1E40AF', '#3B82F6', '#0369A1', '#1E3A8A', '#0EA5E9'];
+const PALETTE = LIGHT_BLUE_PALETTE;
 
 function normalizeName(name) {
   if (!name) return '';
@@ -118,10 +119,11 @@ function findMunicipioCoords(nome) {
 }
 
 const getTipoCadeiaConfig = (nomeTipo) => {
+  const semantic = getSemanticColors();
   const str = String(nomeTipo || '').toLowerCase();
   if (str.includes('potencial')) {
     return {
-      corHex: '#F59E0B',
+      corHex: semantic.warning,
       label: 'IG Potencial',
       badgeClass: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30',
       icone: Compass
@@ -129,29 +131,30 @@ const getTipoCadeiaConfig = (nomeTipo) => {
   }
   if (str.includes('ig') || str.includes('indica')) {
     return {
-      corHex: '#10B981',
+      corHex: semantic.success,
       label: 'IG Concedida',
       badgeClass: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25',
       icone: Award
     };
   }
   return {
-    corHex: '#2563EB',
+    corHex: semantic.primaryBase,
     label: 'APL Mapeado',
     badgeClass: 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/25',
     icone: Wheat
   };
 };
 
+const initialPdfCadeiasSemantic = getSemanticColors();
 const CADEIA_CATEGORIES = [
-  { key: 'apl', label: 'Arranjo Produtivo Local (APL)', shortLabel: 'APL', colorHex: '#2563EB' },
-  { key: 'ig', label: 'Indicação Geográfica (IG)', shortLabel: 'IG', colorHex: '#10B981' },
-  { key: 'ig_potencial', label: 'IG Potencial', shortLabel: 'IG Potencial', colorHex: '#F59E0B' }
+  { key: 'apl', label: 'Arranjo Produtivo Local (APL)', shortLabel: 'APL', colorHex: initialPdfCadeiasSemantic.primaryBase },
+  { key: 'ig', label: 'Indicação Geográfica (IG)', shortLabel: 'IG', colorHex: initialPdfCadeiasSemantic.success },
+  { key: 'ig_potencial', label: 'IG Potencial', shortLabel: 'IG Potencial', colorHex: initialPdfCadeiasSemantic.warning }
 ];
 
 const CADEIA_PRESENCA_CATEGORIES = [
-  { key: 'sede', label: 'Cadeia Sediada (Município Sede)', shortLabel: 'Sede', colorHex: '#F59E0B' },
-  { key: 'abrangente', label: 'Cadeia Abrangente (Atuação Local)', shortLabel: 'Abrangente', colorHex: '#2563EB' }
+  { key: 'sede', label: 'Cadeia Sediada (Município Sede)', shortLabel: 'Sede', colorHex: initialPdfCadeiasSemantic.warning },
+  { key: 'abrangente', label: 'Cadeia Abrangente (Atuação Local)', shortLabel: 'Abrangente', colorHex: initialPdfCadeiasSemantic.primaryBase }
 ];
 
 export default function RelatorioCadeiasPage() {
@@ -486,7 +489,7 @@ export default function RelatorioCadeiasPage() {
           segmento: c.segmento,
           tipo: c.shortTipo || c.tipo,
           badgeClass: c.badgeClass,
-          corHex: c.corHex || '#2563EB',
+          corHex: c.corHex || getSemanticColors().primaryBase,
           municipioSede: c.municipio_sede,
           totalMunicipios: totalMun
         };
@@ -592,7 +595,7 @@ export default function RelatorioCadeiasPage() {
       .slice(0, 5)
       .map((item, idx) => ({
         ...item,
-        corHex: isSemiarido ? '#D97706' : (PALETTE[idx % PALETTE.length] || '#2563EB'),
+        corHex: isSemiarido ? getSemanticColors().warningDeep : (PALETTE[idx % PALETTE.length] || getSemanticColors().primaryBase),
         remaining: Math.max(0, totalGeral - item.total),
         pctTotal: ((item.total / totalGeral) * 100).toFixed(1)
       }));
@@ -911,7 +914,7 @@ export default function RelatorioCadeiasPage() {
                         style={{
                           flexGrow: item.totalMunicipios,
                           flexBasis: 0,
-                          backgroundColor: isSemiarido ? '#D97706' : item.corHex,
+                          backgroundColor: isSemiarido ? getSemanticColors().warningDeep : item.corHex,
                           minWidth: '40px'
                         }}
                       >

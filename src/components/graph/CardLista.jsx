@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { normalize } from '../../utils/normalization';
 import { DataContext } from '../../context/DataContext';
+import { getSemanticColors } from './chartTheme';
 
 function CardLista({
   // --- Props Comuns ---
@@ -253,6 +254,7 @@ function CardLista({
               ) : (
                 displayItems.map((item) => {
                   const IconComponent = item.icone || Microscope;
+                  const fallbackColor = getSemanticColors().primaryBase;
 
                   return (
                     <div
@@ -264,9 +266,9 @@ function CardLista({
                     >
                       <div 
                         className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200"
-                        style={{ backgroundColor: `${item.corHex || '#2563EB'}18` }}
+                        style={{ backgroundColor: `${item.corHex || fallbackColor}18` }}
                       >
-                        <IconComponent size={16} style={{ color: item.corHex || '#2563EB' }} />
+                        <IconComponent size={16} style={{ color: item.corHex || fallbackColor }} />
                       </div>
 
                       <div className="flex flex-col flex-1 min-w-0">

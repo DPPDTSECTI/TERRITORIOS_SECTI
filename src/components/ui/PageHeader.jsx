@@ -28,7 +28,7 @@ export function PageHeader({
     >
       <div className="space-y-1 min-w-0">
         <div className="flex items-center gap-2.5 flex-wrap">
-          <h1 className="text-headline font-bold text-text-primary tracking-tight">
+          <h1 className="font-display text-headline font-bold text-text-primary tracking-tight">
             {title}
           </h1>
           {badge && <div className="inline-flex shrink-0">{badge}</div>}

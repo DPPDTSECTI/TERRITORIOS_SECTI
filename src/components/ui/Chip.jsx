@@ -5,15 +5,15 @@ const badgeVariants = {
   neutral:
     'bg-surface-soft text-text-secondary border border-border dark:bg-zinc-800/60 dark:text-zinc-300 dark:border-zinc-700/60',
   primary:
-    'bg-[#DBEAFE] text-[#1D4ED8] dark:bg-primary-500/15 dark:text-primary-300 border border-[#BFDBFE] dark:border-primary-500/30',
+    'bg-primary-100 text-primary-700 dark:bg-primary-500/15 dark:text-primary-300 border border-primary-200 dark:border-primary-500/30',
   success:
-    'bg-[#DCFCE7] text-[#15803D] dark:bg-emerald-500/15 dark:text-emerald-300 border border-[#BBF7D0] dark:border-emerald-500/30',
+    'bg-success-100 text-success-700 dark:bg-emerald-500/15 dark:text-emerald-300 border border-success-200 dark:border-emerald-500/30',
   warning:
-    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
+    'bg-warning-100 text-warning-700 dark:bg-amber-500/15 dark:text-amber-300 border border-warning-200 dark:border-amber-500/30',
   accent:
-    'bg-[#FEF3C7] text-[#B45309] dark:bg-amber-500/15 dark:text-amber-300 border border-[#FDE68A] dark:border-amber-500/30',
+    'bg-warning-100 text-warning-700 dark:bg-amber-500/15 dark:text-amber-300 border border-warning-200 dark:border-amber-500/30',
   danger:
-    'bg-[#FEE2E2] text-[#B91C1C] dark:bg-rose-500/15 dark:text-rose-300 border border-[#FECACA] dark:border-rose-500/30',
+    'bg-danger-100 text-danger-700 dark:bg-rose-500/15 dark:text-rose-300 border border-danger-200 dark:border-rose-500/30',
 };
 
 const chipUnselectedVariants = {

@@ -32,8 +32,9 @@ import { municipiosDB } from '../../data/municipiosDB';
 import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import { getSemanticColors, LIGHT_CHART_PALETTE } from '../graph/chartTheme';
 
-const PALETTE = ['#1D3557', '#2563EB', '#457B9D', '#06B6D4', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+const PALETTE = LIGHT_CHART_PALETTE;
 
 const CATEGORIAS_ENSINO_VALIDAS = [
   'Campi Instituto Federal',
@@ -91,11 +92,12 @@ function checkSemiaridoValue(val) {
   return s === 'sim' || s === 'true' || s === '1' || s === 't';
 }
 
+const initialPdfEnsinoSemantic = getSemanticColors();
 const ENSINO_CATEGORIES = [
-  { key: 'federal', label: 'Univ. Pública Federal', shortLabel: 'Federal', colorHex: '#1D3557' },
-  { key: 'estadual', label: 'Univ. Pública Estadual', shortLabel: 'Estadual', colorHex: '#2563EB' },
-  { key: 'ifba', label: 'Instituto Federal', shortLabel: 'IF', colorHex: '#10B981' },
-  { key: 'privada', label: 'Univ. Privada', shortLabel: 'Privada', colorHex: '#F59E0B' }
+  { key: 'federal', label: 'Univ. Pública Federal', shortLabel: 'Federal', colorHex: initialPdfEnsinoSemantic.primaryNavy },
+  { key: 'estadual', label: 'Univ. Pública Estadual', shortLabel: 'Estadual', colorHex: initialPdfEnsinoSemantic.primaryBase },
+  { key: 'ifba', label: 'Instituto Federal', shortLabel: 'IF', colorHex: initialPdfEnsinoSemantic.success },
+  { key: 'privada', label: 'Univ. Privada', shortLabel: 'Privada', colorHex: initialPdfEnsinoSemantic.warning }
 ];
 
 export default function RelatorioEnsinoPage() {
@@ -781,13 +783,13 @@ export default function RelatorioEnsinoPage() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={topMunicipiosData} layout="vertical" margin={{ left: 5, right: 28, top: 0, bottom: 0 }}>
                       <XAxis type="number" hide />
-                      <YAxis dataKey="name" type="category" width={95} tick={{ fontSize: 11, fill: isDark ? '#E2E8F0' : '#1D3557', fontWeight: 600 }} />
-                      <RechartsTooltip contentStyle={{ backgroundColor: isDark ? '#1E293B' : '#FFFFFF', borderRadius: '8px', border: '1px solid #E2E8F0', color: isDark ? '#FFF' : '#0F172A', fontSize: '12px', fontWeight: 'bold' }} />
-                      <Bar dataKey="count" fill={isSemiarido ? '#D97706' : '#2563EB'} radius={[0, 8, 8, 0]}>
+                      <YAxis dataKey="name" type="category" width={95} tick={{ fontSize: 11, fill: isDark ? getSemanticColors(true).border : getSemanticColors(false).primaryNavy, fontWeight: 600 }} />
+                      <RechartsTooltip contentStyle={{ backgroundColor: getSemanticColors(isDark).slateSurface, borderRadius: '8px', border: `1px solid ${getSemanticColors(isDark).border}`, color: getSemanticColors(isDark).textPrimary, fontSize: '12px', fontWeight: 'bold' }} />
+                      <Bar dataKey="count" fill={isSemiarido ? getSemanticColors(isDark).warningDeep : getSemanticColors(isDark).primaryBase} radius={[0, 8, 8, 0]}>
                         {topMunicipiosData.map((_, index) => (
-                          <Cell key={`cell-bar-${index}`} fill={isSemiarido ? '#D97706' : PALETTE[index % PALETTE.length]} />
+                          <Cell key={`cell-bar-${index}`} fill={isSemiarido ? getSemanticColors(isDark).warningDeep : PALETTE[index % PALETTE.length]} />
                         ))}
-                        <LabelList dataKey="count" position="insideRight" fill="#ffffff" fontSize={11} fontWeight={700} offset={8} />
+                        <LabelList dataKey="count" position="insideRight" fill={getSemanticColors().white} fontSize={11} fontWeight={700} offset={8} />
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
@@ -819,10 +821,10 @@ export default function RelatorioEnsinoPage() {
               </div>
 
               <div className="flex items-center gap-2 text-[10.5px] font-semibold shrink-0 pt-0.5">
-                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-[#1D3557]"></span>Fed.</span>
-                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-[#2563EB]"></span>Est.</span>
-                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-[#10B981]"></span>IF</span>
-                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>Priv.</span>
+                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-primary-900"></span>Fed.</span>
+                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-primary-600"></span>Est.</span>
+                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>IF</span>
+                <span className="flex items-center gap-1 text-text-secondary"><span className="w-2 h-2 rounded-full bg-warning-500"></span>Priv.</span>
               </div>
             </div>
 
@@ -831,10 +833,10 @@ export default function RelatorioEnsinoPage() {
             <div className="flex-1 flex flex-col justify-between gap-1.5 min-h-0 my-auto py-0.5">
               {matrixAreaNaturezaData.slice(0, 5).map((row, idx) => {
                 const segments = [
-                  { key: 'privada', label: 'Priv', name: 'Privada', count: row.privada, color: 'bg-[#F59E0B]' },
-                  { key: 'federal', label: 'Fed', name: 'Federal', count: row.federal, color: 'bg-[#1D3557]' },
-                  { key: 'estadual', label: 'Est', name: 'Estadual', count: row.estadual, color: 'bg-[#2563EB]' },
-                  { key: 'ifba', label: 'IF', name: 'IF', count: row.ifba, color: 'bg-[#10B981]' },
+                  { key: 'privada', label: 'Priv', name: 'Privada', count: row.privada, color: 'bg-warning-500' },
+                  { key: 'federal', label: 'Fed', name: 'Federal', count: row.federal, color: 'bg-primary-900' },
+                  { key: 'estadual', label: 'Est', name: 'Estadual', count: row.estadual, color: 'bg-primary-600' },
+                  { key: 'ifba', label: 'IF', name: 'IF', count: row.ifba, color: 'bg-emerald-500' },
                 ]
                   .filter(s => s.count > 0)
                   .sort((a, b) => b.count - a.count);

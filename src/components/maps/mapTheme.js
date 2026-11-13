@@ -84,11 +84,11 @@ export function getMapPalette(isDark = false, isSemiarido = false) {
   }
 
   const zero = resolveCssRgb('--color-map-neutral', isDark ? 'rgb(30, 41, 59)' : 'rgb(241, 245, 249)');
-  const level1 = resolveCssRgb('--color-map-1', isDark ? 'rgb(96, 165, 250)' : 'rgb(30, 58, 138)');
-  const level2 = resolveCssRgb('--color-map-2', isDark ? 'rgb(59, 130, 246)' : 'rgb(37, 99, 235)');
-  const level3 = resolveCssRgb('--color-map-3', isDark ? 'rgb(37, 99, 235)' : 'rgb(96, 165, 250)');
-  const level4 = resolveCssRgb('--color-map-4', isDark ? 'rgb(30, 58, 138)' : 'rgb(147, 197, 253)');
-  const level5 = resolveCssRgb('--color-map-5', isDark ? 'rgb(23, 37, 84)' : 'rgb(219, 234, 254)');
+  const level1 = resolveCssRgb('--color-map-1', isDark ? 'rgb(169, 203, 240)' : 'rgb(4, 75, 141)');
+  const level2 = resolveCssRgb('--color-map-2', isDark ? 'rgb(91, 151, 218)' : 'rgb(47, 115, 184)');
+  const level3 = resolveCssRgb('--color-map-3', isDark ? 'rgb(47, 109, 181)' : 'rgb(111, 162, 216)');
+  const level4 = resolveCssRgb('--color-map-4', isDark ? 'rgb(31, 76, 128)' : 'rgb(169, 200, 234)');
+  const level5 = resolveCssRgb('--color-map-5', isDark ? 'rgb(26, 44, 69)' : 'rgb(220, 233, 247)');
 
   return {
     isDark,

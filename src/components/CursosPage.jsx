@@ -35,7 +35,7 @@ import {
     ScrollableList,
     DetailIsland
 } from './ui';
-import { useChartTheme } from './graph/chartTheme';
+import { useChartTheme, getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
@@ -63,7 +63,8 @@ function getAlphaColor(color, alpha = 0.12) {
 }
 
 function getContrastTextColor(hexOrRgb) {
-    if (!hexOrRgb) return '#ffffff';
+    const semantic = getSemanticColors();
+    if (!hexOrRgb) return semantic.white;
     let r = 255, g = 255, b = 255;
     if (hexOrRgb.startsWith('#')) {
         let hex = hexOrRgb.slice(1);
@@ -82,7 +83,7 @@ function getContrastTextColor(hexOrRgb) {
         }
     }
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.55 ? '#090D16' : '#FFFFFF';
+    return luminance > 0.55 ? semantic.textPrimary : semantic.white;
 }
 
 export function cleanTerritorioName(name) {
@@ -397,8 +398,8 @@ export default function CursosPage() {
             .sort((a, b) => b[1].total - a[1].total);
 
         const palette = filtroSemiarido
-            ? (chartTheme.goldenPalette || ['#D97706', '#B45309', '#F59E0B', '#92400E', '#FBBF24', '#CA8A04'])
-            : (chartTheme.bluePalette || ['#2563EB', '#1D4ED8', '#0284C7', '#1E40AF', '#3B82F6', '#0369A1', '#1E3A8A', '#0EA5E9']);
+            ? chartTheme.goldenPalette
+            : chartTheme.bluePalette;
 
         return sorted.map(([name, data], idx) => {
             const percent = total > 0 ? ((data.total / total) * 100).toFixed(1) : '0.0';
@@ -599,7 +600,7 @@ export default function CursosPage() {
             normalize(cleanTerritorioName(t.nome_territorio || t.territorio || '')) === normalize(terrNome)
         );
 
-        const accentColor = categoryColorMap[areaNome] || (filtroSemiarido ? '#D97706' : '#2563EB');
+        const accentColor = categoryColorMap[areaNome] || (filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase);
 
         const statusPills = [
             {
@@ -1876,7 +1877,7 @@ export default function CursosPage() {
                                                     const totalMunCourses = municipalityRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
                                                     const remaining = Math.max(0, totalMunCourses - total);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';
@@ -1945,7 +1946,7 @@ export default function CursosPage() {
                                                     const totalTerrCourses = territoryRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
                                                     const remaining = Math.max(0, totalTerrCourses - total);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';
@@ -2053,7 +2054,7 @@ export default function CursosPage() {
                                                 const remaining = Math.max(0, totalScopedCount - ies.count);
                                                 const rankStr = String(idx + 1).padStart(2, '0');
 
-                                                const fillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                const fillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                 const negPillStyle = filtroSemiarido
                                                     ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                     : 'bg-surface-soft text-text-secondary border border-border';

@@ -35,7 +35,7 @@ import {
     ScrollableList,
     DetailIsland
 } from './ui';
-import { useChartTheme, resolveCssRgb } from './graph/chartTheme';
+import { useChartTheme, resolveCssRgb, getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
@@ -460,10 +460,10 @@ export default function CadeiaPage() {
 
         // Paleta em padrão de tons azuis profissionais (ou âmbar no modo semiárido)
         const palette = filtroSemiarido
-            ? (chartTheme.goldenPalette || ['#D97706', '#B45309', '#F59E0B', '#92400E', '#FBBF24', '#CA8A04'])
-            : (chartTheme.bluePalette || ['#2563EB', '#1D4ED8', '#0284C7', '#1E40AF', '#3B82F6', '#0369A1', '#1E3A8A', '#0EA5E9']);
+            ? chartTheme.goldenPalette
+            : chartTheme.bluePalette;
 
-        const neutral = palette[0] || (filtroSemiarido ? '#D97706' : '#2563EB');
+        const neutral = palette[0] || (filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase);
 
         const colorMap = new Map();
         sorted.forEach(([name], idx) => {
@@ -686,7 +686,7 @@ export default function CadeiaPage() {
         const isSemi = isCadeiaSemiarido(selectedCadeia);
         const accentColor = filtroSemiarido
             ? getSemiaridoArrangementColor(selectedCadeia.tipo, chartTheme)
-            : (selectedCadeia.corHex || '#2563EB');
+            : (selectedCadeia.corHex || getSemanticColors().primaryBase);
 
         const cadeiasMesmoSegmento = enrichedCadeias.filter(c => c.segmento === selectedCadeia.segmento);
         const tipoVar = getTipoBadgeVariant(selectedCadeia.tipo);
@@ -1537,7 +1537,7 @@ export default function CadeiaPage() {
                                                     const totalMunCount = municipalityRanking.reduce((acc, x) => acc + x.count, 0) || 1;
                                                     const remaining = Math.max(0, totalMunCount - m.count);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';
@@ -1604,7 +1604,7 @@ export default function CadeiaPage() {
                                                     const totalTerrCount = territoryRanking.reduce((acc, x) => acc + x.count, 0) || 1;
                                                     const remaining = Math.max(0, totalTerrCount - t.count);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';

@@ -13,17 +13,32 @@ import {
   Moon,
   HelpCircle,
   SlidersHorizontal,
+  Accessibility,
+  Contrast,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { IconButton } from './ui/Button';
+import { PanelMark } from './ui/PanelMark';
 import { cn } from '../lib/cn';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';
+import { useAccessibilityPreferences } from './AccessibilityBar';
 
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
   const { filtroSemiarido, crudStats } = useData();
+  const {
+    fontScaleId,
+    setFontScaleId,
+    decreaseFont,
+    increaseFont,
+    canDecreaseFont,
+    canIncreaseFont,
+    highContrast,
+    toggleHighContrast,
+    hasCustomPrefs,
+  } = useAccessibilityPreferences();
 
   const [isPinned, setIsPinned] = useState(() => {
     try {
@@ -193,11 +208,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         {/* ================= TOPO: LOGO & PIN BUTTON ================= */}
         <div className="w-full h-10 flex items-center mb-3 shrink-0">
           <div className="w-10 h-10 flex items-center justify-center shrink-0">
-            <img
-              src="/img/favicon-96x96.webp"
-              alt="Favicon Mapa"
-              className="w-7 h-7 object-contain"
-            />
+            <PanelMark className="w-7 h-7" />
           </div>
 
           <span
@@ -238,7 +249,11 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
         </div>
 
         {/* ================= NAVEGAÇÃO ================= */}
-        <nav className="flex-1 min-h-0 w-full flex flex-col gap-1 overflow-y-auto overflow-x-hidden scrollbar-none pt-1">
+        <nav
+          id="main-nav"
+          aria-label="Navegação principal"
+          className="flex-1 min-h-0 w-full flex flex-col gap-1 overflow-y-auto overflow-x-hidden scrollbar-none pt-1"
+        >
           {/* SEÇÃO: MENU */}
           {renderSectionLabel('Menu')}
           {navItemsGroup1.map(renderNavItem)}
@@ -380,6 +395,119 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               >
                 <Moon size={13} strokeWidth={2} className={cn('shrink-0', isDark ? (filtroSemiarido ? 'text-amber-400' : 'text-primary-400') : '')} />
                 <span>Escuro</span>
+              </button>
+            </div>
+          </div>
+
+          {/* CONTROLES DE ACESSIBILIDADE eMAG INTEGRADOS NA SIDEBAR */}
+          <div
+            role="group"
+            aria-label="Acessibilidade (tamanho da fonte e alto contraste)"
+            className={cn(
+              'relative w-full h-10 rounded-full shadow-2xs overflow-hidden shrink-0 select-none transition-colors duration-150',
+              filtroSemiarido
+                ? 'bg-amber-50/50 dark:bg-amber-950/30 border border-amber-300/70 dark:border-amber-700/60'
+                : 'bg-surface-soft/90 dark:bg-surface-raised/60 border border-border/80 dark:border-border/60'
+            )}
+          >
+            {/* ESTADO COLAPSADO: ÍCONE DE ACESSIBILIDADE NO CÍRCULO DE 38PX */}
+            <button
+              type="button"
+              onClick={() => setIsHovered(true)}
+              tabIndex={isExpanded ? -1 : 0}
+              aria-label="Abrir controles de acessibilidade"
+              title={!isExpanded ? 'Acessibilidade (eMAG)' : undefined}
+              className={cn(
+                'absolute inset-y-0 left-0 w-[38px] h-full rounded-full flex items-center justify-center transition-[opacity,transform] duration-200 ease-standard cursor-pointer focus-visible:outline-none focus-visible:ring-2 z-20',
+                filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
+                hasCustomPrefs
+                  ? 'text-primary-600 dark:text-primary-400'
+                  : 'text-text-secondary hover:text-text-primary',
+                isExpanded
+                  ? 'opacity-0 scale-90 pointer-events-none'
+                  : 'opacity-100'
+              )}
+            >
+              <Accessibility size={17} strokeWidth={1.75} className="shrink-0" />
+            </button>
+
+            {/* ESTADO EXPANDIDO: A- / A / A+ / ALTO CONTRASTE EM LARGURA FIXA 210PX */}
+            <div
+              className={cn(
+                'w-[210px] h-full p-1 grid grid-cols-4 items-center gap-0.5 transition-opacity duration-200 ease-standard',
+                isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              )}
+            >
+              <button
+                type="button"
+                onClick={decreaseFont}
+                disabled={!canDecreaseFont}
+                tabIndex={isExpanded ? 0 : -1}
+                aria-label="Diminuir tamanho da fonte"
+                title="Diminuir fonte"
+                className={cn(
+                  'h-full rounded-full flex items-center justify-center text-[11px] font-semibold transition-colors cursor-pointer disabled:opacity-35 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
+                  fontScaleId === 'sm'
+                    ? 'bg-white dark:bg-zinc-800 text-text-primary shadow-2xs border border-border/70 dark:border-zinc-700/70'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/70'
+                )}
+              >
+                A-
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFontScaleId('md')}
+                tabIndex={isExpanded ? 0 : -1}
+                aria-label="Tamanho padrão da fonte (100%)"
+                aria-pressed={fontScaleId === 'md'}
+                title="Fonte padrão (100%)"
+                className={cn(
+                  'h-full rounded-full flex items-center justify-center text-[11px] font-semibold transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
+                  fontScaleId === 'md'
+                    ? 'bg-white dark:bg-zinc-800 text-text-primary shadow-2xs border border-border/70 dark:border-zinc-700/70'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/70'
+                )}
+              >
+                A
+              </button>
+
+              <button
+                type="button"
+                onClick={increaseFont}
+                disabled={!canIncreaseFont}
+                tabIndex={isExpanded ? 0 : -1}
+                aria-label="Aumentar tamanho da fonte"
+                title="Aumentar fonte"
+                className={cn(
+                  'h-full rounded-full flex items-center justify-center text-[11px] font-semibold transition-colors cursor-pointer disabled:opacity-35 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
+                  (fontScaleId === 'lg' || fontScaleId === 'xl')
+                    ? 'bg-white dark:bg-zinc-800 text-text-primary shadow-2xs border border-border/70 dark:border-zinc-700/70'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/70'
+                )}
+              >
+                A+
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleHighContrast}
+                tabIndex={isExpanded ? 0 : -1}
+                aria-label="Alternar alto contraste"
+                aria-pressed={highContrast}
+                title={highContrast ? 'Desativar alto contraste' : 'Ativar alto contraste'}
+                className={cn(
+                  'h-full rounded-full flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2',
+                  filtroSemiarido ? 'focus-visible:ring-amber-500' : 'focus-visible:ring-primary-500',
+                  highContrast
+                    ? 'bg-primary-600 text-white shadow-2xs'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/70'
+                )}
+              >
+                <Contrast size={14} strokeWidth={2} className="shrink-0" />
               </button>
             </div>
           </div>

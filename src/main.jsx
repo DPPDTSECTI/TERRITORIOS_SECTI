@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import '@fontsource-variable/plus-jakarta-sans';
+import '@fontsource-variable/lexend';
 import './index.css'
 
 class ErrorBoundary extends React.Component {

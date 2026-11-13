@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { resolveCssRgb } from './graph/chartTheme';
 
 const CustomTooltip = ({
   continuous,
@@ -319,7 +320,7 @@ export default function TourGuide() {
       styles={{
         options: {
           zIndex: 10000,
-          arrowColor: isDark ? 'rgb(24, 34, 54)' : '#ffffff', // A seta acompanha a cor do card no tema escuro
+          arrowColor: isDark ? 'rgb(24, 34, 54)' : resolveCssRgb('--color-surface', 'rgb(255, 255, 255)'), // A seta acompanha a cor do card no tema escuro
         },
         overlay: {
           backgroundColor: 'rgba(29, 53, 87, 0.4)', // Overlay mais escuro e elegante

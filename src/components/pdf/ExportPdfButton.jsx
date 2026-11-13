@@ -97,7 +97,7 @@ export default function ExportPdfButton({
 
   const variantStyles = {
     primary: 'bg-primary-900 text-white hover:bg-primary-800 shadow-2xs',
-    navy: 'bg-[#1D3557] text-white hover:bg-[#2563EB] shadow-xs',
+    navy: 'bg-brand text-white hover:bg-primary-600 shadow-xs',
     emerald: 'bg-emerald-700 text-white hover:bg-emerald-800 shadow-2xs'
   };
 

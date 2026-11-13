@@ -173,7 +173,7 @@ export function KpiCard({
 
       <div className="flex items-baseline gap-2 flex-wrap">
         <div className={cn(
-          'text-[30px] font-bold leading-none tracking-tight',
+          'font-display text-[30px] font-bold leading-none tracking-tight',
           isBrand ? 'text-white' : 'text-text-primary'
         )}>
           {typeof value === 'number' || (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value.trim())) ? (

@@ -1,40 +1,28 @@
-import { getMapPalette } from '../mapTheme';
-
-export const HEAT_LEVELS = [
-  { min: 0, max: 0, label: '0 cursos', color: '#F1F5F9', text: '#64748B' },
-  { min: 1, max: 5, label: '1 a 5', color: '#BAE6FD', text: '#0369A1' },
-  { min: 6, max: 15, label: '6 a 15', color: '#38BDF8', text: '#0284C7' },
-  { min: 16, max: 35, label: '16 a 35', color: '#2563EB', text: '#FFFFFF' },
-  { min: 36, max: 70, label: '36 a 70', color: '#1D4ED8', text: '#FFFFFF' },
-  { min: 71, max: Infinity, label: '70+ cursos', color: '#0F1D30', text: '#38BDF8' },
-];
-
-export const SEMIARIDO_HEAT_LEVELS = [
-  { min: 0, max: 0, label: '0 cursos', color: '#FEF9C3', text: '#854D0E' },
-  { min: 1, max: 5, label: '1 a 5', color: '#FDE68A', text: '#92400E' },
-  { min: 6, max: 15, label: '6 a 15', color: '#FBBF24', text: '#78350F' },
-  { min: 16, max: 35, label: '16 a 35', color: '#F59E0B', text: '#FFFFFF' },
-  { min: 36, max: 70, label: '36 a 70', color: '#D97706', text: '#FFFFFF' },
-  { min: 71, max: Infinity, label: '70+ cursos', color: '#78350F', text: '#FEF3C7' },
-];
+import { getMapPalette, resolveCssRgb } from '../mapTheme';
 
 /**
- * Retorna os níveis de calor dinâmicos adaptados ao tema claro/escuro e semiárido.
+ * Retorna os níveis de calor dinâmicos adaptados ao tema claro/escuro e semiárido,
+ * consumindo a escala sequencial unificada de mapTheme (--color-map-1..5 / --chart-seq).
  */
 export function getDynamicHeatLevels(isSemiarido = false, isDark = false) {
   const palette = getMapPalette(isDark, isSemiarido);
-  const textMuted = palette.textMuted || (isDark ? '#94A3B8' : '#64748B');
-  const textPrimary = palette.textPrimary || (isDark ? '#F8FAFC' : '#0F172A');
+  const white = resolveCssRgb('--color-white', 'rgb(255, 255, 255)');
+  const darkInk = resolveCssRgb('--color-neutral-950', 'rgb(9, 13, 22)');
+  const textMuted = palette.textMuted || resolveCssRgb('--color-text-muted', isDark ? 'rgb(148, 163, 184)' : 'rgb(100, 116, 139)');
+  const textPrimary = palette.textPrimary || resolveCssRgb('--color-text-primary', isDark ? 'rgb(248, 250, 252)' : 'rgb(9, 13, 22)');
 
   return [
     { min: 0, max: 0, label: '0 cursos', color: palette.choropleth.zero, text: textMuted },
-    { min: 1, max: 5, label: '1 a 5', color: palette.choropleth.level5, text: textMuted },
-    { min: 6, max: 15, label: '6 a 15', color: palette.choropleth.level4, text: isDark ? '#FFFFFF' : textPrimary },
-    { min: 16, max: 35, label: '16 a 35', color: palette.choropleth.level3, text: '#FFFFFF' },
-    { min: 36, max: 70, label: '36 a 70', color: palette.choropleth.level2, text: '#FFFFFF' },
-    { min: 71, max: Infinity, label: '70+ cursos', color: palette.choropleth.level1, text: isDark ? '#0F172A' : '#FFFFFF' },
+    { min: 1, max: 5, label: '1 a 5', color: palette.choropleth.level5, text: isDark ? white : textPrimary },
+    { min: 6, max: 15, label: '6 a 15', color: palette.choropleth.level4, text: isDark ? white : textPrimary },
+    { min: 16, max: 35, label: '16 a 35', color: palette.choropleth.level3, text: white },
+    { min: 36, max: 70, label: '36 a 70', color: palette.choropleth.level2, text: white },
+    { min: 71, max: Infinity, label: '70+ cursos', color: palette.choropleth.level1, text: isDark ? darkInk : white },
   ];
 }
+
+export const HEAT_LEVELS = getDynamicHeatLevels(false, false);
+export const SEMIARIDO_HEAT_LEVELS = getDynamicHeatLevels(true, false);
 
 export const getHeatColor = (count, isSemiarido = false, isDark = false) => {
   const palette = getMapPalette(isDark, isSemiarido);

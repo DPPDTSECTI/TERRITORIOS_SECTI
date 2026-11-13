@@ -1,23 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React from 'react';
+import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { cn } from '../../lib/cn';
 
-const positionClasses = {
-  top: 'bottom-full inset-x-0 flex justify-center mb-2',
-  bottom: 'top-full inset-x-0 flex justify-center mt-2',
-  right: 'left-full inset-y-0 flex items-center ml-2',
-  left: 'right-full inset-y-0 flex items-center mr-2',
-};
-
-const animationVariants = {
-  top: { initial: { opacity: 0, y: 4 }, animate: { opacity: 1, y: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, y: 4 } },
-  bottom: { initial: { opacity: 0, y: -4 }, animate: { opacity: 1, y: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, y: -4 } },
-  right: { initial: { opacity: 0, x: -4 }, animate: { opacity: 1, x: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, x: -4 } },
-  left: { initial: { opacity: 0, x: 4 }, animate: { opacity: 1, x: 0, transitionEnd: { transform: 'none' } }, exit: { opacity: 0, x: 4 } },
-};
-
 /**
- * Componente de dica flutuante contextual (Tooltip) com delay customizável.
+ * Componente de dica flutuante contextual (Radix Tooltip) com portal, colisão e delay customizável.
  *
  * @component
  * @param {object} props
@@ -34,65 +20,38 @@ export function Tooltip({
   className,
   children,
 }) {
-  const [isVisible, setIsVisible] = useState(false);
-  const timeoutRef = useRef(null);
-
-  const showTooltip = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsVisible(true);
-    }, delay);
-  };
-
-  const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    setIsVisible(false);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   if (!content) return children;
 
-  return (
-    <div
-      className="relative inline-flex items-center"
-      onMouseEnter={showTooltip}
-      onMouseLeave={hideTooltip}
-      onFocus={showTooltip}
-      onBlur={hideTooltip}
-    >
-      {children}
+  const triggerNode = React.isValidElement(children) ? (
+    <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+  ) : (
+    <RadixTooltip.Trigger asChild>
+      <span tabIndex={0} className="inline-flex items-center">
+        {children}
+      </span>
+    </RadixTooltip.Trigger>
+  );
 
-      <AnimatePresence>
-        {isVisible && (
-          <div
+  return (
+    <RadixTooltip.Provider delayDuration={delay}>
+      <RadixTooltip.Root>
+        {triggerNode}
+        <RadixTooltip.Portal>
+          <RadixTooltip.Content
+            side={side}
+            sideOffset={6}
+            collisionPadding={8}
             className={cn(
-              'absolute z-[120] pointer-events-none select-none',
-              positionClasses[side] || positionClasses.top
+              'z-[120] select-none bg-neutral-900 text-white dark:bg-surface-raised dark:text-text-primary text-caption px-2.5 py-1.5 rounded-control shadow-float border border-border whitespace-nowrap font-medium',
+              'animate-in fade-in-0 zoom-in-95 duration-150',
+              className
             )}
           >
-            <motion.div
-              role="tooltip"
-              initial={animationVariants[side]?.initial || animationVariants.top.initial}
-              animate={animationVariants[side]?.animate || animationVariants.top.animate}
-              exit={animationVariants[side]?.exit || animationVariants.top.exit}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-              className={cn(
-                'bg-neutral-900 text-white dark:bg-surface-raised dark:text-text-primary text-caption px-2.5 py-1.5 rounded-control shadow-float border border-border whitespace-nowrap font-medium',
-                className
-              )}
-            >
-              {content}
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-    </div>
+            {content}
+          </RadixTooltip.Content>
+        </RadixTooltip.Portal>
+      </RadixTooltip.Root>
+    </RadixTooltip.Provider>
   );
 }
 

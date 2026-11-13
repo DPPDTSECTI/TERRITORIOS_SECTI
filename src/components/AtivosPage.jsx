@@ -37,6 +37,7 @@ import {
     DetailIsland
 } from './ui';
 import { useTheme } from '../context/ThemeContext';
+import { getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
@@ -339,8 +340,8 @@ export default function AtivosPage() {
                     shortName: a.shortTipo || t,
                     count: 0,
                     rnpCount: 0,
-                    corHex: a.corHex || '#3B82F6',
-                    corHexDark: a.corHexDark || '#60A5FA',
+                    corHex: a.corHex || getSemanticColors().primarySoft,
+                    corHexDark: a.corHexDark || getSemanticColors().primaryLight,
                     icone: a.icone || Database
                 };
             }
@@ -515,7 +516,7 @@ export default function AtivosPage() {
         const isSemi = isMunicipioSemiarido(selectedAsset.municipio);
         const accentColor = filtroSemiarido
             ? getSemiaridoPointColor(isDark ? (selectedAsset.corHexDark || selectedAsset.corHex) : selectedAsset.corHex, selectedAsset.tipo || selectedAsset.shortTipo || selectedAsset.nome, isDark)
-            : (isDark ? (selectedAsset.corHexDark || selectedAsset.corHex || '#60A5FA') : (selectedAsset.corHex || '#2563EB'));
+            : (isDark ? (selectedAsset.corHexDark || selectedAsset.corHex || getSemanticColors(true).primaryLight) : (selectedAsset.corHex || getSemanticColors(false).primaryBase));
 
         const statusPills = [
             ...(selectedAsset.sigla ? [{ label: selectedAsset.sigla, variant: 'primary' }] : []),
@@ -1003,7 +1004,7 @@ export default function AtivosPage() {
                                         const IconComp = ativo.icone || Database;
                                         const itemColor = filtroSemiarido
                                             ? getSemiaridoPointColor(ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome)
-                                            : (ativo.corHex || '#3B82F6');
+                                            : (ativo.corHex || getSemanticColors().primarySoft);
                                         const isSelected = selectedAssetId === ativo.id;
 
                                         return (
@@ -1395,7 +1396,7 @@ export default function AtivosPage() {
                                                 const isSelected = selectedAssetId === ativo.id;
                                                 const itemColor = filtroSemiarido
                                                     ? getSemiaridoPointColor(isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex, ativo.tipo || ativo.shortTipo || ativo.nome, isDark)
-                                                    : (isDark ? (ativo.corHexDark || ativo.corHex || '#60A5FA') : (ativo.corHex || '#2563EB'));
+                                                    : (isDark ? (ativo.corHexDark || ativo.corHex || getSemanticColors(true).primaryLight) : (ativo.corHex || getSemanticColors(false).primaryBase));
                                                 const assetUrl = ativo.urlReferencia || ativo.url || ativo.link || ativo.site;
 
                                                 return (
@@ -1565,7 +1566,7 @@ export default function AtivosPage() {
                                                 const isSelected = selectedTipos.includes(cat.name) || selectedTipo === cat.name;
                                                 const catColor = filtroSemiarido
                                                     ? getSemiaridoPointColor(isDark ? (cat.corHexDark || cat.corHex) : cat.corHex, cat.name || cat.key, isDark)
-                                                    : (isDark ? (cat.corHexDark || cat.corHex || '#60A5FA') : (cat.corHex || '#2563EB'));
+                                                    : (isDark ? (cat.corHexDark || cat.corHex || getSemanticColors(true).primaryLight) : (cat.corHex || getSemanticColors(false).primaryBase));
 
                                                 const pos = Number(cat.rnpCount || 0);
                                                 const total = Number(cat.count || 0);
@@ -1679,7 +1680,7 @@ export default function AtivosPage() {
                                                     const totalMunAtivos = municipalityRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
                                                     const remaining = Math.max(0, totalMunAtivos - total);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';
@@ -1756,7 +1757,7 @@ export default function AtivosPage() {
                                                     const totalTerrAtivos = territoryRanking.reduce((acc, x) => acc + Number(x.count || 0), 0) || 1;
                                                     const remaining = Math.max(0, totalTerrAtivos - total);
 
-                                                    const posPillColor = filtroSemiarido ? '#D97706' : '#2563EB';
+                                                    const posPillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
                                                     const negPillStyle = filtroSemiarido
                                                         ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
                                                         : 'bg-surface-soft text-text-secondary border border-border';
