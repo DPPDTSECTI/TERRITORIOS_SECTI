@@ -6,12 +6,12 @@
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 736 nodes · 2311 edges · 41 communities (32 shown, 9 thin omitted)
+- 736 nodes · 2316 edges · 41 communities (32 shown, 9 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 57 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `03c7a853`
+- Built from commit: `55f1250a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -60,8 +60,8 @@
 1. `react` - 60 edges
 2. `cn()` - 53 edges
 3. `lucide-react` - 38 edges
-4. `useTheme()` - 36 edges
-5. `SideMap()` - 33 edges
+4. `SideMap()` - 36 edges
+5. `useTheme()` - 36 edges
 6. `normalize()` - 31 edges
 7. `getSemanticColors()` - 29 edges
 8. `isMunicipioSemiarido()` - 28 edges
@@ -228,13 +228,13 @@ Nodes (6): [Baixa] Dados: assetTypes acoplado, heuristica cache, provider, O(n*m
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `react` connect `react` to `chartTheme.js`, `CadeiaPage.jsx`, `AtivosPage.jsx`, `RelatorioCadeias.jsx`, `dependencies`, `SideMap.jsx`, `RelatorioAtivos.jsx`, `RelatorioPage.jsx`, `App.jsx`, `RelatorioPage.jsx`, `DashboardPainel.jsx`, `package.json`, `useTheme`, `AdminPage.jsx`, `DataContext.jsx`, `AUDITORIA.md Auditoria do repositorio`?**
-  _High betweenness centrality (0.146) - this node is a cross-community bridge._
+  _High betweenness centrality (0.145) - this node is a cross-community bridge._
 - **What connects `Deploy Vercel (cron, headers, rewrites)`, `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
   _Cohesion score 0.08385579937304075 - nodes in this community are weakly interconnected._
 - **Why does `lucide-react` connect `DashboardPainel.jsx` to `react`, `CadeiaPage.jsx`, `AtivosPage.jsx`, `chartTheme.js`, `dependencies`, `SideMap.jsx`, `RelatorioAtivos.jsx`, `RelatorioCadeias.jsx`, `RelatorioPage.jsx`, `App.jsx`, `RelatorioPage.jsx`, `package.json`, `useTheme`, `AdminPage.jsx`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Should `RelatorioCadeias.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.1452991452991453 - nodes in this community are weakly interconnected._
 
