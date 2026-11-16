@@ -41,6 +41,7 @@ import {
   KpiSkeleton,
   useToast,
 } from './ui';
+import { buildEntitySearchData } from './ui/Input';
 
 const BATCH_SIZE = 30;
 
@@ -490,6 +491,23 @@ export default function AdminPage() {
     });
   }, [currentList, activeEntity, territoryNameById]);
 
+  const adminSearchData = useMemo(
+    () => buildEntitySearchData(normalizedRows, {
+      facets: [
+        { category: 'Categoria', getValue: (r) => r.category, priority: 14, recommendationLimit: 2 },
+        { category: 'Município', getValue: (r) => r.municipality, priority: 12, recommendationLimit: 2 },
+        { category: 'Território', getValue: (r) => r.territoryName, priority: 10, recommendationLimit: 2 }
+      ],
+      itemExtractor: {
+        category: 'Registro',
+        getLabel: (r) => r.primary,
+        getSubtitle: (r) => [r.municipality, r.territoryName].filter(Boolean).join(' · '),
+        priority: 4
+      }
+    }),
+    [normalizedRows]
+  );
+
   const filteredRows = useMemo(() => {
     const q = normalize(searchTerm);
     return normalizedRows.filter((row) => {
@@ -930,12 +948,14 @@ export default function AdminPage() {
           )}
         >
           {/* TOOLBAR UNIFICADA */}
-          <div className="p-4 sm:px-5 border-b border-border/60 flex flex-col lg:flex-row lg:items-center justify-between gap-3 shrink-0">
+          <div className="p-4 sm:px-5 border-b border-border/60 flex flex-col lg:flex-row lg:items-center justify-between gap-3 shrink-0 relative z-30">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
               <SearchInput
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onClear={() => setSearchTerm('')}
+                suggestions={adminSearchData.suggestions}
+                recommendations={adminSearchData.recommendations}
                 enableShortcut
                 containerClassName="sm:max-w-md"
                 placeholder="Buscar registro, município... (/)"

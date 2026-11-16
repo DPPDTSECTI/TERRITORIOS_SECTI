@@ -94,7 +94,8 @@ export default function SideMap({
   onToggleExpand = null,
   filtroSemiarido: propFiltroSemiarido,
   getSegmentColor = null,
-  hideLayerControls = false
+  hideLayerControls = false,
+  hideSemiaridoToggle = false
 }) {
   const {
     filtroSemiarido: contextFiltroSemiarido,
@@ -1802,7 +1803,7 @@ export default function SideMap({
         )}
 
         {/* BOTÃO MODO SEMIÁRIDO */}
-        {!hideLayerControls && Boolean(setFiltroSemiarido) && (
+        {!hideLayerControls && !hideSemiaridoToggle && Boolean(setFiltroSemiarido) && (
           <button
             type="button"
             onClick={() => setFiltroSemiarido(prev => !prev)}

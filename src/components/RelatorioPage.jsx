@@ -28,8 +28,10 @@ import {
   Badge,
   KpiCard,
   PageHeader,
+  SearchInput,
   useToast
 } from './ui';
+import { buildEntitySearchData } from './ui/Input';
 import SideMap from './maps/SideMap';
 import PtiMap from './maps/PtiMap';
 import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIOS } from '../constants/semiarido';
@@ -612,6 +614,74 @@ export default function RelatorioPage() {
       setSortAsc(true);
     }
   };
+
+  // Sugestões e recomendações contextuais para a tabela do relatório atual
+  const tableSearchData = useMemo(() => {
+    if (reportType === 'ativos') {
+      return buildEntitySearchData(scopedAtivos, {
+        facets: [
+          { category: 'Instituição', getValue: (a) => a.sigla, priority: 14, recommendationLimit: 2 },
+          { category: 'Município', getValue: (a) => a.municipio, priority: 12, recommendationLimit: 2 },
+          { category: 'Tipologia', getValue: (a) => a.tipo, priority: 10, recommendationLimit: 2 }
+        ],
+        itemExtractor: {
+          category: 'Ativo',
+          getLabel: (a) => a.nome_ativo || a.ativo || a.nome,
+          getSubtitle: (a) => [a.municipio, a.tipo].filter(Boolean).join(' · '),
+          priority: 4
+        }
+      });
+    }
+    if (reportType === 'cursos') {
+      return buildEntitySearchData(scopedCursos, {
+        facets: [
+          { category: 'Instituição', getValue: (c) => c.sigla || cleanIes(c.instituicao || c.entidade), priority: 14, recommendationLimit: 2 },
+          { category: 'Área', getValue: (c) => c.tipo || c.categoria, priority: 12, recommendationLimit: 2 },
+          { category: 'Município', getValue: (c) => c.municipio, priority: 11, recommendationLimit: 2 }
+        ],
+        itemExtractor: {
+          category: 'Curso',
+          getLabel: (c) => c.nome || c.curso,
+          getSubtitle: (c) => [c.tipo || c.categoria, c.sigla].filter(Boolean).join(' · '),
+          aggregate: true,
+          priority: 6
+        }
+      });
+    }
+    if (reportType === 'cadeias') {
+      return buildEntitySearchData(scopedCadeias, {
+        facets: [
+          { category: 'Tipologia', getValue: (c) => c.shortTipo || c.tipo, priority: 14, recommendationLimit: 3 },
+          { category: 'Segmento', getValue: (c) => c.segmento, priority: 12, recommendationLimit: 3 }
+        ],
+        itemExtractor: {
+          category: 'Arranjo / IG',
+          getLabel: (c) => c.nome || c.entidade,
+          getSubtitle: (c) => c.segmento || c.shortTipo || c.tipo,
+          priority: 4
+        }
+      });
+    }
+    if (reportType === 'municipios') {
+      return buildEntitySearchData(scopedMunicipios, {
+        facets: [
+          {
+            category: 'Território',
+            getValue: (m) => (m.territorio || m.nome_territorio || '').replace(/^Território de Identidade\s+/i, ''),
+            priority: 14,
+            recommendationLimit: 3
+          }
+        ],
+        itemExtractor: {
+          category: 'Município',
+          getLabel: (m) => m.municipio || m.nome_municipio,
+          getSubtitle: (m) => (m.territorio || m.nome_territorio || '').replace(/^Território de Identidade\s+/i, ''),
+          priority: 8
+        }
+      });
+    }
+    return { suggestions: [], recommendations: [] };
+  }, [reportType, scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios]);
 
   // FILTRAGEM E ORDENAÇÃO DE TABELAS CONFORME O RELATÓRIO
   const tableData = useMemo(() => {
@@ -1405,6 +1475,7 @@ export default function RelatorioPage() {
                   selectedTerritory={selectedTerritory}
                   onSelectTerritory={handleMapSelect}
                   filtroSemiarido={reportMode === 'semiarido'}
+                  hideSemiaridoToggle={true}
                 />
               );
             }
@@ -1417,6 +1488,7 @@ export default function RelatorioPage() {
                   selectedTerritory={selectedTerritory}
                   onSelectTerritory={handleMapSelect}
                   filtroSemiarido={reportMode === 'semiarido'}
+                  hideSemiaridoToggle={true}
                 />
               );
             }
@@ -1432,6 +1504,7 @@ export default function RelatorioPage() {
                   onAssetClick={(cad) => setSelectedCadeia((prev) => (prev?.id === cad?.id ? null : cad))}
                   onSelectTerritory={handleMapSelect}
                   filtroSemiarido={reportMode === 'semiarido'}
+                  hideSemiaridoToggle={true}
                 />
               );
             }
@@ -1445,7 +1518,6 @@ export default function RelatorioPage() {
                 territoriesDynamicStats={territoriesDynamicStats}
                 semiaridoMunicipios={reportMode === 'semiarido' ? SEMIARIDO_MUNICIPIOS : []}
                 filtroSemiarido={reportMode === 'semiarido'}
-                onToggleSemiarido={handleToggleReportMode}
               />
             );
           })()}
@@ -1755,27 +1827,21 @@ export default function RelatorioPage() {
             <div className="flex-1 flex flex-col overflow-hidden print:block print:h-auto print:overflow-visible min-h-0">
 
               {/* BARRA DE BUSCA E CONTAGEM DA TABELA */}
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-3 shrink-0 print:hidden min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3 shrink-0 print:hidden min-w-0 relative z-30">
                 <div className="relative flex-1 max-w-sm min-w-[200px]">
-                  <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
-                  <input
-                    type="text"
+                  <SearchInput
                     value={tableSearch}
                     onChange={(e) => setTableSearch(e.target.value)}
+                    onClear={() => setTableSearch('')}
+                    suggestions={tableSearchData.suggestions}
+                    recommendations={tableSearchData.recommendations}
                     placeholder={`Pesquisar nos ${tableData.length} registros...`}
-                    className={`w-full h-9 pl-9 pr-7 rounded-control bg-surface-soft border border-border text-body-sm text-text-primary placeholder-text-muted focus:bg-surface focus:outline-none transition-colors ${reportMode === 'semiarido' ? 'focus:border-amber-500 focus:ring-1 focus:ring-amber-400' : 'focus:border-primary-600 focus:ring-1 focus:ring-primary-500'
-                      }`}
+                    className={
+                      reportMode === 'semiarido'
+                        ? 'bg-surface-soft focus-visible:ring-amber-400 focus-visible:border-amber-500'
+                        : 'bg-surface-soft'
+                    }
                   />
-                  {tableSearch && (
-                    <button
-                      type="button"
-                      onClick={() => setTableSearch('')}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary text-body-sm font-medium cursor-pointer"
-                      title="Limpar pesquisa"
-                    >
-                      ×
-                    </button>
-                  )}
                 </div>
 
                 <div className="text-caption font-medium text-text-secondary shrink-0 tnum">
