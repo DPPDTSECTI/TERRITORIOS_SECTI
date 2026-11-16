@@ -853,11 +853,8 @@ export default function PtiMap({
           {modoGeografico && (
             <TileLayer
               key={`pti-geo-tiles-${isDark ? 'dark' : 'light'}`}
-              url={
-                isDark
-                  ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-                  : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'
-              }
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+              className={isDark ? 'map-tiles-dark' : ''}
               maxZoom={19}
               minZoom={3}
               keepBuffer={2}
@@ -921,10 +918,10 @@ export default function PtiMap({
               data={allTerritoryMesh}
               style={{
                 color: modoGeografico
-                  ? (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : getSemanticColors(isDark).slateMuted)
+                  ? (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : (isDark ? '#94A3B8' : getSemanticColors(false).slateMuted))
                   : (filtroSemiarido ? (isDark ? getSemanticColors(true).warning : getSemanticColors(false).warningWarm) : isDark ? getSemanticColors(true).slateBorder : getSemanticColors(false).white),
-                weight: modoGeografico ? 0.75 : (filtroSemiarido ? 1.6 : 1.8),
-                opacity: modoGeografico ? (selectedTerritory ? 0.25 : 0.38) : (filtroSemiarido ? 0.7 : isDark ? 0.85 : 0.95),
+                weight: modoGeografico ? (isDark ? 0.95 : 0.75) : (filtroSemiarido ? 1.6 : 1.8),
+                opacity: modoGeografico ? (selectedTerritory ? (isDark ? 0.35 : 0.25) : (isDark ? 0.55 : 0.38)) : (filtroSemiarido ? 0.7 : isDark ? 0.85 : 0.95),
                 fill: false,
                 lineCap: 'round',
                 lineJoin: 'round'

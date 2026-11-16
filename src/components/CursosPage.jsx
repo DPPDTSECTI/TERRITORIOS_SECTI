@@ -180,13 +180,15 @@ export default function CursosPage() {
 
     const itemRefs = useRef({});
     const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+    const isEadTab = activeTab === 'ead';
+    const baseCursosPool = isEadTab ? cursosEadData : cursosData;
 
-    // Cursos presenciais restritos ao território selecionado
+    // Cursos (presenciais ou EaD na aba EaD) restritos ao território selecionado
     const territoryCursos = useMemo(() => {
-        if (!cursosData || cursosData.length === 0) return [];
-        if (!selectedTerritory) return cursosData;
-        return cursosData.filter(c => Number(c.id_territorio) === Number(selectedTerritory.id_territorio));
-    }, [cursosData, selectedTerritory]);
+        if (!baseCursosPool || baseCursosPool.length === 0) return [];
+        if (!selectedTerritory) return baseCursosPool;
+        return baseCursosPool.filter(c => Number(c.id_territorio) === Number(selectedTerritory.id_territorio));
+    }, [baseCursosPool, selectedTerritory]);
 
     // Subconjunto ativo com respeito ao Semiárido
     const activeScopedCursos = useMemo(() => {
@@ -340,9 +342,10 @@ export default function CursosPage() {
     }, [cursosEadData, selectedCategory, selectedRede, selectedIES, selectedTerritory, searchQuery, filtroSemiarido]);
 
     const compactCursosList = useMemo(() => {
-        if (!sidebarSearch.trim()) return filteredCursos;
+        const source = isEadTab ? filteredEadCursos : filteredCursos;
+        if (!sidebarSearch.trim()) return source;
         const q = normalize(sidebarSearch);
-        return filteredCursos.filter(c =>
+        return source.filter(c =>
             normalize(c.curso || c.nome).includes(q) ||
             normalize(c.sigla).includes(q) ||
             normalize(c.entidade).includes(q) ||
@@ -350,10 +353,10 @@ export default function CursosPage() {
             normalize(c.municipio).includes(q) ||
             normalize(c.categoria || c.tipo).includes(q)
         );
-    }, [filteredCursos, sidebarSearch]);
+    }, [filteredCursos, filteredEadCursos, isEadTab, sidebarSearch]);
 
     const cursosDataForMap = useMemo(() => {
-        let list = cursosData;
+        let list = baseCursosPool;
         if (filtroSemiarido) {
             list = list.filter(c => isMunicipioSemiarido(c.municipio));
         }
@@ -379,7 +382,7 @@ export default function CursosPage() {
                 cleanEnt === selectedIES
             );
         });
-    }, [cursosData, selectedCategory, selectedRede, selectedIES, filtroSemiarido]);
+    }, [baseCursosPool, selectedCategory, selectedRede, selectedIES, filtroSemiarido]);
 
     // 2. Mapeamento e Estatísticas de Categorias (Áreas)
     const categoryStats = useMemo(() => {
@@ -425,8 +428,8 @@ export default function CursosPage() {
 
     // 3A. Ranking de Territórios
     const territoryRanking = useMemo(() => {
-        if (!cursosData || cursosData.length === 0) return [];
-        const base = filtroSemiarido ? cursosData.filter(c => isMunicipioSemiarido(c.municipio)) : cursosData;
+        if (!baseCursosPool || baseCursosPool.length === 0) return [];
+        const base = filtroSemiarido ? baseCursosPool.filter(c => isMunicipioSemiarido(c.municipio)) : baseCursosPool;
         const counts = {};
         let totalCount = 0;
 
@@ -463,7 +466,7 @@ export default function CursosPage() {
 
         const maxCount = Math.max(...Object.values(counts).map(t => t.count), 1);
 
-        return Object.values(counts)
+            return Object.values(counts)
             .sort((a, b) => b.count - a.count)
             .map((t, idx) => ({
                 ...t,
@@ -472,7 +475,7 @@ export default function CursosPage() {
                 percentBar: Math.min(100, (t.count / maxCount) * 100),
                 heatColor: getHeatColor(t.count)
             }));
-    }, [cursosData, territoriosData, filtroSemiarido]);
+    }, [baseCursosPool, territoriosData, filtroSemiarido]);
 
     // 3B. Ranking de Municípios
     const municipalityRanking = useMemo(() => {
@@ -542,29 +545,32 @@ export default function CursosPage() {
     }, [activeScopedCursos]);
 
     const totalIesUnicas = useMemo(() => {
-        if (!cursosData || cursosData.length === 0) return 0;
+        if (!baseCursosPool || baseCursosPool.length === 0) return 0;
         const iesSet = new Set();
-        const base = filtroSemiarido ? cursosData.filter(c => isMunicipioSemiarido(c.municipio)) : cursosData;
+        const base = filtroSemiarido ? baseCursosPool.filter(c => isMunicipioSemiarido(c.municipio)) : baseCursosPool;
         base.forEach(c => {
             const nome = c.sigla ? String(c.sigla).trim().toUpperCase() : String(c.entidade || c.instituicao || '').trim();
             if (nome) iesSet.add(nome);
         });
         return iesSet.size;
-    }, [cursosData, filtroSemiarido]);
+    }, [baseCursosPool, filtroSemiarido]);
 
     const territoriosComCursosCount = useMemo(() => {
-        if (!filtroSemiarido && territoriosData && territoriosData.length > 0) {
+        if (!filtroSemiarido && !isEadTab && territoriosData && territoriosData.length > 0) {
             return territoriosData.filter(t => Number(t.qtd_cursos_cti || 0) > 0).length;
         }
         return territoryRanking.length;
-    }, [territoriosData, territoryRanking, filtroSemiarido]);
+    }, [territoriosData, territoryRanking, filtroSemiarido, isEadTab]);
 
     const cursosSemiaridoCount = useMemo(() => {
+        if (isEadTab) {
+            return (baseCursosPool || []).filter(c => isMunicipioSemiarido(c.municipio)).length;
+        }
         if (!territoriosData || territoriosData.length === 0) return 0;
         return territoriosData
             .filter(t => Number(t.qtd_mun_semiarido || 0) > 0)
             .reduce((acc, t) => acc + Number(t.qtd_cursos_cti || 0), 0);
-    }, [territoriosData]);
+    }, [territoriosData, isEadTab, baseCursosPool]);
 
     const semiaridoMetrics = useMemo(() => {
         const totalCursos = territoryCursos.length || 1;
@@ -722,15 +728,25 @@ export default function CursosPage() {
 
     const kpis = [
         {
-            label: filtroSemiarido
-                ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido')
-                : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos Presenciais de CT&I'),
-            value: loadingStats ? '...' : (filtroSemiarido ? semiaridoMetrics.semiCursos : (selectedTerritory ? territoryCursos.length : (kpisGlobais?.cursos != null ? kpisGlobais.cursos : cursosData.length))),
+            label: isEadTab
+                ? (filtroSemiarido
+                    ? (selectedTerritory ? `Cursos EaD no Semiárido · ${territoryName}` : 'Cursos EaD no Semiárido')
+                    : (selectedTerritory ? `Cursos EaD em ${territoryName}` : 'Cursos EaD de CT&I'))
+                : (filtroSemiarido
+                    ? (selectedTerritory ? `Cursos no Semiárido · ${territoryName}` : 'Cursos CT&I no Semiárido')
+                    : (selectedTerritory ? `Cursos em ${territoryName}` : 'Cursos Presenciais de CT&I')),
+            value: loadingStats
+                ? '...'
+                : (filtroSemiarido
+                    ? semiaridoMetrics.semiCursos
+                    : (selectedTerritory || isEadTab
+                        ? territoryCursos.length
+                        : (kpisGlobais?.cursos != null ? kpisGlobais.cursos : cursosData.length))),
             percent: filtroSemiarido ? `${semiaridoMetrics.pctCursos}% do total` : null,
             tooltip: filtroSemiarido
                 ? `No Semiárido: ${semiaridoMetrics.semiCursos} (${semiaridoMetrics.pctCursos}% do total de cursos) | Fora: ${Math.max(0, territoryCursos.length - semiaridoMetrics.semiCursos)}`
                 : undefined,
-            icon: GraduationCap
+            icon: isEadTab ? Laptop : GraduationCap
         },
         {
             label: filtroSemiarido ? 'Territórios com Oferta (Semiárido)' : 'Territórios com Oferta',
@@ -743,7 +759,7 @@ export default function CursosPage() {
             icon: Building2
         },
         {
-            label: filtroSemiarido ? 'Municípios com Oferta' : 'Cursos no Semiárido',
+            label: filtroSemiarido ? 'Municípios com Oferta' : (isEadTab ? 'Cursos EaD no Semiárido' : 'Cursos no Semiárido'),
             value: loadingStats ? '...' : (filtroSemiarido ? `${municipalityRanking.length} munic.` : cursosSemiaridoCount),
             icon: Database
         },
