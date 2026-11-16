@@ -35,6 +35,7 @@ import {
     ScrollableList,
     DetailIsland
 } from './ui';
+import { buildEntitySearchData } from './ui/Input';
 import { useChartTheme, getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
@@ -683,6 +684,42 @@ export default function CursosPage() {
         };
     }, [selectedCurso, cursosData, cursosEadData, territoriosData, categoryColorMap, filtroSemiarido, selectedIES]);
 
+    const cursosSearchData = useMemo(
+        () => buildEntitySearchData(activeScopedCursos, {
+            facets: [
+                {
+                    category: 'Instituição',
+                    getValue: (c) => (c.sigla && String(c.sigla).trim())
+                        ? String(c.sigla).trim().toUpperCase()
+                        : (c.entidade || c.instituicao),
+                    priority: 14,
+                    recommendationLimit: 2
+                },
+                {
+                    category: 'Área',
+                    getValue: (c) => c.categoria || c.tipo,
+                    priority: 12,
+                    recommendationLimit: 2
+                },
+                {
+                    category: 'Município',
+                    getValue: (c) => c.municipio,
+                    priority: 11,
+                    recommendationLimit: 2
+                }
+            ],
+            itemExtractor: {
+                category: 'Curso',
+                getLabel: (c) => c.nome || c.curso,
+                getSubtitle: (c) => [c.categoria || c.tipo, c.sigla].filter(Boolean).join(' · '),
+                aggregate: true,
+                priority: 6,
+                maxItems: 700
+            }
+        }),
+        [activeScopedCursos]
+    );
+
     const kpis = [
         {
             label: filtroSemiarido
@@ -716,6 +753,34 @@ export default function CursosPage() {
             icon: Sparkles
         }
     ];
+
+    const activeDetailIsland = selectedCurso && selectedCursoDetails ? (
+        <DetailIsland
+            compact={isMapExpanded}
+            isOpen={true}
+            onClose={() => {
+                setSelectedCursoId(null);
+                setSelectedCurso(null);
+            }}
+            title={selectedCursoDetails.title}
+            subtitle={selectedCursoDetails.subtitle}
+            badgeText={selectedCursoDetails.badgeText}
+            accentColor={selectedCursoDetails.accentColor}
+            icon={selectedCursoDetails.icon}
+            statusPills={selectedCursoDetails.statusPills}
+            metrics={selectedCursoDetails.metrics}
+            extraSection={selectedCursoDetails.extraSection}
+            externalUrl={selectedCursoDetails.externalUrl}
+            externalLabel="Fonte Oficial"
+            secondaryAction={selectedCursoDetails.secondaryAction}
+            filtroSemiarido={filtroSemiarido}
+            className={
+                isMapExpanded
+                    ? 'flex-1 h-full w-full min-h-0'
+                    : 'absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40'
+            }
+        />
+    ) : null;
 
     return (
         <main className="flex-1 min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
@@ -916,14 +981,18 @@ export default function CursosPage() {
                     />
                 </motion.div>
 
-                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS CONFORME PROTÓTIPO */}
+                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS OU BOX DE DETALHES DEDICADA */}
                 {isMapExpanded ? (
                     <motion.div
                         variants={fadeUp}
-                        className="w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
+                        className="w-full lg:w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
                     >
+                        {activeDetailIsland ? (
+                            activeDetailIsland
+                        ) : (
+                        <>
                         {/* BOX 1: CABEÇALHO & BUSCA */}
-                        <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0">
+                        <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0 relative z-20">
                             <div className="flex items-center justify-between gap-2 shrink-0">
                                 <div className="flex items-center gap-2 min-w-0">
                                     <span className="text-body-sm font-semibold text-text-primary truncate">
@@ -950,6 +1019,8 @@ export default function CursosPage() {
                                     value={sidebarSearch}
                                     onChange={(e) => setSidebarSearch(e.target.value)}
                                     onClear={() => setSidebarSearch('')}
+                                    suggestions={cursosSearchData.suggestions}
+                                    recommendations={cursosSearchData.recommendations}
                                     placeholder="Filtrar cursos..."
                                     size="sm"
                                 />
@@ -1039,6 +1110,8 @@ export default function CursosPage() {
                                 )}
                             </div>
                         </div>
+                        </>
+                        )}
                     </motion.div>
                 ) : (
                     /* LADO DIREITO: CATÁLOGO COM A NOVA ABA DE CURSOS EAD */
@@ -1305,6 +1378,8 @@ export default function CursosPage() {
                                         }
                                     }}
                                     onClear={() => setSearchQuery('')}
+                                    suggestions={cursosSearchData.suggestions}
+                                    recommendations={cursosSearchData.recommendations}
                                     placeholder="Buscar curso, instituição ou cidade... (/)"
                                     size="sm"
                                 />
@@ -2119,28 +2194,7 @@ export default function CursosPage() {
             </motion.div>
 
             {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
-            {selectedCurso && selectedCursoDetails && (
-                <DetailIsland
-                    isOpen={true}
-                    onClose={() => {
-                        setSelectedCursoId(null);
-                        setSelectedCurso(null);
-                    }}
-                    title={selectedCursoDetails.title}
-                    subtitle={selectedCursoDetails.subtitle}
-                    badgeText={selectedCursoDetails.badgeText}
-                    accentColor={selectedCursoDetails.accentColor}
-                    icon={selectedCursoDetails.icon}
-                    statusPills={selectedCursoDetails.statusPills}
-                    metrics={selectedCursoDetails.metrics}
-                    extraSection={selectedCursoDetails.extraSection}
-                    externalUrl={selectedCursoDetails.externalUrl}
-                    externalLabel="Fonte Oficial"
-                    secondaryAction={selectedCursoDetails.secondaryAction}
-                    filtroSemiarido={filtroSemiarido}
-                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
-                />
-            )}
+            {!isMapExpanded && activeDetailIsland}
 
             </div>
 

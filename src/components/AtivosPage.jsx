@@ -36,6 +36,7 @@ import {
     ScrollableList,
     DetailIsland
 } from './ui';
+import { buildEntitySearchData } from './ui/Input';
 import { useTheme } from '../context/ThemeContext';
 import { getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
@@ -597,6 +598,23 @@ export default function AtivosPage() {
         };
     }, [selectedAsset, ativosProcessados, territoriosData, filtroSemiarido, isDark]);
 
+    const ativosSearchData = useMemo(
+        () => buildEntitySearchData(activeScopedAtivos, {
+            facets: [
+                { category: 'Instituição', getValue: (a) => a.sigla, priority: 14, recommendationLimit: 2 },
+                { category: 'Município', getValue: (a) => a.municipio, priority: 12, recommendationLimit: 2 },
+                { category: 'Tipologia', getValue: (a) => a.shortTipo || a.tipo, priority: 10, recommendationLimit: 2 }
+            ],
+            itemExtractor: {
+                category: 'Ativo',
+                getLabel: (a) => a.nome || a.nome_ativo || a.sigla,
+                getSubtitle: (a) => [a.municipio, a.shortTipo || a.tipo].filter(Boolean).join(' · '),
+                priority: 4
+            }
+        }),
+        [activeScopedAtivos]
+    );
+
     // 7. 5 Indicadores Estratégicos (KPIs com adaptação contextual à região e ao Semiárido)
     const kpis = [
         {
@@ -631,6 +649,50 @@ export default function AtivosPage() {
             icon: Sparkles
         }
     ];
+
+    const activeDetailIsland = selectedAsset && selectedAssetDetails ? (
+        <DetailIsland
+            compact={isMapExpanded}
+            isOpen={true}
+            onClose={() => {
+                setSelectedAssetId(null);
+                setFocusedAsset(null);
+            }}
+            title={selectedAsset.nome}
+            subtitle={`${selectedAsset.municipio} · ${selectedAsset.territorio}`}
+            badgeText={selectedAsset.tipo}
+            accentColor={selectedAssetDetails.accentColor}
+            icon={selectedAsset.icone || Database}
+            statusPills={selectedAssetDetails.statusPills}
+            metrics={selectedAssetDetails.metrics}
+            extraSection={selectedAssetDetails.extraSection}
+            externalUrl={selectedAssetDetails.externalUrl}
+            externalLabel="Acessar Site Oficial"
+            secondaryAction={
+                selectedAsset.lat && selectedAsset.lng
+                    ? {
+                          label: 'Focar no Mapa',
+                          icon: <MapPin size={15} />,
+                          onClick: () =>
+                              setFocusedAsset({
+                                  lat: selectedAsset.lat,
+                                  lng: selectedAsset.lng,
+                                  id: selectedAsset.id,
+                                  tipo: selectedAsset.tipo,
+                                  zoom: 15,
+                                  ts: Date.now()
+                              })
+                      }
+                    : null
+            }
+            filtroSemiarido={filtroSemiarido}
+            className={
+                isMapExpanded
+                    ? 'flex-1 h-full w-full min-h-0'
+                    : 'absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40'
+            }
+        />
+    ) : null;
 
     return (
         <main className="flex-1 min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
@@ -847,12 +909,16 @@ export default function AtivosPage() {
                     />
                 </motion.div>
 
-                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS CONFORME PROTÓTIPO */}
+                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS OU BOX DE DETALHES DEDICADA */}
                 {isMapExpanded ? (
                     <motion.div
                         variants={fadeUp}
-                        className="w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
+                        className="w-full lg:w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
                     >
+                        {activeDetailIsland ? (
+                            activeDetailIsland
+                        ) : (
+                        <>
                         {/* BOX 1: CABEÇALHO COMPACTO + BUSCA & FILTRO */}
                         <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0 relative z-20">
                             {/* CABEÇALHO */}
@@ -884,6 +950,8 @@ export default function AtivosPage() {
                                         value={sidebarSearch}
                                         onChange={(e) => setSidebarSearch(e.target.value)}
                                         onClear={() => setSidebarSearch('')}
+                                        suggestions={ativosSearchData.suggestions}
+                                        recommendations={ativosSearchData.recommendations}
                                         placeholder="Filtrar por nome, cidade..."
                                         size="sm"
                                     />
@@ -1094,6 +1162,8 @@ export default function AtivosPage() {
                                 )}
                             </div>
                         </div>
+                        </>
+                        )}
                     </motion.div>
                 ) : (
                     /* LADO DIREITO: DASHBOARD ANALÍTICO & CATÁLOGO DE ATIVOS */
@@ -1339,6 +1409,8 @@ export default function AtivosPage() {
                                         }
                                     }}
                                     onClear={() => setSearchQuery('')}
+                                    suggestions={ativosSearchData.suggestions}
+                                    recommendations={ativosSearchData.recommendations}
                                     placeholder="Buscar ativo, tipo, cidade... (/)"
                                     size="sm"
                                 />
@@ -1823,44 +1895,7 @@ export default function AtivosPage() {
             </motion.div>
 
             {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
-            {selectedAsset && selectedAssetDetails && (
-                <DetailIsland
-                    isOpen={true}
-                    onClose={() => {
-                        setSelectedAssetId(null);
-                        setFocusedAsset(null);
-                    }}
-                    title={selectedAsset.nome}
-                    subtitle={`${selectedAsset.municipio} · ${selectedAsset.territorio}`}
-                    badgeText={selectedAsset.tipo}
-                    accentColor={selectedAssetDetails.accentColor}
-                    icon={selectedAsset.icone || Database}
-                    statusPills={selectedAssetDetails.statusPills}
-                    metrics={selectedAssetDetails.metrics}
-                    extraSection={selectedAssetDetails.extraSection}
-                    externalUrl={selectedAssetDetails.externalUrl}
-                    externalLabel="Acessar Site Oficial"
-                    secondaryAction={
-                        selectedAsset.lat && selectedAsset.lng
-                            ? {
-                                  label: 'Focar no Mapa',
-                                  icon: <MapPin size={15} />,
-                                  onClick: () =>
-                                      setFocusedAsset({
-                                          lat: selectedAsset.lat,
-                                          lng: selectedAsset.lng,
-                                          id: selectedAsset.id,
-                                          tipo: selectedAsset.tipo,
-                                          zoom: 15,
-                                          ts: Date.now()
-                                      })
-                              }
-                            : null
-                    }
-                    filtroSemiarido={filtroSemiarido}
-                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
-                />
-            )}
+            {!isMapExpanded && activeDetailIsland}
 
             </div>
 

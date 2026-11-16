@@ -21,6 +21,7 @@ import {
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Badge } from './ui/Chip';
+import { SearchInput, buildEntitySearchData } from './ui/Input';
 
 const ICONES_CATEGORIA = {
   todas: Layers,
@@ -36,6 +37,37 @@ export default function FontesReferenciasSection() {
   const [selectedSubcategory, setSelectedSubcategory] = useState('todas_sub');
   const [copiedId, setCopiedId] = useState(null);
   const [visibleCount, setVisibleCount] = useState(12);
+
+  // Sugestões e recomendações baseadas no acervo oficial de fontes
+  const refSearchData = useMemo(() => {
+    const data = buildEntitySearchData(REFERENCIAS_DATABASE, {
+      facets: [
+        { category: 'Órgão', getValue: (r) => r.autorOuOrgao, priority: 14, recommendationLimit: 2 },
+        { category: 'Subcategoria', getValue: (r) => r.subcategoriaNome, priority: 12, recommendationLimit: 2 },
+        { category: 'Categoria', getValue: (r) => r.categoriaNome, priority: 10, recommendationLimit: 2 }
+      ],
+      itemExtractor: {
+        category: 'Referência',
+        getLabel: (r) => r.titulo,
+        getSubtitle: (r) => r.autorOuOrgao,
+        priority: 4
+      }
+    });
+
+    const quickTerms = [
+      { label: 'IBGE', value: 'IBGE', category: 'Órgão' },
+      { label: 'INEP', value: 'INEP', category: 'Órgão' },
+      { label: 'SEBRAE', value: 'SEBRAE', category: 'Órgão' },
+      { label: 'FIRJAN', value: 'FIRJAN', category: 'Órgão' },
+      { label: 'Cacau', value: 'Cacau', category: 'Produto' },
+      { label: 'Semiárido', value: 'Semiárido', category: 'Recorte' }
+    ];
+
+    return {
+      suggestions: [...quickTerms, ...data.suggestions],
+      recommendations: quickTerms
+    };
+  }, []);
 
   // Subcategorias visíveis com base na categoria principal selecionada
   const subcategoriasDisponiveis = useMemo(() => {
@@ -165,31 +197,25 @@ export default function FontesReferenciasSection() {
       </div>
 
       {/* CONTROLES DE FILTRO: CATEGORIAS, SUBCATEGORIAS E BUSCA */}
-      <Card className="p-5 sm:p-6 flex flex-col gap-5">
+      <Card className="p-5 sm:p-6 flex flex-col gap-5 relative z-20">
         {/* Barra de Busca Textual */}
-        <div className="relative w-full">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-text-muted">
-            <Search size={18} />
-          </div>
-          <input
-            type="text"
+        <div className="relative w-full z-30">
+          <SearchInput
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setVisibleCount(12);
             }}
+            onClear={() => {
+              setSearchTerm('');
+              setVisibleCount(12);
+            }}
+            onSelectSuggestion={() => setVisibleCount(12)}
+            suggestions={refSearchData.suggestions}
+            recommendations={refSearchData.recommendations}
             placeholder="Buscar por produto (cacau, cerâmica, café...), órgão (INEP, RNP, SEBRAE), município ou local no painel..."
-            className="w-full pl-10 pr-10 py-2.5 rounded-control border border-border bg-surface-soft text-text-primary placeholder:text-text-muted text-body-sm focus:bg-surface focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-ring/20 transition-all"
+            className="h-10 bg-surface-soft focus:bg-surface"
           />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-text-muted hover:text-text-primary cursor-pointer"
-              title="Limpar busca"
-            >
-              <X size={16} />
-            </button>
-          )}
         </div>
 
         {/* Nível 1: Pílulas de Categorias Principais */}

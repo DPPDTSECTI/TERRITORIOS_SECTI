@@ -35,6 +35,7 @@ import {
     ScrollableList,
     DetailIsland
 } from './ui';
+import { buildEntitySearchData } from './ui/Input';
 import { useChartTheme, resolveCssRgb, getSemanticColors } from './graph/chartTheme';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
@@ -767,6 +768,23 @@ export default function CadeiaPage() {
         };
     }, [selectedCadeia, enrichedCadeias, filtroSemiarido, chartTheme, selectedSegmento]);
 
+    const cadeiasSearchData = useMemo(
+        () => buildEntitySearchData(territoryCadeias, {
+            facets: [
+                { category: 'Segmento', getValue: (c) => c.segmento, priority: 14, recommendationLimit: 2 },
+                { category: 'Município', getValue: (c) => c.municipio_sede || c.municipio, priority: 12, recommendationLimit: 2 },
+                { category: 'Tipologia', getValue: (c) => c.shortTipo || c.tipo, priority: 10, recommendationLimit: 2 }
+            ],
+            itemExtractor: {
+                category: 'Arranjo / IG',
+                getLabel: (c) => c.entidade || c.nome,
+                getSubtitle: (c) => [c.segmento, c.municipio_sede ? `Sede: ${c.municipio_sede}` : null].filter(Boolean).join(' · '),
+                priority: 4
+            }
+        }),
+        [territoryCadeias]
+    );
+
     const kpis = [
         {
             label: filtroSemiarido
@@ -803,6 +821,35 @@ export default function CadeiaPage() {
             icon: Sparkles
         }
     ];
+
+    const activeDetailIsland = selectedCadeia && selectedCadeiaDetails ? (
+        <DetailIsland
+            compact={isMapExpanded}
+            isOpen={true}
+            onClose={() => {
+                setSelectedCadeia(null);
+                setFocusedAsset(null);
+            }}
+            title={selectedCadeiaDetails.title}
+            subtitle={selectedCadeiaDetails.subtitle}
+            badgeText={selectedCadeiaDetails.badgeText}
+            accentColor={selectedCadeiaDetails.accentColor}
+            icon={selectedCadeiaDetails.icon}
+            statusPills={selectedCadeiaDetails.statusPills}
+            metrics={selectedCadeiaDetails.metrics}
+            extraSection={selectedCadeiaDetails.extraSection}
+            referenceQuote={selectedCadeiaDetails.referenceQuote}
+            externalUrl={selectedCadeiaDetails.externalUrl}
+            externalLabel="Acessar Fonte Oficial"
+            secondaryAction={selectedCadeiaDetails.secondaryAction}
+            filtroSemiarido={filtroSemiarido}
+            className={
+                isMapExpanded
+                    ? 'flex-1 h-full w-full min-h-0'
+                    : 'absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40'
+            }
+        />
+    ) : null;
 
     return (
         <main className="flex-1 min-w-0 h-full min-h-0 overflow-y-auto overflow-x-hidden relative p-6 lg:p-8 flex flex-col gap-5 bg-transparent font-sans w-full">
@@ -1013,14 +1060,18 @@ export default function CadeiaPage() {
                     />
                 </motion.div>
 
-                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS CONFORME PROTÓTIPO */}
+                {/* MODO EXPANDIDO: DUAS CAIXAS SEPARADAS OU BOX DE DETALHES DEDICADA */}
                 {isMapExpanded ? (
                     <motion.div
                         variants={fadeUp}
-                        className="w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
+                        className="w-full lg:w-[420px] shrink-0 h-[480px] lg:h-full flex flex-col gap-4 min-h-0 min-w-0 animate-in fade-in slide-in-from-right-4 duration-300"
                     >
+                        {activeDetailIsland ? (
+                            activeDetailIsland
+                        ) : (
+                        <>
                         {/* BOX 1: CABEÇALHO & BUSCA */}
-                        <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0">
+                        <div className="bg-surface rounded-card border border-border shadow-card p-3.5 flex flex-col gap-2 shrink-0 relative z-20">
                             <div className="flex items-center justify-between gap-2 shrink-0">
                                 <div className="flex items-center gap-2 min-w-0">
                                     <span className="text-body-sm font-semibold text-text-primary truncate">
@@ -1047,6 +1098,8 @@ export default function CadeiaPage() {
                                     value={sidebarSearch}
                                     onChange={(e) => setSidebarSearch(e.target.value)}
                                     onClear={() => setSidebarSearch('')}
+                                    suggestions={cadeiasSearchData.suggestions}
+                                    recommendations={cadeiasSearchData.recommendations}
                                     placeholder="Filtrar arranjo ou cidade..."
                                     size="sm"
                                 />
@@ -1128,6 +1181,8 @@ export default function CadeiaPage() {
                                 )}
                             </div>
                         </div>
+                        </>
+                        )}
                     </motion.div>
                 ) : (
                     /* LADO DIREITO: TABS, FILTROS E CONTEÚDO */
@@ -1136,7 +1191,7 @@ export default function CadeiaPage() {
                         className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0"
                     >
                         {/* BARRA SUPERIOR: TABS + FILTROS AO LADO + BUSCA */}
-                        <div className="flex flex-col gap-2.5 shrink-0">
+                        <div className="flex flex-col gap-2.5 shrink-0 relative z-30">
                             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 min-w-0">
                                 <div className="flex items-center gap-2.5 flex-nowrap min-w-0 overflow-x-auto scrollbar-none">
                                     <Tabs
@@ -1216,6 +1271,8 @@ export default function CadeiaPage() {
                                             }
                                         }}
                                         onClear={() => setSearchQuery('')}
+                                        suggestions={cadeiasSearchData.suggestions}
+                                        recommendations={cadeiasSearchData.recommendations}
                                         placeholder="Buscar cadeia, segmento ou cidade... (/)"
                                         size="sm"
                                     />
@@ -1674,29 +1731,7 @@ export default function CadeiaPage() {
             </motion.div>
 
             {/* ILHA FLUTUANTE DE DETALHES POR CIMA DOS COMPONENTES ATUAIS */}
-            {selectedCadeia && selectedCadeiaDetails && (
-                <DetailIsland
-                    isOpen={true}
-                    onClose={() => {
-                        setSelectedCadeia(null);
-                        setFocusedAsset(null);
-                    }}
-                    title={selectedCadeiaDetails.title}
-                    subtitle={selectedCadeiaDetails.subtitle}
-                    badgeText={selectedCadeiaDetails.badgeText}
-                    accentColor={selectedCadeiaDetails.accentColor}
-                    icon={selectedCadeiaDetails.icon}
-                    statusPills={selectedCadeiaDetails.statusPills}
-                    metrics={selectedCadeiaDetails.metrics}
-                    extraSection={selectedCadeiaDetails.extraSection}
-                    referenceQuote={selectedCadeiaDetails.referenceQuote}
-                    externalUrl={selectedCadeiaDetails.externalUrl}
-                    externalLabel="Acessar Fonte Oficial"
-                    secondaryAction={selectedCadeiaDetails.secondaryAction}
-                    filtroSemiarido={filtroSemiarido}
-                    className="absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40"
-                />
-            )}
+            {!isMapExpanded && activeDetailIsland}
 
             </div>
 
