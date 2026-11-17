@@ -226,18 +226,18 @@ export default function LandingHero() {
     'Uma plataforma de inteligência territorial desenvolvida pela SECTI para consolidar, analisar e dar transparência aos dados de Ciência, Tecnologia e Inovação nos 27 Territórios de Identidade da Bahia.';
 
   return (
-    <main className="w-full min-h-screen font-sans relative text-text-primary scroll-smooth bg-background overflow-x-hidden transition-colors duration-300">
+    <main className="w-full min-h-screen font-sans relative text-text-primary scroll-smooth bg-transparent overflow-x-hidden transition-colors duration-300">
 
       {/* ================= MALHA DE GRADIENTES SUTIS EM CSS PURO ================= */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {/* Glow Primário Superior Esquerdo */}
-        <div className="absolute -top-[15%] -left-[10%] w-[550px] h-[550px] lg:w-[850px] lg:h-[850px] rounded-full bg-gradient-to-br from-primary-500/15 via-primary-600/5 to-transparent blur-[140px] opacity-60" />
+        <div className="absolute -top-[15%] -left-[10%] w-[550px] h-[550px] lg:w-[850px] lg:h-[850px] rounded-full bg-gradient-to-br from-primary-500/15 via-primary-600/5 to-transparent blur-[140px] opacity-45 animate-magma-1 [animation-duration:24s]" />
 
         {/* Glow Secundário Central Direito */}
-        <div className="absolute top-[25%] -right-[15%] w-[450px] h-[450px] lg:w-[750px] lg:h-[750px] rounded-full bg-gradient-to-bl from-primary-400/10 via-primary-500/5 to-transparent blur-[130px] opacity-50" />
+        <div className="absolute top-[25%] -right-[15%] w-[450px] h-[450px] lg:w-[750px] lg:h-[750px] rounded-full bg-gradient-to-bl from-primary-400/10 via-primary-500/5 to-transparent blur-[130px] opacity-40 animate-magma-2 [animation-duration:28s]" />
 
         {/* Glow Inferior */}
-        <div className="absolute -bottom-[20%] left-[20%] w-[500px] h-[500px] lg:w-[900px] lg:h-[900px] rounded-full bg-gradient-to-tr from-primary-600/10 via-primary-400/5 to-transparent blur-[160px] opacity-40" />
+        <div className="absolute -bottom-[20%] left-[20%] w-[500px] h-[500px] lg:w-[900px] lg:h-[900px] rounded-full bg-gradient-to-tr from-primary-600/10 via-primary-400/5 to-transparent blur-[160px] opacity-35 animate-magma-3 [animation-duration:32s]" />
 
         {/* Linhas orbitais arquitetônicas sutis */}
         <div className="absolute top-[-5%] right-[-35%] lg:right-[-20%] w-[1200px] h-[1200px] lg:w-[1700px] lg:h-[1700px] border border-primary-900/[0.04] dark:border-primary-400/[0.06] rounded-[38%] rotate-[35deg]" />
@@ -296,9 +296,13 @@ export default function LandingHero() {
 
             <div className="flex items-center gap-3 sm:gap-3.5">
               <PanelMark className="h-9 sm:h-11 w-auto" />
-              <span className="font-display font-bold text-subtitle sm:text-title tracking-tight text-text-primary">
-                Painel Territorial CT&I
-              </span>
+              <img
+                src="/img/pti-bahia-logo.webp"
+                alt="PTI Bahia"
+                width={150}
+                height={34}
+                className="h-7 sm:h-8 w-auto object-contain select-none shrink-0 dark:brightness-125"
+              />
             </div>
           </div>
         </div>

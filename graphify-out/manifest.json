@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1794593624.5842335,
-    "seen": 1794853422.2151642,
-    "ast_hash": "fbe764ae0e48575de6ee281c7b00c3ff",
+    "mtime": 1794941212.4067416,
+    "seen": 1794941264.0964603,
+    "ast_hash": "68111966c99dba1b4713c5cb5814abd6",
     "semantic_hash": ""
   },
   "src/__tests__/lib/format.test.js": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1794931024.7393298,
-    "seen": 1794931302.6958184,
-    "ast_hash": "9a476b07abd5c61c9deacdcf4d9bfcc6",
+    "mtime": 1794937512.0251372,
+    "seen": 1794938911.411354,
+    "ast_hash": "308a9e7f55cdc064900a9f6d9966462c",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1794593624.6056607,
-    "seen": 1794853422.2151642,
-    "ast_hash": "6f6459397c26ea6bfcb391df38bbdba6",
+    "mtime": 1794942713.63567,
+    "seen": 1794942737.499014,
+    "ast_hash": "a0223a7f495759b437f3b6ca7a6699fe",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -270,9 +270,9 @@
     "semantic_hash": ""
   },
   "src/components/hero.jsx": {
-    "mtime": 1794593624.6195548,
-    "seen": 1794853422.2151642,
-    "ast_hash": "1e08a6f0ecd7bc975a3c07f20dadddee",
+    "mtime": 1794942873.2448964,
+    "seen": 1794942896.555808,
+    "ast_hash": "f1d82be92f2bdcff9ff010a6e043d332",
     "semantic_hash": ""
   },
   "src/components/maps/CtrlScrollZoom.jsx": {
@@ -312,9 +312,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/side/MapMarkersAndPopups.jsx": {
-    "mtime": 1794931297.6766489,
-    "seen": 1794931302.6958184,
-    "ast_hash": "db110f512475352f4f11b033ad33c4a3",
+    "mtime": 1794937505.250373,
+    "seen": 1794938911.411354,
+    "ast_hash": "1a79fb330579d99d2841aa221d7ce5fd",
     "semantic_hash": ""
   },
   "src/components/maps/side/mapGeoUtils.js": {
@@ -390,9 +390,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/DetailIsland.jsx": {
-    "mtime": 1794931297.8415244,
-    "seen": 1794931302.6958184,
-    "ast_hash": "6ac357f4fab9a6dd69f31209309622e3",
+    "mtime": 1794936288.16538,
+    "seen": 1794938911.411354,
+    "ast_hash": "98d020c3f33caeba50c48b81fa0fecba",
     "semantic_hash": ""
   },
   "src/components/ui/Dialog.jsx": {
@@ -438,9 +438,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/PanelMark.jsx": {
-    "mtime": 1794593624.6539488,
-    "seen": 1794853422.2151642,
-    "ast_hash": "83166298304addcd6a55e54bef6ad006",
+    "mtime": 1794942010.512955,
+    "seen": 1794942051.3144493,
+    "ast_hash": "c877e88349929aff745527b38da64aa1",
     "semantic_hash": ""
   },
   "src/components/ui/PillBar.jsx": {
@@ -684,9 +684,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794593624.5709581,
-    "seen": 1794853422.2151642,
-    "ast_hash": "270e3f09bc0b0d3c54df38b0158083cc",
+    "mtime": 1794942013.4122698,
+    "seen": 1794942051.3144493,
+    "ast_hash": "0986cbcd7660e5d9a6c5cec8e71f9c0d",
     "semantic_hash": ""
   },
   "public/robots.txt": {
@@ -771,6 +771,18 @@
     "mtime": 1790188651.1295295,
     "seen": 1794853422.2155619,
     "ast_hash": "8bbd8c2f5d9eeccaa8704d3db8e096af",
+    "semantic_hash": ""
+  },
+  "public/img/pti-bahia.webp": {
+    "mtime": 1794942689.335,
+    "seen": 1794942737.499014,
+    "ast_hash": "669baf8f0841be148d860f7f13a88e14",
+    "semantic_hash": ""
+  },
+  "public/img/pti-bahia-logo.webp": {
+    "mtime": 1794942689.306,
+    "seen": 1794942737.499014,
+    "ast_hash": "669baf8f0841be148d860f7f13a88e14",
     "semantic_hash": ""
   },
   "package-lock.json": {

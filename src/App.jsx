@@ -134,16 +134,16 @@ function randomBetween(min, max) {
   return min + Math.random() * (max - min);
 }
 
-function generateRandomState() {
+function generateRandomState(subtle = false) {
   const x = randomBetween(-14, 72);
   const y = randomBetween(-16, 68);
-  const sx = randomBetween(0.76, 1.34);
-  const sy = randomBetween(0.76, 1.34);
-  const rot = randomBetween(-35, 35);
+  const sx = subtle ? randomBetween(0.86, 1.16) : randomBetween(0.76, 1.34);
+  const sy = subtle ? randomBetween(0.86, 1.16) : randomBetween(0.76, 1.34);
+  const rot = subtle ? randomBetween(-22, 22) : randomBetween(-35, 35);
   return `translate3d(${x.toFixed(1)}vw, ${y.toFixed(1)}vh, 0) rotate(${rot.toFixed(1)}deg) scale3d(${sx.toFixed(2)}, ${sy.toFixed(2)}, 1)`;
 }
 
-function MagmaLampBackground({ filtroSemiarido }) {
+function MagmaLampBackground({ filtroSemiarido, subtle = false }) {
   const orbRefs = useRef([]);
 
   useEffect(() => {
@@ -157,15 +157,15 @@ function MagmaLampBackground({ filtroSemiarido }) {
     orbRefs.current.forEach((el, idx) => {
       if (!el || typeof el.animate !== 'function') return;
 
-      let currentTransform = generateRandomState();
+      let currentTransform = generateRandomState(subtle);
       el.style.transform = currentTransform;
 
       const runNextLeg = () => {
         if (cancelled || !el) return;
-        const midTransform1 = generateRandomState();
-        const midTransform2 = generateRandomState();
-        const nextTransform = generateRandomState();
-        const duration = Math.round(randomBetween(11000, 21000));
+        const midTransform1 = generateRandomState(subtle);
+        const midTransform2 = generateRandomState(subtle);
+        const nextTransform = generateRandomState(subtle);
+        const duration = Math.round(subtle ? randomBetween(18000, 28000) : randomBetween(11000, 21000));
 
         const anim = el.animate(
           [
@@ -201,13 +201,15 @@ function MagmaLampBackground({ filtroSemiarido }) {
         }
       });
     };
-  }, []);
+  }, [subtle]);
 
   return (
     <div
       aria-hidden="true"
       data-html2canvas-ignore="true"
-      className="pointer-events-none fixed inset-0 overflow-hidden z-0 print:hidden select-none"
+      className={`pointer-events-none fixed inset-0 overflow-hidden z-0 print:hidden select-none transition-opacity duration-700 ${
+        subtle ? 'opacity-50 dark:opacity-60' : 'opacity-100'
+      }`}
     >
       {MAGMA_ORBS_CONFIG.map((orb, idx) => (
         <div
@@ -243,7 +245,7 @@ function AnimatedRoutes() {
     <div className={`flex w-full relative ${isHome ? 'min-h-screen bg-background text-text-primary overflow-x-clip' : 'h-dvh bg-background text-text-primary overflow-hidden'} font-sans print:h-auto print:overflow-visible print:bg-transparent`}>
       {!isPrintPage && <AccessibilityBar showFloatingButton={isHome} />}
       {/* ATMOSFERA GLOBAL: ESFERAS ALEATORIZADAS ESTILO LANTERNA DE MAGMA */}
-      {!hideNavigation && <MagmaLampBackground filtroSemiarido={filtroSemiarido} />}
+      {!isPrintPage && <MagmaLampBackground filtroSemiarido={filtroSemiarido} subtle={isHome} />}
       {/* SIDEBAR GLOBAL */}
       <AnimatePresence initial={false} mode="wait">
         {!hideNavigation && (
