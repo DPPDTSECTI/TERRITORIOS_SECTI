@@ -6,12 +6,12 @@
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 733 nodes · 2307 edges · 38 communities (24 shown, 14 thin omitted)
+- 733 nodes · 2308 edges · 38 communities (24 shown, 14 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 57 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c3b457bb`
+- Built from commit: `46dedf6b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
