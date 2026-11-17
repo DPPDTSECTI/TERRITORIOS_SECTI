@@ -991,6 +991,15 @@ export default function CursosPage() {
                         onSelectTerritory={setSelectedTerritory}
                         selectedIES={selectedIES}
                         onSelectIES={setSelectedIES}
+                        onAssetClick={(curso) => {
+                            if (curso) {
+                                setSelectedCurso(curso);
+                                setSelectedCursoId(curso.id_curso || curso.id || `${curso.curso || curso.nome}-${curso.municipio}`);
+                            } else {
+                                setSelectedCurso(null);
+                                setSelectedCursoId(null);
+                            }
+                        }}
                         isExpanded={isMapExpanded}
                         onToggleExpand={() => setIsMapExpanded(prev => !prev)}
                         filtroSemiarido={filtroSemiarido}

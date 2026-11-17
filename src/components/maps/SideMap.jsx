@@ -333,32 +333,95 @@ export default function SideMap({
 
   const visibleCursosGeoMarkers = useMemo(() => {
     if (mode !== 'cursos' || !modoGeografico) return [];
-    return visibleCursos
-      .map((c, idx) => {
-        let lat = c.lat ? Number(c.lat) : null;
-        let lng = c.lng ? Number(c.lng) : null;
-        if (!isInsideBahia(lat, lng)) {
-          const coords = findMunicipioCoords(c.municipio);
-          if (coords) {
-            lat = coords[0];
-            lng = coords[1];
-          }
+
+    const semantic = getSemanticColors();
+    const semanticDark = getSemanticColors(true);
+    const groups = new Map();
+
+    const cleanGeoIesName = (name, municipio) => {
+      if (!name) return '';
+      let clean = String(name).trim()
+        .replace(/\s*-\s*Campus\b.*$/i, '')
+        .replace(/\s*-\s*Polo\b.*$/i, '')
+        .replace(/\s*-\s*Unidade\b.*$/i, '')
+        .replace(/\s*\((?:campus|polo|sede|ead).*?\)/gi, '');
+
+      if (municipio) {
+        const munTrim = String(municipio).trim();
+        if (clean.toLowerCase().endsWith(' - ' + munTrim.toLowerCase())) {
+          clean = clean.slice(0, -(munTrim.length + 3)).trim();
         }
-        if (!isInsideBahia(lat, lng)) return null;
-        return {
-          ...c,
-          id: c.id_curso || c.id || `curso-${idx}`,
-          nome: c.nome_curso || c.curso || c.nome || 'Curso Superior / Técnico',
-          tipo: c.categoria || 'Curso CT&I',
-          shortTipo: c.ies ? `${c.ies} · ${c.categoria || 'Curso'}` : (c.categoria || 'Curso'),
+      }
+
+      clean = clean.replace(/\s*-\s*([A-Za-zÀ-ÖØ-öø-ÿ\s]+)$/, (match, candidate) => {
+        const trimmed = candidate.trim();
+        if (trimmed && findMunicipioCoords(trimmed)) {
+          return '';
+        }
+        return match;
+      });
+
+      return clean.trim();
+    };
+
+    visibleCursos.forEach((c, idx) => {
+      let lat = c.lat ? Number(c.lat) : null;
+      let lng = c.lng ? Number(c.lng) : null;
+      if (!isInsideBahia(lat, lng)) {
+        const coords = findMunicipioCoords(c.municipio);
+        if (coords) {
+          lat = coords[0];
+          lng = coords[1];
+        }
+      }
+      if (!isInsideBahia(lat, lng)) return;
+
+      const rawEntidade = c.entidade || c.instituicao || c.ies || '';
+      const sigla = c.sigla ? String(c.sigla).trim().toUpperCase() : '';
+      const cleanEntidade = cleanGeoIesName(rawEntidade, c.municipio);
+      const iesKey = normalizeName(sigla || cleanEntidade || 'ies');
+      const munKey = normalizeName(c.municipio || '');
+      const groupKey = `${iesKey}__${munKey}`;
+
+      if (!groups.has(groupKey)) {
+        const displayNome =
+          sigla && cleanEntidade && cleanEntidade.toUpperCase() !== sigla
+            ? `${sigla} — ${cleanEntidade}`
+            : (cleanEntidade || rawEntidade || sigla || 'Instituição de Ensino');
+
+        groups.set(groupKey, {
+          id: `ies-${groupKey}`,
+          isUniversityPoint: true,
+          sigla: sigla || null,
+          iesNome: cleanEntidade || rawEntidade || sigla || 'Instituição de Ensino',
+          nome: displayNome,
+          tipo: 'Instituição de Ensino',
+          shortTipo: sigla || 'Instituição de Ensino',
+          municipio: c.municipio,
           territorio: c.territorio_identidade || c.territorio,
-          corHex: getSemanticColors().primaryBase,
-          corHexDark: getSemanticColors(true).primaryLight,
+          id_territorio: c.id_territorio,
+          corHex: semantic.primaryBase,
+          corHexDark: semanticDark.primaryLight,
           lat,
-          lng
-        };
-      })
-      .filter(Boolean);
+          lng,
+          cursos: []
+        });
+      }
+
+      const group = groups.get(groupKey);
+      group.cursos.push({
+        id: c.id_curso || c.id || `curso-${idx}`,
+        nome: c.nome_curso || c.curso || c.nome || 'Curso Superior / Técnico',
+        categoria: c.categoria || c.tipo || 'Curso CT&I',
+        ead: Boolean(c.ead),
+        raw: c
+      });
+    });
+
+    return Array.from(groups.values()).map((group) => ({
+      ...group,
+      cursos: [...group.cursos].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+    }));
   }, [mode, modoGeografico, visibleCursos]);
 
   const visibleCadeias = useMemo(() => {
