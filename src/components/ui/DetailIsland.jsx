@@ -43,13 +43,11 @@ export function DetailIsland({
   return (
     <aside
       aria-label={`Detalhes de ${title}`}
-      className={`flex flex-col justify-between bg-white dark:bg-zinc-900 border ${
-        filtroSemiarido
-          ? 'border-amber-400/50 dark:border-amber-500/40 shadow-xs'
-          : 'border-zinc-200/80 dark:border-zinc-800/80 shadow-xs'
-      } ${
-        compact ? 'rounded-card p-4 sm:p-5' : 'rounded-panel p-6 lg:p-7'
-      } overflow-hidden animate-in fade-in zoom-in-[0.98] slide-in-from-right-6 duration-200 select-text ${className}`}
+      className={`flex flex-col justify-between bg-white dark:bg-zinc-900 border ${filtroSemiarido
+        ? 'border-amber-400/50 dark:border-amber-500/40 shadow-xs'
+        : 'border-zinc-200/80 dark:border-zinc-800/80 shadow-xs'
+        } ${compact ? 'rounded-card p-4 sm:p-5' : 'rounded-panel p-6 lg:p-7'
+        } overflow-hidden animate-in fade-in zoom-in-[0.98] slide-in-from-right-6 duration-200 select-text ${className}`}
     >
       {/* CABEÇALHO FIXO DA ILHA */}
       <div className={`flex items-start justify-between gap-3 ${compact ? 'pb-3' : 'pb-4'} border-b border-zinc-200/80 dark:border-zinc-800/80 shrink-0`}>
@@ -134,19 +132,17 @@ export function DetailIsland({
               {metrics.map((m, idx) => (
                 <div
                   key={idx}
-                  className={`flex flex-col justify-between min-w-0 ${
-                    m.fullWidth
-                      ? (compact ? 'col-span-2' : 'col-span-2 sm:col-span-3')
-                      : 'col-span-1'
-                  }`}
+                  className={`flex flex-col justify-between min-w-0 ${m.fullWidth
+                    ? (compact ? 'col-span-2' : 'col-span-2 sm:col-span-3')
+                    : 'col-span-1'
+                    }`}
                 >
                   <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 truncate">
                     {m.label}
                   </span>
                   <span
-                    className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 break-words leading-snug ${
-                      m.tabular ? 'tabular-nums' : ''
-                    }`}
+                    className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 break-words leading-snug ${m.tabular ? 'tabular-nums' : ''
+                      }`}
                     title={String(m.value ?? '-')}
                   >
                     {m.value ?? '-'}

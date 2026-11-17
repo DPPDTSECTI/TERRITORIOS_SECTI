@@ -43,11 +43,10 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
       </p>
 
       {ativo.rnp && (
-        <div className={`inline-flex items-center gap-1.5 w-fit text-[11px] font-medium px-2 py-0.5 rounded-md ${
-          filtroSemiarido
-            ? 'text-amber-800 dark:text-amber-300 bg-amber-500/10'
-            : 'text-info-600 dark:text-info-400 bg-info-500/10'
-        }`}>
+        <div className={`inline-flex items-center gap-1.5 w-fit text-[11px] font-medium px-2 py-0.5 rounded-md ${filtroSemiarido
+          ? 'text-amber-800 dark:text-amber-300 bg-amber-500/10'
+          : 'text-info-600 dark:text-info-400 bg-info-500/10'
+          }`}>
           <span className={`w-1.5 h-1.5 rounded-full ${filtroSemiarido ? 'bg-amber-600' : 'bg-info-500'}`} />
           <span>Ponto de Presença / Conexão RNP</span>
         </div>
