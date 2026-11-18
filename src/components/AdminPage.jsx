@@ -14,9 +14,14 @@ import {
   AlertCircle,
   ArrowUp,
   Wifi,
+  LogOut,
+  ShieldCheck,
+  User,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { normalize } from '../utils/normalization';
 import { fadeUp, staggerContainer } from '../lib/motion';
 import {
@@ -296,6 +301,8 @@ const INPUT_LABEL_CLASS = 'text-xs font-medium text-zinc-700 dark:text-zinc-300 
 
 export default function AdminPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user, userName, userRole, signOut } = useAuth();
   const {
     ativosData = [],
     cursosData = [],
@@ -795,15 +802,19 @@ export default function AdminPage() {
                 </Button>
               )}
 
-              <Button
+              <IconButton
                 variant="secondary"
                 size="md"
-                iconLeft={<Download className="w-4 h-4 stroke-[1.75]" />}
-                onClick={handleExportJson}
-                disabled={filteredRows.length === 0}
+                aria-label="Encerrar sessão"
+                title="Encerrar sessão"
+                onClick={async () => {
+                  await signOut();
+                  navigate('/territorios');
+                }}
+                className="text-text-secondary hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
               >
-                Exportar JSON
-              </Button>
+                <LogOut className="w-4 h-4 stroke-[1.75]" />
+              </IconButton>
 
               <Button
                 variant="primary"

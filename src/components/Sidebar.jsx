@@ -15,6 +15,10 @@ import {
   SlidersHorizontal,
   Accessibility,
   Contrast,
+  Lock,
+  LogOut,
+  User,
+  ShieldCheck,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { IconButton } from './ui/Button';
@@ -22,12 +26,14 @@ import { PanelMark } from './ui/PanelMark';
 import { cn } from '../lib/cn';
 import { useTheme } from '../context/ThemeContext';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { useAccessibilityPreferences } from './AccessibilityBar';
 
 export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
   const { filtroSemiarido, crudStats } = useData();
+  const { isAuthenticated, user, userName, userRole, signOut } = useAuth();
   const {
     fontScaleId,
     setFontScaleId,
@@ -97,6 +103,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
       icon: SlidersHorizontal,
       tourClass: 'tour-nav-admin',
       badgeCount: crudStats?.total > 0 ? crudStats.total : 0,
+      isLocked: !isAuthenticated,
     },
   ];
 
@@ -169,6 +176,15 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                   aria-hidden="true"
                   className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-amber-500 ring-2 ring-white dark:ring-carbon"
                 />
+              )}
+              {item.isLocked && (
+                <span
+                  aria-hidden="true"
+                  title="Acesso Restrito ao CRUD"
+                  className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-zinc-700 dark:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-center ring-2 ring-white dark:ring-carbon shadow-2xs"
+                >
+                  <Lock size={8} strokeWidth={2.5} />
+                </span>
               )}
             </div>
           </div>

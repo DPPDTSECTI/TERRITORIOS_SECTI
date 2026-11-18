@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1794593624.5842335,
-    "seen": 1794598038.8677096,
-    "ast_hash": "fbe764ae0e48575de6ee281c7b00c3ff",
+    "mtime": 1795025295.187566,
+    "seen": 1795025321.592395,
+    "ast_hash": "58021fb9e6159aa80190923b58c34439",
     "semantic_hash": ""
   },
   "src/__tests__/lib/format.test.js": {
@@ -150,26 +150,26 @@
     "semantic_hash": ""
   },
   "src/components/AdminPage.jsx": {
-    "mtime": 1794847199.9841027,
-    "seen": 1794847237.3811414,
-    "ast_hash": "6b830959db44c1699cbfe09cd942b563",
+    "mtime": 1795026489.8807788,
+    "seen": 1795026507.1058023,
+    "ast_hash": "a5f592e956b0daf103b3e497c830eedf",
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1794852689.3170905,
-    "seen": 1794852741.1245766,
+    "mtime": 1794853406.1221807,
+    "seen": 1795024716.1929514,
     "ast_hash": "08da1e7fed07b7ff6e444dbff53e07d2",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1794852679.9112673,
-    "seen": 1794852741.1245766,
+    "mtime": 1794853406.1282604,
+    "seen": 1795024716.1929514,
     "ast_hash": "bc3224c12c2bc7ba882e9e98dc60cf17",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1794852697.5702448,
-    "seen": 1794852741.1245766,
+    "mtime": 1795024703.6086142,
+    "seen": 1795024716.1929514,
     "ast_hash": "f09d5b88b94529d3f1270bd070fbd1d2",
     "semantic_hash": ""
   },
@@ -180,21 +180,21 @@
     "semantic_hash": ""
   },
   "src/components/FontesReferenciasSection.jsx": {
-    "mtime": 1794847194.178576,
-    "seen": 1794847237.3811414,
+    "mtime": 1794853406.1327915,
+    "seen": 1795024716.1929514,
     "ast_hash": "abf1721113d7b3c1a642fc0809b6221c",
     "semantic_hash": ""
   },
   "src/components/RelatorioPage.jsx": {
-    "mtime": 1794850310.7503157,
-    "seen": 1794850345.4926436,
+    "mtime": 1794853406.1327915,
+    "seen": 1795024716.1929514,
     "ast_hash": "7d7853fb9f0b55700ed845d117b9c80b",
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1794593624.6056607,
-    "seen": 1794598038.8677096,
-    "ast_hash": "6f6459397c26ea6bfcb391df38bbdba6",
+    "mtime": 1795026782.0226555,
+    "seen": 1795026798.7678843,
+    "ast_hash": "082bfd4751705aec74a6b35504d85c67",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "src/components/UserHeaderProfile.jsx": {
-    "mtime": 1794593624.6076725,
-    "seen": 1794598038.8677096,
-    "ast_hash": "0bd6bf129f187323d2c517f45d5a2b9a",
+    "mtime": 1795026241.8222783,
+    "seen": 1795026261.7588298,
+    "ast_hash": "a3d8379ab69c5e9e7fc753a2e31a070f",
     "semantic_hash": ""
   },
   "src/components/graph/CardLista.jsx": {
@@ -258,20 +258,20 @@
     "semantic_hash": ""
   },
   "src/components/hero.jsx": {
-    "mtime": 1794593624.6195548,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "1e08a6f0ecd7bc975a3c07f20dadddee",
     "semantic_hash": ""
   },
   "src/components/maps/PtiMap.jsx": {
-    "mtime": 1794593624.6215708,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "78372bf406f2e5ab758a359187ceed81",
     "semantic_hash": ""
   },
   "src/components/maps/SideMap.jsx": {
-    "mtime": 1794850308.5888307,
-    "seen": 1794850345.4926436,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "d33810f3fba4ddcd1f2196efecd23503",
     "semantic_hash": ""
   },
@@ -294,8 +294,8 @@
     "semantic_hash": ""
   },
   "src/components/maps/side/MapMarkersAndPopups.jsx": {
-    "mtime": 1794593624.628327,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "ba61acc4a59552759319d33b9f24543a",
     "semantic_hash": ""
   },
@@ -372,8 +372,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/DetailIsland.jsx": {
-    "mtime": 1794852611.456677,
-    "seen": 1794852741.1245766,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "3ee59f3dd2194831b3df64d67147e6ae",
     "semantic_hash": ""
   },
@@ -402,8 +402,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/Input.jsx": {
-    "mtime": 1794849481.0113432,
-    "seen": 1794849520.8153126,
+    "mtime": 1794853406.1327915,
+    "seen": 1795024716.1929514,
     "ast_hash": "0846d1e7401902b74f0bbc271d23ee4e",
     "semantic_hash": ""
   },
@@ -654,8 +654,8 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1794593624.5709581,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6086142,
+    "seen": 1795024716.1929514,
     "ast_hash": "270e3f09bc0b0d3c54df38b0158083cc",
     "semantic_hash": ""
   },
@@ -738,8 +738,8 @@
     "semantic_hash": ""
   },
   "src/components/maps/CtrlScrollZoom.jsx": {
-    "mtime": 1794593624.6215708,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "76f1e38ec89e6521f0a4c4bfdcd5f2c3",
     "semantic_hash": ""
   },
@@ -750,8 +750,8 @@
     "semantic_hash": ""
   },
   "src/components/ui/PanelMark.jsx": {
-    "mtime": 1794593624.6539488,
-    "seen": 1794598038.8677096,
+    "mtime": 1795024703.6177666,
+    "seen": 1795024716.1929514,
     "ast_hash": "83166298304addcd6a55e54bef6ad006",
     "semantic_hash": ""
   },
@@ -771,6 +771,30 @@
     "mtime": 1794593624.5842335,
     "seen": 1794598038.8677096,
     "ast_hash": "a80072a42602ca761e2438b392e1b4af",
+    "semantic_hash": ""
+  },
+  "src/__tests__/auth/authContext.test.js": {
+    "mtime": 1795025242.4623363,
+    "seen": 1795025288.6660447,
+    "ast_hash": "26bcf3dbee4237939bb178b0fe13de91",
+    "semantic_hash": ""
+  },
+  "src/components/auth/LoginPage.jsx": {
+    "mtime": 1795027187.5141144,
+    "seen": 1795027204.708069,
+    "ast_hash": "4ae6a3434a0e2a6f6be4665b3c2e1d58",
+    "semantic_hash": ""
+  },
+  "src/components/auth/ProtectedRoute.jsx": {
+    "mtime": 1795024985.862012,
+    "seen": 1795025288.6660447,
+    "ast_hash": "9bceadd4d3abdab135029070a16616b5",
+    "semantic_hash": ""
+  },
+  "src/context/AuthContext.jsx": {
+    "mtime": 1795024963.2207906,
+    "seen": 1795025288.6660447,
+    "ast_hash": "7456eb93faa516604e1b9bd5a0d574ec",
     "semantic_hash": ""
   },
   "package-lock.json": {
