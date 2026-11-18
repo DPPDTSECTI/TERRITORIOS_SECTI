@@ -6,19 +6,18 @@
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 737 nodes · 2394 edges · 35 communities (23 shown, 12 thin omitted)
+- 737 nodes · 2397 edges · 34 communities (22 shown, 12 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a1589981`
+- Built from commit: `edfd5220`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - react
 - exportReportClient.js
-- CadeiaPage.jsx
 - SideMap.jsx
 - package.json
 - topojson-client
@@ -77,23 +76,19 @@
 ## Import Cycles
 - None detected.
 
-## Communities (35 total, 12 thin omitted)
+## Communities (34 total, 12 thin omitted)
 
 ### Community 0 - "react"
-Cohesion: 0.07
-Nodes (74): [Media] Acessibilidade: div onClick, graficos so mouse, Tabs/Dialog/Dropdown sem foco/aria, Layout, sidebar, scroll navigator e tour guiado, framer-motion, @radix-ui/react-dialog, react, react-router-dom, LoginPage(), ProtectedRoute() (+66 more)
+Cohesion: 0.06
+Nodes (92): [Media] Acessibilidade: div onClick, graficos so mouse, Tabs/Dialog/Dropdown sem foco/aria, Layout, sidebar, scroll navigator e tour guiado, framer-motion, @radix-ui/react-dialog, react, react-router-dom, LoginPage(), ProtectedRoute() (+84 more)
 
 ### Community 1 - "exportReportClient.js"
 Cohesion: 0.17
 Nodes (17): Exportacoes com tema claro forcado, html2canvas@^1.4.1, jspdf@^4.2.0, html2canvas, jspdf, captureDomElement(), captureReportViaIframe(), downloadCanvasAsPdf() (+9 more)
 
-### Community 2 - "CadeiaPage.jsx"
-Cohesion: 0.13
-Nodes (22): [Media] Filtros de Ativos/Cursos/Cadeia em useState local, fora da URL, Filtro do Semiarido (278 municipios), Modulos e rotas (/territorios, /ativos, /cadeia, /cursos, /relatorio), selectedTerritory compartilhado, CadeiaPage(), cleanTerritorioName(), findMunicipioCoords(), getAlphaColor() (+14 more)
-
 ### Community 3 - "SideMap.jsx"
-Cohesion: 0.09
-Nodes (53): [Media] Mapas: ~247 hex hardcoded, duplicacao SideMap/PtiMap, performance, acessibilidade, Mapa coropletico da Bahia (escala de azuis), Arquitetura SPA sem backend, somente leitura, Mapas PtiMap e SideMap (Leaflet), Supabase (Postgres, chave anon), ThemeContext (tema claro/escuro), leaflet@^1.9.4, leaflet (+45 more)
+Cohesion: 0.10
+Nodes (49): [Media] Mapas: ~247 hex hardcoded, duplicacao SideMap/PtiMap, performance, acessibilidade, Mapa coropletico da Bahia (escala de azuis), leaflet@^1.9.4, leaflet, react-leaflet, DARK_CHART_PALETTE, buildTopologiaPayload(), getCachedBahiaTopologia() (+41 more)
 
 ### Community 4 - "package.json"
 Cohesion: 0.15
@@ -164,8 +159,8 @@ Cohesion: 0.15
 Nodes (10): exportarDados.mjs (placeholder), generateJson.mjs (legado e quebrado), Scripts do repositorio, __dirname, __filename, projectRoot, __dirname, __filename (+2 more)
 
 ### Community 25 - "[Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes"
-Cohesion: 0.06
-Nodes (51): AUDITORIA.md Auditoria do repositorio, [Baixa] Dados: assetTypes acoplado, heuristica cache, provider, O(n*m), [Alta] Falhas de consulta silenciosas e cache parcial por 10 min, [Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes, [Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD, Evolucao entre branches (dev, main, redesign) e funcionalidades perdidas, [Baixa] Mapas: codigo morto, arquivos monoliticos, CSP, sanitizacao, [Alta] Tiles Esri/ArcGIS sem atribuicao (licenca) (+43 more)
+Cohesion: 0.05
+Nodes (59): AUDITORIA.md Auditoria do repositorio, [Baixa] Dados: assetTypes acoplado, heuristica cache, provider, O(n*m), [Alta] Falhas de consulta silenciosas e cache parcial por 10 min, [Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes, [Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD, Evolucao entre branches (dev, main, redesign) e funcionalidades perdidas, [Baixa] Mapas: codigo morto, arquivos monoliticos, CSP, sanitizacao, [Alta] Tiles Esri/ArcGIS sem atribuicao (licenca) (+51 more)
 
 ### Community 28 - "AdminPage.jsx"
 Cohesion: 0.10
@@ -185,16 +180,16 @@ Nodes (26): AdminPage(), buildPayloadFromForm(), cleanTerritoryLabel(), CrudStat
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `CadeiaPage.jsx`, `SideMap.jsx`, `package.json`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `App.jsx`, `dependencies`, `CursosPage.jsx`, `[Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes`, `AdminPage.jsx`?**
-  _High betweenness centrality (0.145) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `SideMap.jsx`, `package.json`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `App.jsx`, `dependencies`, `CursosPage.jsx`, `[Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes`, `AdminPage.jsx`?**
+  _High betweenness centrality (0.144) - this node is a cross-community bridge._
 - **What connects `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Deploy Vercel (cron, headers, rewrites)` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
-  _Cohesion score 0.0674066924066924 - nodes in this community are weakly interconnected._
-- **Why does `lucide-react` connect `CursosPage.jsx` to `react`, `CadeiaPage.jsx`, `SideMap.jsx`, `package.json`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `dependencies`, `[Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes`, `AdminPage.jsx`?**
+  _Cohesion score 0.05586398334489938 - nodes in this community are weakly interconnected._
+- **Why does `lucide-react` connect `CursosPage.jsx` to `react`, `SideMap.jsx`, `package.json`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `dependencies`, `[Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes`, `AdminPage.jsx`?**
   _High betweenness centrality (0.065) - this node is a cross-community bridge._
-- **Should `CadeiaPage.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.13043478260869565 - nodes in this community are weakly interconnected._
+- **Should `SideMap.jsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.0994535519125683 - nodes in this community are weakly interconnected._
 
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._
