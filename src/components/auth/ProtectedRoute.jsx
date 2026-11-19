@@ -1,9 +1,11 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LoginPage from './LoginPage';
 import { Skeleton } from '../ui/Skeleton';
 
 export default function ProtectedRoute({ children }) {
+  const location = useLocation();
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -18,7 +20,7 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    return <LoginPage returnUrl="/admin" />;
+    return <LoginPage returnUrl={`${location.pathname}${location.search}`} />;
   }
 
   return children;

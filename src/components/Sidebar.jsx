@@ -54,9 +54,22 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
     }
   });
   const [isHovered, setIsHovered] = useState(false);
+  const [lockVisible, setLockVisible] = useState(true);
   const asideRef = useRef(null);
 
   const isExpanded = isPinned || isHovered;
+
+  useEffect(() => {
+    if (isAuthenticated) return undefined;
+    setLockVisible(true);
+    if (isHovered) return undefined;
+
+    const timer = setTimeout(() => {
+      setLockVisible(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [isHovered, isAuthenticated]);
 
   useEffect(() => {
     if (!isHovered || isPinned) return undefined;
@@ -181,7 +194,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
                 <span
                   aria-hidden="true"
                   title="Acesso Restrito ao CRUD"
-                  className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-zinc-700 dark:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-center ring-2 ring-white dark:ring-carbon shadow-2xs"
+                  className={cn(
+                    'absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-zinc-700 dark:bg-zinc-200 text-white dark:text-zinc-900 flex items-center justify-center ring-2 ring-white dark:ring-carbon shadow-2xs transition-all ease-out group-hover:opacity-100 group-hover:scale-100 group-hover:duration-200',
+                    lockVisible
+                      ? 'opacity-100 scale-100 duration-300'
+                      : 'opacity-0 scale-75 pointer-events-none duration-1000'
+                  )}
                 >
                   <Lock size={8} strokeWidth={2.5} />
                 </span>

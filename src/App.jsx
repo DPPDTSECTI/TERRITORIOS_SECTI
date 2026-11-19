@@ -5,6 +5,7 @@ import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { DataProvider, DataContext } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { TelemetryProvider } from './context/TelemetryContext';
 import { Analytics } from '@vercel/analytics/react';
 
 import Sidebar from './components/Sidebar';
@@ -322,9 +323,11 @@ export default function AppWrapper() {
           <AuthProvider>
             <Router>
               <DataProvider>
-                <ToastProvider>
-                  <MainApp />
-                </ToastProvider>
+                <TelemetryProvider>
+                  <ToastProvider>
+                    <MainApp />
+                  </ToastProvider>
+                </TelemetryProvider>
               </DataProvider>
             </Router>
           </AuthProvider>

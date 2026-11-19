@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { supabase } from '../services/supabase';
+import { supabasePublic } from '../services/supabase';
 import { getTextoReferencia } from '../data/referenciasDB';
 import {
   ENTITY_META,
@@ -21,7 +21,8 @@ export const useData = () => {
   return context || {};
 };
 
-const CACHE_KEY = '@SectiPainel_Data_v14_SUPABASE_PROD';
+const CACHE_KEY = '@SectiPainel_Data_v15_SUPABASE_PROD';
+const LEGACY_CACHE_KEY = '@SectiPainel_Data_v14_SUPABASE_PROD';
 const CACHE_TIME_MS = 10 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
@@ -61,6 +62,10 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     const carregarEstatisticas = async () => {
+      try {
+        localStorage.removeItem(LEGACY_CACHE_KEY);
+      } catch {}
+
       // 1. TENTA LER DO CACHE
       const cachedDataStr = localStorage.getItem(CACHE_KEY);
 
@@ -69,7 +74,13 @@ export const DataProvider = ({ children }) => {
           const cache = JSON.parse(cachedDataStr);
           const idadeDoCache = Date.now() - cache.timestamp;
 
-          if (cache.distCadeias && cache.distCadeias.length > 88 && idadeDoCache < CACHE_TIME_MS) {
+          if (
+            cache.stats?.length > 0 &&
+            cache.ativos?.length > 0 &&
+            cache.cursos?.length > 0 &&
+            cache.distCadeias?.length > 88 &&
+            idadeDoCache < CACHE_TIME_MS
+          ) {
             setBaseTerritoriosData(cache.stats || []);
             setBaseAtivosData(cache.ativos || []);
             setBaseCursosData(cache.cursos || []);
@@ -107,18 +118,18 @@ export const DataProvider = ({ children }) => {
           referenciasRes,
           firjanRes
         ] = await Promise.all([
-          supabase.from('stats_ti').select('*'),
-          supabase.from('lista_ativos_cti').select('*').range(0, 3000),
-          supabase.from('lista_cursos_cti').select('*').range(0, 3000),
-          supabase.from('distribuicao_cadeias').select('*').range(0, 4999),
-          supabase.from('lista_cadeia_produtiva').select('*').range(0, 1000),
-          supabase.from('lista_municipioxterritorio').select('*').range(0, 1000),
-          supabase.from('tipo_ativos').select('*'),
-          supabase.from('tipo_cursos').select('*'),
-          supabase.from('tipo_cadeia').select('*'),
-          supabase.from('cursos').select('id_curso, ead').range(0, 3000),
-          supabase.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia'),
-          supabase.from('firjan').select('*').range(0, 1000)
+          supabasePublic.from('stats_ti').select('*'),
+          supabasePublic.from('lista_ativos_cti').select('*').range(0, 3000),
+          supabasePublic.from('lista_cursos_cti').select('*').range(0, 3000),
+          supabasePublic.from('distribuicao_cadeias').select('*').range(0, 4999),
+          supabasePublic.from('lista_cadeia_produtiva').select('*').range(0, 1000),
+          supabasePublic.from('lista_municipioxterritorio').select('*').range(0, 1000),
+          supabasePublic.from('tipo_ativos').select('*'),
+          supabasePublic.from('tipo_cursos').select('*'),
+          supabasePublic.from('tipo_cadeia').select('*'),
+          supabasePublic.from('cursos').select('id_curso, ead').range(0, 3000),
+          supabasePublic.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia'),
+          supabasePublic.from('firjan').select('*').range(0, 1000)
         ]);
 
         if (statsRes.error) console.error('Supabase stats_ti error:', statsRes.error);
@@ -212,10 +223,12 @@ export const DataProvider = ({ children }) => {
           timestamp: Date.now()
         };
 
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify(novoCache));
-        } catch (err) {
-          console.warn("LocalStorage lotado, rodando sem cache.");
+        if (dadosTratados.length > 0 && (ativosRes?.data?.length || 0) > 0) {
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(novoCache));
+          } catch (err) {
+            console.warn("LocalStorage lotado, rodando sem cache.");
+          }
         }
 
         setBaseTerritoriosData(novoCache.stats);

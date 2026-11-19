@@ -17,11 +17,13 @@ import {
   LogOut,
   ShieldCheck,
   User,
+  Activity,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import MonitoringPanel from './MonitoringPanel';
 import { normalize } from '../utils/normalization';
 import { fadeUp, staggerContainer } from '../lib/motion';
 import {
@@ -302,6 +304,7 @@ const INPUT_LABEL_CLASS = 'text-xs font-medium text-zinc-700 dark:text-zinc-300 
 export default function AdminPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, userName, userRole, signOut } = useAuth();
   const {
     ativosData = [],
@@ -322,7 +325,19 @@ export default function AdminPage() {
     resetCrudDrafts,
   } = useData();
 
-  const [activeEntity, setActiveEntity] = useState('ativos');
+  const [activeEntity, setActiveEntity] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    return ['ativos', 'cursos', 'cadeias', 'monitoramento'].includes(tab) ? tab : 'ativos';
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && ['ativos', 'cursos', 'cadeias', 'monitoramento'].includes(tab)) {
+      setActiveEntity(tab);
+    }
+  }, [location.search]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTerritoryId, setSelectedTerritoryId] = useState('all');
@@ -616,6 +631,11 @@ export default function AdminPage() {
         icon: <GitPullRequest className="w-3.5 h-3.5" />,
         count: listaCadeias.length,
       },
+      {
+        id: 'monitoramento',
+        label: 'Monitoramento',
+        icon: <Activity className="w-3.5 h-3.5" />,
+      },
     ],
     [ativosData.length, cursosData.length, listaCadeias.length]
   );
@@ -774,48 +794,60 @@ export default function AdminPage() {
 
   return (
     <main className="flex-1 w-full h-full min-h-0 p-6 lg:p-8 flex flex-col gap-5 overflow-hidden bg-transparent font-sans">
-        {/* CABECALHO */}
-        <PageHeader
-          title="Gestão CRUD · Base CT&I"
-          subtitle="Esboço operacional para cadastrar, editar, filtrar e auditar Ativos, Cursos e Cadeias Produtivas em tempo real no painel."
-          actions={
-            <div className="flex items-center gap-2 flex-wrap">
-              {auditLog.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="md"
-                  iconLeft={<History className="w-4 h-4 stroke-[1.75]" />}
-                  onClick={() => setIsHistoryOpen(true)}
-                >
-                  Histórico ({auditLog.length})
-                </Button>
-              )}
+      {/* CABECALHO */}
+      <PageHeader
+        title="Gestão CRUD · Base CT&I"
+        subtitle="Esboço operacional para cadastrar, editar, filtrar e auditar Ativos, Cursos e Cadeias Produtivas em tempo real no painel."
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            {auditLog.length > 0 && (
+              <Button
+                variant="ghost"
+                size="md"
+                iconLeft={<History className="w-4 h-4 stroke-[1.75]" />}
+                onClick={() => setIsHistoryOpen(true)}
+              >
+                Histórico ({auditLog.length})
+              </Button>
+            )}
 
-              {crudStats?.total > 0 && (
-                <Button
-                  variant="secondary"
-                  size="md"
-                  iconLeft={<RotateCcw className="w-4 h-4 stroke-[1.75]" />}
-                  onClick={() => setIsResetDialogOpen(true)}
-                >
-                  Restaurar base
-                </Button>
-              )}
-
-              <IconButton
+            {crudStats?.total > 0 && (
+              <Button
                 variant="secondary"
                 size="md"
-                aria-label="Encerrar sessão"
-                title="Encerrar sessão"
-                onClick={async () => {
-                  await signOut();
-                  navigate('/territorios');
-                }}
-                className="text-text-secondary hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+                iconLeft={<RotateCcw className="w-4 h-4 stroke-[1.75]" />}
+                onClick={() => setIsResetDialogOpen(true)}
               >
-                <LogOut className="w-4 h-4 stroke-[1.75]" />
-              </IconButton>
+                Restaurar base
+              </Button>
+            )}
 
+            <Button
+              variant={activeEntity === 'monitoramento' ? 'primary' : 'secondary'}
+              size="md"
+              iconLeft={<Activity className="w-4 h-4 stroke-[1.75]" />}
+              onClick={() =>
+                setActiveEntity((prev) => (prev === 'monitoramento' ? 'ativos' : 'monitoramento'))
+              }
+            >
+              Monitoramento
+            </Button>
+
+            <IconButton
+              variant="secondary"
+              size="md"
+              aria-label="Encerrar sessão"
+              title="Encerrar sessão"
+              onClick={async () => {
+                await signOut();
+                navigate('/territorios');
+              }}
+              className="text-text-secondary hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+            >
+              <LogOut className="w-4 h-4 stroke-[1.75]" />
+            </IconButton>
+
+            {activeEntity !== 'monitoramento' && (
               <Button
                 variant="primary"
                 size="md"
@@ -824,949 +856,958 @@ export default function AdminPage() {
               >
                 Novo Registro
               </Button>
-            </div>
-          }
+            )}
+          </div>
+        }
+      />
+
+      {/* SELETOR DE ENTIDADE */}
+      <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <Tabs
+          items={entityTabs}
+          value={activeEntity}
+          onChange={setActiveEntity}
+          isSemiarido={filtroSemiarido}
+          layoutId="admin-entity-tabs"
         />
 
-        {/* SELETOR DE ENTIDADE */}
-        <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <Tabs
-            items={entityTabs}
-            value={activeEntity}
-            onChange={setActiveEntity}
-            isSemiarido={filtroSemiarido}
-            layoutId="admin-entity-tabs"
-          />
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          {activeEntity === 'monitoramento'
+            ? 'Monitoramento em tempo real de acessos, sessões, auditoria CRUD e saúde dos dados.'
+            : 'Alterações locais atualizam o mapa e os módulos instantaneamente (persistência em navegador).'}
+        </p>
+      </div>
 
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Alterações locais atualizam o mapa e os módulos instantaneamente (persistência em navegador).
-          </p>
-        </div>
+      {activeEntity === 'monitoramento' ? (
+        <MonitoringPanel />
+      ) : (
+        <>
+          {/* KPI CARDS (animacao escalonada + AnimatedNumber igual aos outros modulos) */}
+          <motion.div
+            key={`kpis-${activeEntity}`}
+            variants={staggerContainer(0.04)}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0"
+          >
+            {loadingStats ? (
+              Array.from({ length: 4 }).map((_, idx) => <KpiSkeleton key={idx} />)
+            ) : (
+              <>
+                {[
+                  {
+                    key: 'total',
+                    label: 'Total na Entidade',
+                    icon: Database,
+                    numericValue: currentList.length,
+                    suffix: '',
+                    hint:
+                      entityChangesCount > 0
+                        ? `${entityChangesCount} alteração(ões) nesta aba`
+                        : 'Registros carregados da base',
+                  },
+                  {
+                    key: 'filtered',
+                    label: 'Exibidos no Filtro',
+                    icon: CheckCircle2,
+                    numericValue: filteredRows.length,
+                    suffix: '',
+                    hint: hasActiveFilters ? 'Filtros ativos aplicados' : 'Sem filtros aplicados',
+                  },
+                  {
+                    key: 'coverage',
+                    label: 'Cobertura Territorial',
+                    icon: MapPin,
+                    numericValue: municipalityCount,
+                    suffix: ' munic.',
+                    hint: `${territoryCoverage} de ${territoriosData.length || 27} territórios`,
+                  },
+                ].map((kpi) => {
+                  const KpiIcon = kpi.icon;
+                  return (
+                    <motion.div
+                      key={kpi.key}
+                      variants={fadeUp}
+                      className={cn(
+                        'rounded-card border bg-surface p-4 sm:p-5 shadow-card flex flex-col justify-between gap-2 transition-colors duration-200 h-full',
+                        filtroSemiarido
+                          ? 'border-amber-300/60 dark:border-amber-700/50'
+                          : 'border-border/60'
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-text-secondary">{kpi.label}</span>
+                        <KpiIcon className="w-4 h-4 text-text-muted stroke-[1.75]" />
+                      </div>
+                      <div className="text-2xl font-semibold tracking-tight tabular-nums text-text-primary">
+                        <AnimatedNumber value={kpi.numericValue} />
+                        {kpi.suffix}
+                      </div>
+                      <div className="text-xs text-text-muted tabular-nums">{kpi.hint}</div>
+                    </motion.div>
+                  );
+                })}
 
-        {/* KPI CARDS (animacao escalonada + AnimatedNumber igual aos outros modulos) */}
-        <motion.div
-          key={`kpis-${activeEntity}`}
-          variants={staggerContainer(0.04)}
-          initial="initial"
-          animate="animate"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0"
-        >
-          {loadingStats ? (
-            Array.from({ length: 4 }).map((_, idx) => <KpiSkeleton key={idx} />)
-          ) : (
-            <>
-              {[
-                {
-                  key: 'total',
-                  label: 'Total na Entidade',
-                  icon: Database,
-                  numericValue: currentList.length,
-                  suffix: '',
-                  hint:
-                    entityChangesCount > 0
-                      ? `${entityChangesCount} alteração(ões) nesta aba`
-                      : 'Registros carregados da base',
-                },
-                {
-                  key: 'filtered',
-                  label: 'Exibidos no Filtro',
-                  icon: CheckCircle2,
-                  numericValue: filteredRows.length,
-                  suffix: '',
-                  hint: hasActiveFilters ? 'Filtros ativos aplicados' : 'Sem filtros aplicados',
-                },
-                {
-                  key: 'coverage',
-                  label: 'Cobertura Territorial',
-                  icon: MapPin,
-                  numericValue: municipalityCount,
-                  suffix: ' munic.',
-                  hint: `${territoryCoverage} de ${territoriosData.length || 27} territórios`,
-                },
-              ].map((kpi) => {
-                const KpiIcon = kpi.icon;
-                return (
-                  <motion.div
-                    key={kpi.key}
-                    variants={fadeUp}
-                    className={cn(
-                      'rounded-card border bg-surface p-4 sm:p-5 shadow-card flex flex-col justify-between gap-2 transition-colors duration-200 h-full',
-                      filtroSemiarido
-                        ? 'border-amber-300/60 dark:border-amber-700/50'
-                        : 'border-border/60'
-                    )}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-medium text-text-secondary">{kpi.label}</span>
-                      <KpiIcon className="w-4 h-4 text-text-muted stroke-[1.75]" />
-                    </div>
-                    <div className="text-2xl font-semibold tracking-tight tabular-nums text-text-primary">
-                      <AnimatedNumber value={kpi.numericValue} />
-                      {kpi.suffix}
-                    </div>
-                    <div className="text-xs text-text-muted tabular-nums">{kpi.hint}</div>
-                  </motion.div>
-                );
-              })}
-
-              <motion.div
-                variants={fadeUp}
-                className={cn(
-                  'rounded-card border bg-surface p-4 sm:p-5 shadow-card flex flex-col justify-between gap-2 transition-colors duration-200 h-full',
-                  filtroSemiarido
-                    ? 'border-amber-300/60 dark:border-amber-700/50'
-                    : 'border-border/60'
-                )}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-text-secondary">
-                    Modo de Persistência
-                  </span>
-                  <Wifi className="w-4 h-4 text-text-muted stroke-[1.75]" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn(
-                      'w-1.5 h-1.5 rounded-full shrink-0',
-                      crudStats?.total > 0 ? 'bg-amber-500' : 'bg-emerald-500'
-                    )}
-                  />
-                  <span className="text-base font-semibold tracking-tight text-text-primary">
-                    {crudStats?.total > 0 ? 'Rascunho Local' : 'Leitura Oficial'}
-                  </span>
-                </div>
-                <div className="text-xs text-text-muted tabular-nums">
-                  {crudStats?.total > 0
-                    ? `+${crudStats.added} novo(s) · ${crudStats.updated} edit. · ${crudStats.deleted} excl.`
-                    : 'Supabase (somente leitura) + cache'}
-                </div>
-              </motion.div>
-            </>
-          )}
-        </motion.div>
-
-        {/* CONTAINER UNIFICADO DA TABELA */}
-        <motion.section
-          key={`table-${activeEntity}`}
-          variants={fadeUp}
-          initial="initial"
-          animate="animate"
-          className={cn(
-            'flex-1 min-h-0 rounded-card border bg-surface shadow-card flex flex-col overflow-hidden transition-colors duration-200',
-            filtroSemiarido
-              ? 'border-amber-300/60 dark:border-amber-700/50'
-              : 'border-border/60'
-          )}
-        >
-          {/* TOOLBAR UNIFICADA */}
-          <div className="p-4 sm:px-5 border-b border-border/60 flex flex-col lg:flex-row lg:items-center justify-between gap-3 shrink-0 relative z-30">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
-              <SearchInput
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onClear={() => setSearchTerm('')}
-                suggestions={adminSearchData.suggestions}
-                recommendations={adminSearchData.recommendations}
-                enableShortcut
-                containerClassName="sm:max-w-md"
-                placeholder="Buscar registro, município... (/)"
-              />
-
-              <Select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                containerClassName="w-full sm:w-56 shrink-0"
-                aria-label="Filtrar por categoria"
-              >
-                <option value="all">Todas as categorias</option>
-                {categoryOptions.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </Select>
-
-              <Select
-                value={selectedTerritoryId}
-                onChange={(e) => setSelectedTerritoryId(e.target.value)}
-                containerClassName="w-full sm:w-56 shrink-0"
-                aria-label="Filtrar por território"
-              >
-                <option value="all">Todos os territórios</option>
-                {territoryOptions.map((t) => (
-                  <option key={t.id} value={String(t.id)}>
-                    {t.name}
-                  </option>
-                ))}
-              </Select>
-
-              {entityChangesCount > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setOnlyModified((v) => !v)}
+                <motion.div
+                  variants={fadeUp}
                   className={cn(
-                    'h-9 px-3.5 rounded-control text-xs font-medium border transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/15 dark:focus-visible:ring-zinc-100/20',
-                    onlyModified
-                      ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/30'
-                      : 'bg-surface text-text-secondary border-border hover:bg-surface-soft dark:hover:bg-surface-raised'
+                    'rounded-card border bg-surface p-4 sm:p-5 shadow-card flex flex-col justify-between gap-2 transition-colors duration-200 h-full',
+                    filtroSemiarido
+                      ? 'border-amber-300/60 dark:border-amber-700/50'
+                      : 'border-border/60'
                   )}
                 >
-                  Alterados ({entityChangesCount})
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-text-secondary">
+                      Modo de Persistência
+                    </span>
+                    <Wifi className="w-4 h-4 text-text-muted stroke-[1.75]" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        'w-1.5 h-1.5 rounded-full shrink-0',
+                        crudStats?.total > 0 ? 'bg-amber-500' : 'bg-emerald-500'
+                      )}
+                    />
+                    <span className="text-base font-semibold tracking-tight text-text-primary">
+                      {crudStats?.total > 0 ? 'Rascunho Local' : 'Leitura Oficial'}
+                    </span>
+                  </div>
+                  <div className="text-xs text-text-muted tabular-nums">
+                    {crudStats?.total > 0
+                      ? `+${crudStats.added} novo(s) · ${crudStats.updated} edit. · ${crudStats.deleted} excl.`
+                      : 'Supabase (somente leitura) + cache'}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </motion.div>
+
+          {/* CONTAINER UNIFICADO DA TABELA */}
+          <motion.section
+            key={`table-${activeEntity}`}
+            variants={fadeUp}
+            initial="initial"
+            animate="animate"
+            className={cn(
+              'flex-1 min-h-0 rounded-card border bg-surface shadow-card flex flex-col overflow-hidden transition-colors duration-200',
+              filtroSemiarido
+                ? 'border-amber-300/60 dark:border-amber-700/50'
+                : 'border-border/60'
+            )}
+          >
+            {/* TOOLBAR UNIFICADA */}
+            <div className="p-4 sm:px-5 border-b border-border/60 flex flex-col lg:flex-row lg:items-center justify-between gap-3 shrink-0 relative z-30">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
+                <SearchInput
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onClear={() => setSearchTerm('')}
+                  suggestions={adminSearchData.suggestions}
+                  recommendations={adminSearchData.recommendations}
+                  enableShortcut
+                  containerClassName="sm:max-w-md"
+                  placeholder="Buscar registro, município... (/)"
+                />
+
+                <Select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  containerClassName="w-full sm:w-56 shrink-0"
+                  aria-label="Filtrar por categoria"
+                >
+                  <option value="all">Todas as categorias</option>
+                  {categoryOptions.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </Select>
+
+                <Select
+                  value={selectedTerritoryId}
+                  onChange={(e) => setSelectedTerritoryId(e.target.value)}
+                  containerClassName="w-full sm:w-56 shrink-0"
+                  aria-label="Filtrar por território"
+                >
+                  <option value="all">Todos os territórios</option>
+                  {territoryOptions.map((t) => (
+                    <option key={t.id} value={String(t.id)}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Select>
+
+                {entityChangesCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setOnlyModified((v) => !v)}
+                    className={cn(
+                      'h-9 px-3.5 rounded-control text-xs font-medium border transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/15 dark:focus-visible:ring-zinc-100/20',
+                      onlyModified
+                        ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/30'
+                        : 'bg-surface text-text-secondary border-border hover:bg-surface-soft dark:hover:bg-surface-raised'
+                    )}
+                  >
+                    Alterados ({entityChangesCount})
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
+                {hasActiveFilters && (
+                  <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                    Limpar filtros
+                  </Button>
+                )}
+                <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
+                  Mostrando <strong className="text-zinc-900 dark:text-zinc-100">{filteredRows.length}</strong> de{' '}
+                  {currentList.length}
+                </span>
+              </div>
+            </div>
+
+            {/* CORPO DA TABELA COM CABECALHO UNICO STICKY E ROLAGEM INFINITA */}
+            <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+              {showScrollTop && (
+                <button
+                  type="button"
+                  onClick={scrollTableToTop}
+                  aria-label="Voltar ao topo da lista"
+                  title="Voltar ao topo"
+                  className="absolute bottom-4 right-5 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/80 dark:border-zinc-700/80 text-zinc-700 dark:text-zinc-200 shadow-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-150 ease-out active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/15 dark:focus-visible:ring-zinc-100/20"
+                >
+                  <ArrowUp className="w-4 h-4 stroke-[1.75]" />
                 </button>
               )}
-            </div>
 
-            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-              {hasActiveFilters && (
-                <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                  Limpar filtros
-                </Button>
-              )}
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                Mostrando <strong className="text-zinc-900 dark:text-zinc-100">{filteredRows.length}</strong> de{' '}
-                {currentList.length}
-              </span>
-            </div>
-          </div>
-
-          {/* CORPO DA TABELA COM CABECALHO UNICO STICKY E ROLAGEM INFINITA */}
-          <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
-            {showScrollTop && (
-              <button
-                type="button"
-                onClick={scrollTableToTop}
-                aria-label="Voltar ao topo da lista"
-                title="Voltar ao topo"
-                className="absolute bottom-4 right-5 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/95 dark:bg-zinc-900/95 border border-zinc-200/80 dark:border-zinc-700/80 text-zinc-700 dark:text-zinc-200 shadow-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all duration-150 ease-out active:scale-[0.98] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/15 dark:focus-visible:ring-zinc-100/20"
+              <div
+                ref={tableScrollRef}
+                onScroll={handleTableScroll}
+                className="flex-1 min-h-0 overflow-auto"
               >
-                <ArrowUp className="w-4 h-4 stroke-[1.75]" />
-              </button>
-            )}
-
-            <div
-              ref={tableScrollRef}
-              onScroll={handleTableScroll}
-              className="flex-1 min-h-0 overflow-auto"
-            >
-              <table className="w-full text-left border-collapse text-sm min-w-[760px]">
-                <thead className="sticky top-0 z-10 bg-surface-soft/95 backdrop-blur-xs border-b border-border/60">
-                  <tr>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[33%]">
-                      {columnHeaders.primary}
-                    </th>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[18%]">
-                      {columnHeaders.category}
-                    </th>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[14%]">
-                      {columnHeaders.municipality}
-                    </th>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[17%]">
-                      {columnHeaders.territory}
-                    </th>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 text-center w-[10%]">
-                      {columnHeaders.status}
-                    </th>
-                    <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 text-center w-[8%]">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60">
-                  {loadingStats ? (
-                    <TableSkeletonRows />
-                  ) : visibleRows.length > 0 ? (
-                    visibleRows.map((row) => (
-                    <tr
-                      key={row.id || row.primary}
-                      className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors group"
-                    >
-                      <td className="py-2.5 px-4 align-top">
-                        <div className="min-w-0">
-                          <div className="flex items-start gap-2 min-w-0">
-                            <span
-                              className="font-medium text-zinc-900 dark:text-zinc-100 line-clamp-2"
-                              title={row.primary}
-                            >
-                              {row.primary}
-                            </span>
-                            <CrudStatusPill status={row.crudStatus} />
-                          </div>
-                          {row.secondary && (
-                            <p
-                              className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5"
-                              title={row.secondary}
-                            >
-                              {row.secondary}
-                            </p>
-                          )}
-                        </div>
-                      </td>
-
-                      <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300 align-top">
-                        <span className="line-clamp-2" title={row.category}>
-                          {row.category}
-                        </span>
-                      </td>
-
-                      <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300 align-top">
-                        <span className="line-clamp-2" title={row.municipality}>
-                          {row.municipality}
-                        </span>
-                      </td>
-
-                      <td className="py-2.5 px-4 text-zinc-500 dark:text-zinc-400 align-top">
-                        <span className="line-clamp-2" title={row.territoryName}>
-                          {row.territoryName}
-                        </span>
-                      </td>
-
-                      <td className="py-2.5 px-4 text-center">
-                        <span
-                          className={cn(
-                            'inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap',
-                            row.badgeClass
-                          )}
-                        >
-                          {row.badgeLabel}
-                        </span>
-                      </td>
-
-                      <td className="py-2.5 px-4 text-center">
-                        <div className="inline-flex items-center justify-center gap-1">
-                          <IconButton
-                            size="sm"
-                            variant="ghost"
-                            aria-label={`Editar ${row.primary}`}
-                            title="Editar registro"
-                            icon={<Pencil className="w-4 h-4 stroke-[1.75] text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" />}
-                            onClick={() => handleOpenEdit(row)}
-                          />
-                          <IconButton
-                            size="sm"
-                            variant="ghost"
-                            aria-label={`Excluir ${row.primary}`}
-                            title="Excluir registro"
-                            icon={<Trash2 className="w-4 h-4 stroke-[1.75] text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400" />}
-                            onClick={() => setDeletingTarget(row)}
-                          />
-                        </div>
-                      </td>
+                <table className="w-full text-left border-collapse text-sm min-w-[760px]">
+                  <thead className="sticky top-0 z-10 bg-surface-soft/95 backdrop-blur-xs border-b border-border/60">
+                    <tr>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[33%]">
+                        {columnHeaders.primary}
+                      </th>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[18%]">
+                        {columnHeaders.category}
+                      </th>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[14%]">
+                        {columnHeaders.municipality}
+                      </th>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 w-[17%]">
+                        {columnHeaders.territory}
+                      </th>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 text-center w-[10%]">
+                        {columnHeaders.status}
+                      </th>
+                      <th className="py-2.5 px-4 text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 text-center w-[8%]">
+                        Ações
+                      </th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="p-6">
-                      <EmptyState
-                        title="Nenhum resultado encontrado"
-                        description="Nenhum registro corresponde aos critérios de busca ou filtros aplicados."
-                        action={
-                          hasActiveFilters ? (
-                            <Button variant="secondary" size="sm" onClick={handleClearFilters}>
-                              Limpar filtros
-                            </Button>
-                          ) : (
-                            <Button variant="primary" size="sm" onClick={handleOpenCreate}>
-                              Cadastrar primeiro registro
-                            </Button>
-                          )
-                        }
-                      />
-                    </td>
-                  </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60">
+                    {loadingStats ? (
+                      <TableSkeletonRows />
+                    ) : visibleRows.length > 0 ? (
+                      visibleRows.map((row) => (
+                        <tr
+                          key={row.id || row.primary}
+                          className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors group"
+                        >
+                          <td className="py-2.5 px-4 align-top">
+                            <div className="min-w-0">
+                              <div className="flex items-start gap-2 min-w-0">
+                                <span
+                                  className="font-medium text-zinc-900 dark:text-zinc-100 line-clamp-2"
+                                  title={row.primary}
+                                >
+                                  {row.primary}
+                                </span>
+                                <CrudStatusPill status={row.crudStatus} />
+                              </div>
+                              {row.secondary && (
+                                <p
+                                  className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5"
+                                  title={row.secondary}
+                                >
+                                  {row.secondary}
+                                </p>
+                              )}
+                            </div>
+                          </td>
+
+                          <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300 align-top">
+                            <span className="line-clamp-2" title={row.category}>
+                              {row.category}
+                            </span>
+                          </td>
+
+                          <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300 align-top">
+                            <span className="line-clamp-2" title={row.municipality}>
+                              {row.municipality}
+                            </span>
+                          </td>
+
+                          <td className="py-2.5 px-4 text-zinc-500 dark:text-zinc-400 align-top">
+                            <span className="line-clamp-2" title={row.territoryName}>
+                              {row.territoryName}
+                            </span>
+                          </td>
+
+                          <td className="py-2.5 px-4 text-center">
+                            <span
+                              className={cn(
+                                'inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium border whitespace-nowrap',
+                                row.badgeClass
+                              )}
+                            >
+                              {row.badgeLabel}
+                            </span>
+                          </td>
+
+                          <td className="py-2.5 px-4 text-center">
+                            <div className="inline-flex items-center justify-center gap-1">
+                              <IconButton
+                                size="sm"
+                                variant="ghost"
+                                aria-label={`Editar ${row.primary}`}
+                                title="Editar registro"
+                                icon={<Pencil className="w-4 h-4 stroke-[1.75] text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" />}
+                                onClick={() => handleOpenEdit(row)}
+                              />
+                              <IconButton
+                                size="sm"
+                                variant="ghost"
+                                aria-label={`Excluir ${row.primary}`}
+                                title="Excluir registro"
+                                icon={<Trash2 className="w-4 h-4 stroke-[1.75] text-zinc-500 hover:text-rose-600 dark:hover:text-rose-400" />}
+                                onClick={() => setDeletingTarget(row)}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="p-6">
+                          <EmptyState
+                            title="Nenhum resultado encontrado"
+                            description="Nenhum registro corresponde aos critérios de busca ou filtros aplicados."
+                            action={
+                              hasActiveFilters ? (
+                                <Button variant="secondary" size="sm" onClick={handleClearFilters}>
+                                  Limpar filtros
+                                </Button>
+                              ) : (
+                                <Button variant="primary" size="sm" onClick={handleOpenCreate}>
+                                  Cadastrar primeiro registro
+                                </Button>
+                              )
+                            }
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+
+                {/* SENTINELA DE ROLAGEM INFINITA */}
+                {!loadingStats && hasMoreRows && (
+                  <div
+                    ref={loadMoreRef}
+                    className="py-4 px-4 flex items-center justify-center gap-2 border-t border-zinc-200/60 dark:border-zinc-800/60"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
+                      Carregando mais registros ({visibleRows.length} de {filteredRows.length})...
+                    </span>
+                  </div>
                 )}
-                </tbody>
-              </table>
-
-              {/* SENTINELA DE ROLAGEM INFINITA */}
-              {!loadingStats && hasMoreRows && (
-                <div
-                  ref={loadMoreRef}
-                  className="py-4 px-4 flex items-center justify-center gap-2 border-t border-zinc-200/60 dark:border-zinc-800/60"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-pulse" />
-                  <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                    Carregando mais registros ({visibleRows.length} de {filteredRows.length})...
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
-          </div>
 
-          {/* RODAPE DE STATUS DA ROLAGEM INFINITA */}
-          {!loadingStats && filteredRows.length > 0 && (
-            <div className="px-4 sm:px-5 py-2.5 border-t border-border/60 flex items-center justify-between gap-3 bg-surface-soft/60 shrink-0">
-              <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
-                Exibindo <strong className="text-zinc-900 dark:text-zinc-100">{visibleRows.length}</strong> de{' '}
-                {filteredRows.length} registro(s)
-              </span>
+            {/* RODAPE DE STATUS DA ROLAGEM INFINITA */}
+            {!loadingStats && filteredRows.length > 0 && (
+              <div className="px-4 sm:px-5 py-2.5 border-t border-border/60 flex items-center justify-between gap-3 bg-surface-soft/60 shrink-0">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums">
+                  Exibindo <strong className="text-zinc-900 dark:text-zinc-100">{visibleRows.length}</strong> de{' '}
+                  {filteredRows.length} registro(s)
+                </span>
 
-              <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                {hasMoreRows ? 'Role para carregar mais' : 'Lista completa carregada'}
-              </span>
-            </div>
-          )}
-        </motion.section>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {hasMoreRows ? 'Role para carregar mais' : 'Lista completa carregada'}
+                </span>
+              </div>
+            )}
+          </motion.section>
+        </>
+      )}
 
-        {/* AUTOCOMPLETE DE MUNICIPIOS DA BAHIA */}
-        <datalist id="ba-municipios-list">
-          {municipalityLookup.options.map((mun) => (
-            <option key={mun} value={mun} />
-          ))}
-        </datalist>
+      {/* AUTOCOMPLETE DE MUNICIPIOS DA BAHIA */}
+      <datalist id="ba-municipios-list">
+        {municipalityLookup.options.map((mun) => (
+          <option key={mun} value={mun} />
+        ))}
+      </datalist>
 
-        {/* DRAWER DE CRIACAO E EDICAO */}
-        <Drawer
-          open={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          title={
-            editingId
-              ? 'Editar Registro'
-              : activeEntity === 'ativos'
-                ? 'Novo Ativo de CT&I'
-                : activeEntity === 'cursos'
-                  ? 'Novo Curso CT&I'
-                  : 'Nova Cadeia Produtiva / IG'
-          }
-          subtitle={
-            editingId
-              ? 'As alterações serão aplicadas imediatamente no rascunho local do painel.'
-              : 'Preencha os campos abaixo para incluir um novo registro territorial.'
-          }
-          footer={
+      {/* DRAWER DE CRIACAO E EDICAO */}
+      <Drawer
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title={
+          editingId
+            ? 'Editar Registro'
+            : activeEntity === 'ativos'
+              ? 'Novo Ativo de CT&I'
+              : activeEntity === 'cursos'
+                ? 'Novo Curso CT&I'
+                : 'Nova Cadeia Produtiva / IG'
+        }
+        subtitle={
+          editingId
+            ? 'As alterações serão aplicadas imediatamente no rascunho local do painel.'
+            : 'Preencha os campos abaixo para incluir um novo registro territorial.'
+        }
+        footer={
+          <>
+            <Button variant="secondary" size="md" onClick={() => setIsDrawerOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="primary" size="md" onClick={handleSave}>
+              {editingId ? 'Salvar Alterações' : 'Cadastrar Registro'}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSave} className="space-y-4">
+          {activeEntity === 'ativos' && (
             <>
-              <Button variant="secondary" size="md" onClick={() => setIsDrawerOpen(false)}>
-                Cancelar
-              </Button>
-              <Button variant="primary" size="md" onClick={handleSave}>
-                {editingId ? 'Salvar Alterações' : 'Cadastrar Registro'}
-              </Button>
-            </>
-          }
-        >
-          <form onSubmit={handleSave} className="space-y-4">
-            {activeEntity === 'ativos' && (
-              <>
-                <div>
-                  <label htmlFor="ativo-nome" className={INPUT_LABEL_CLASS}>
-                    Nome do Ativo <span className="text-rose-600">*</span>
-                  </label>
-                  <Input
-                    id="ativo-nome"
-                    value={formValues.nome_ativo}
-                    error={Boolean(formErrors.nome_ativo)}
-                    onChange={(e) => {
-                      setFormValues((prev) => ({ ...prev, nome_ativo: e.target.value }));
-                      if (formErrors.nome_ativo) setFormErrors((p) => ({ ...p, nome_ativo: undefined }));
-                    }}
-                    placeholder="Ex: Parque Tecnológico da Bahia"
-                  />
-                  <FieldError message={formErrors.nome_ativo} />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="ativo-sigla" className={INPUT_LABEL_CLASS}>
-                      Sigla
-                    </label>
-                    <Input
-                      id="ativo-sigla"
-                      value={formValues.sigla}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, sigla: e.target.value }))}
-                      placeholder="Ex: PTB"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="ativo-tipo" className={INPUT_LABEL_CLASS}>
-                      Tipologia <span className="text-rose-600">*</span>
-                    </label>
-                    <Select
-                      id="ativo-tipo"
-                      value={formValues.tipo}
-                      error={Boolean(formErrors.tipo)}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, tipo: e.target.value }))}
-                    >
-                      {Array.from(new Set([...DEFAULT_ATIVO_TYPES, ...categoryOptions])).map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </Select>
-                    <FieldError message={formErrors.tipo} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="ativo-municipio" className={INPUT_LABEL_CLASS}>
-                      Município <span className="text-rose-600">*</span>
-                    </label>
-                    <Input
-                      id="ativo-municipio"
-                      list="ba-municipios-list"
-                      value={formValues.municipio}
-                      error={Boolean(formErrors.municipio)}
-                      onChange={(e) => handleMunicipalityChange('municipio', e.target.value)}
-                      placeholder="Ex: Salvador"
-                    />
-                    <FieldError message={formErrors.municipio} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="ativo-territorio" className={INPUT_LABEL_CLASS}>
-                      Território de Identidade
-                    </label>
-                    <Select
-                      id="ativo-territorio"
-                      value={formValues.id_territorio}
-                      onChange={(e) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          id_territorio: e.target.value,
-                          territorio_identidade:
-                            territoryNameById.get(Number(e.target.value)) || '',
-                        }))
-                      }
-                    >
-                      <option value="">Selecionar território...</option>
-                      {territoryOptions.map((t) => (
-                        <option key={t.id} value={String(t.id)}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="ativo-ref" className={INPUT_LABEL_CLASS}>
-                    Referência / Fonte
-                  </label>
-                  <Input
-                    id="ativo-ref"
-                    value={formValues.referencia}
-                    onChange={(e) => setFormValues((prev) => ({ ...prev, referencia: e.target.value }))}
-                    placeholder="Ex: SECTI / INEP Censo Superior"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="ativo-lat" className={INPUT_LABEL_CLASS}>
-                      Latitude
-                    </label>
-                    <Input
-                      id="ativo-lat"
-                      value={formValues.latitude}
-                      error={Boolean(formErrors.latitude)}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, latitude: e.target.value }))}
-                      placeholder="-12.9714"
-                      className="tabular-nums"
-                    />
-                    <FieldError message={formErrors.latitude} />
-                  </div>
-                  <div>
-                    <label htmlFor="ativo-lng" className={INPUT_LABEL_CLASS}>
-                      Longitude
-                    </label>
-                    <Input
-                      id="ativo-lng"
-                      value={formValues.longitude}
-                      error={Boolean(formErrors.longitude)}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, longitude: e.target.value }))}
-                      placeholder="-38.5014"
-                      className="tabular-nums"
-                    />
-                    <FieldError message={formErrors.longitude} />
-                  </div>
-                </div>
-
-                <label className="flex items-center gap-2.5 pt-1 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(formValues.rnp)}
-                    onChange={(e) => setFormValues((prev) => ({ ...prev, rnp: e.target.checked }))}
-                    className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 accent-zinc-900 dark:accent-zinc-100"
-                  />
-                  <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                    Conectado à Rede Nacional de Ensino e Pesquisa (RNP)
-                  </span>
+              <div>
+                <label htmlFor="ativo-nome" className={INPUT_LABEL_CLASS}>
+                  Nome do Ativo <span className="text-rose-600">*</span>
                 </label>
-              </>
-            )}
+                <Input
+                  id="ativo-nome"
+                  value={formValues.nome_ativo}
+                  error={Boolean(formErrors.nome_ativo)}
+                  onChange={(e) => {
+                    setFormValues((prev) => ({ ...prev, nome_ativo: e.target.value }));
+                    if (formErrors.nome_ativo) setFormErrors((p) => ({ ...p, nome_ativo: undefined }));
+                  }}
+                  placeholder="Ex: Parque Tecnológico da Bahia"
+                />
+                <FieldError message={formErrors.nome_ativo} />
+              </div>
 
-            {activeEntity === 'cursos' && (
-              <>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="curso-nome" className={INPUT_LABEL_CLASS}>
-                    Nome do Curso <span className="text-rose-600">*</span>
+                  <label htmlFor="ativo-sigla" className={INPUT_LABEL_CLASS}>
+                    Sigla
                   </label>
                   <Input
-                    id="curso-nome"
-                    value={formValues.curso}
-                    error={Boolean(formErrors.curso)}
-                    onChange={(e) => {
-                      setFormValues((prev) => ({ ...prev, curso: e.target.value }));
-                      if (formErrors.curso) setFormErrors((p) => ({ ...p, curso: undefined }));
-                    }}
-                    placeholder="Ex: Ciência da Computação"
+                    id="ativo-sigla"
+                    value={formValues.sigla}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, sigla: e.target.value }))}
+                    placeholder="Ex: PTB"
                   />
-                  <FieldError message={formErrors.curso} />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-2">
-                    <label htmlFor="curso-entidade" className={INPUT_LABEL_CLASS}>
-                      Instituição (IES) <span className="text-rose-600">*</span>
-                    </label>
-                    <Input
-                      id="curso-entidade"
-                      value={formValues.entidade}
-                      error={Boolean(formErrors.entidade)}
-                      onChange={(e) => {
-                        setFormValues((prev) => ({ ...prev, entidade: e.target.value }));
-                        if (formErrors.entidade) setFormErrors((p) => ({ ...p, entidade: undefined }));
-                      }}
-                      placeholder="Ex: Universidade Federal da Bahia"
-                    />
-                    <FieldError message={formErrors.entidade} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="curso-sigla" className={INPUT_LABEL_CLASS}>
-                      Sigla IES
-                    </label>
-                    <Input
-                      id="curso-sigla"
-                      value={formValues.sigla}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, sigla: e.target.value }))}
-                      placeholder="UFBA"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="curso-categoria" className={INPUT_LABEL_CLASS}>
-                      Área / Categoria <span className="text-rose-600">*</span>
-                    </label>
-                    <Select
-                      id="curso-categoria"
-                      value={formValues.categoria}
-                      error={Boolean(formErrors.categoria)}
-                      onChange={(e) =>
-                        setFormValues((prev) => ({ ...prev, categoria: e.target.value }))
-                      }
-                    >
-                      {Array.from(new Set([...DEFAULT_CURSO_CATEGORIES, ...categoryOptions])).map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </Select>
-                    <FieldError message={formErrors.categoria} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="curso-modalidade" className={INPUT_LABEL_CLASS}>
-                      Modalidade
-                    </label>
-                    <Select
-                      id="curso-modalidade"
-                      value={formValues.modalidade}
-                      onChange={(e) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          modalidade: e.target.value,
-                          ead: e.target.value === 'EAD',
-                        }))
-                      }
-                    >
-                      <option value="Presencial">Presencial</option>
-                      <option value="EAD">EAD</option>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="curso-municipio" className={INPUT_LABEL_CLASS}>
-                      Município <span className="text-rose-600">*</span>
-                    </label>
-                    <Input
-                      id="curso-municipio"
-                      list="ba-municipios-list"
-                      value={formValues.municipio}
-                      error={Boolean(formErrors.municipio)}
-                      onChange={(e) => handleMunicipalityChange('municipio', e.target.value)}
-                      placeholder="Ex: Feira de Santana"
-                    />
-                    <FieldError message={formErrors.municipio} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="curso-territorio" className={INPUT_LABEL_CLASS}>
-                      Território de Identidade
-                    </label>
-                    <Select
-                      id="curso-territorio"
-                      value={formValues.id_territorio}
-                      onChange={(e) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          id_territorio: e.target.value,
-                          territorio_identidade:
-                            territoryNameById.get(Number(e.target.value)) || '',
-                        }))
-                      }
-                    >
-                      <option value="">Selecionar território...</option>
-                      {territoryOptions.map((t) => (
-                        <option key={t.id} value={String(t.id)}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {activeEntity === 'cadeias' && (
-              <>
                 <div>
-                  <label htmlFor="cadeia-entidade" className={INPUT_LABEL_CLASS}>
-                    Nome do Arranjo / Indicação Geográfica <span className="text-rose-600">*</span>
+                  <label htmlFor="ativo-tipo" className={INPUT_LABEL_CLASS}>
+                    Tipologia <span className="text-rose-600">*</span>
+                  </label>
+                  <Select
+                    id="ativo-tipo"
+                    value={formValues.tipo}
+                    error={Boolean(formErrors.tipo)}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, tipo: e.target.value }))}
+                  >
+                    {Array.from(new Set([...DEFAULT_ATIVO_TYPES, ...categoryOptions])).map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </Select>
+                  <FieldError message={formErrors.tipo} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="ativo-municipio" className={INPUT_LABEL_CLASS}>
+                    Município <span className="text-rose-600">*</span>
                   </label>
                   <Input
-                    id="cadeia-entidade"
+                    id="ativo-municipio"
+                    list="ba-municipios-list"
+                    value={formValues.municipio}
+                    error={Boolean(formErrors.municipio)}
+                    onChange={(e) => handleMunicipalityChange('municipio', e.target.value)}
+                    placeholder="Ex: Salvador"
+                  />
+                  <FieldError message={formErrors.municipio} />
+                </div>
+
+                <div>
+                  <label htmlFor="ativo-territorio" className={INPUT_LABEL_CLASS}>
+                    Território de Identidade
+                  </label>
+                  <Select
+                    id="ativo-territorio"
+                    value={formValues.id_territorio}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        id_territorio: e.target.value,
+                        territorio_identidade:
+                          territoryNameById.get(Number(e.target.value)) || '',
+                      }))
+                    }
+                  >
+                    <option value="">Selecionar território...</option>
+                    {territoryOptions.map((t) => (
+                      <option key={t.id} value={String(t.id)}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="ativo-ref" className={INPUT_LABEL_CLASS}>
+                  Referência / Fonte
+                </label>
+                <Input
+                  id="ativo-ref"
+                  value={formValues.referencia}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, referencia: e.target.value }))}
+                  placeholder="Ex: SECTI / INEP Censo Superior"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="ativo-lat" className={INPUT_LABEL_CLASS}>
+                    Latitude
+                  </label>
+                  <Input
+                    id="ativo-lat"
+                    value={formValues.latitude}
+                    error={Boolean(formErrors.latitude)}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, latitude: e.target.value }))}
+                    placeholder="-12.9714"
+                    className="tabular-nums"
+                  />
+                  <FieldError message={formErrors.latitude} />
+                </div>
+                <div>
+                  <label htmlFor="ativo-lng" className={INPUT_LABEL_CLASS}>
+                    Longitude
+                  </label>
+                  <Input
+                    id="ativo-lng"
+                    value={formValues.longitude}
+                    error={Boolean(formErrors.longitude)}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, longitude: e.target.value }))}
+                    placeholder="-38.5014"
+                    className="tabular-nums"
+                  />
+                  <FieldError message={formErrors.longitude} />
+                </div>
+              </div>
+
+              <label className="flex items-center gap-2.5 pt-1 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={Boolean(formValues.rnp)}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, rnp: e.target.checked }))}
+                  className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 accent-zinc-900 dark:accent-zinc-100"
+                />
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                  Conectado à Rede Nacional de Ensino e Pesquisa (RNP)
+                </span>
+              </label>
+            </>
+          )}
+
+          {activeEntity === 'cursos' && (
+            <>
+              <div>
+                <label htmlFor="curso-nome" className={INPUT_LABEL_CLASS}>
+                  Nome do Curso <span className="text-rose-600">*</span>
+                </label>
+                <Input
+                  id="curso-nome"
+                  value={formValues.curso}
+                  error={Boolean(formErrors.curso)}
+                  onChange={(e) => {
+                    setFormValues((prev) => ({ ...prev, curso: e.target.value }));
+                    if (formErrors.curso) setFormErrors((p) => ({ ...p, curso: undefined }));
+                  }}
+                  placeholder="Ex: Ciência da Computação"
+                />
+                <FieldError message={formErrors.curso} />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                  <label htmlFor="curso-entidade" className={INPUT_LABEL_CLASS}>
+                    Instituição (IES) <span className="text-rose-600">*</span>
+                  </label>
+                  <Input
+                    id="curso-entidade"
                     value={formValues.entidade}
                     error={Boolean(formErrors.entidade)}
                     onChange={(e) => {
                       setFormValues((prev) => ({ ...prev, entidade: e.target.value }));
                       if (formErrors.entidade) setFormErrors((p) => ({ ...p, entidade: undefined }));
                     }}
-                    placeholder="Ex: Cacau do Sul da Bahia"
+                    placeholder="Ex: Universidade Federal da Bahia"
                   />
                   <FieldError message={formErrors.entidade} />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="cadeia-tipo" className={INPUT_LABEL_CLASS}>
-                      Tipo <span className="text-rose-600">*</span>
-                    </label>
-                    <Select
-                      id="cadeia-tipo"
-                      value={formValues.tipo}
-                      error={Boolean(formErrors.tipo)}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, tipo: e.target.value }))}
-                    >
-                      {Array.from(new Set([...DEFAULT_CADEIA_TYPES, ...categoryOptions])).map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </Select>
-                    <FieldError message={formErrors.tipo} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="cadeia-segmento" className={INPUT_LABEL_CLASS}>
-                      Segmento / Produto
-                    </label>
-                    <Input
-                      id="cadeia-segmento"
-                      value={formValues.segmento}
-                      onChange={(e) => setFormValues((prev) => ({ ...prev, segmento: e.target.value }))}
-                      placeholder="Ex: Cacauicultura / Fruticultura"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label htmlFor="cadeia-municipio" className={INPUT_LABEL_CLASS}>
-                      Município Sede <span className="text-rose-600">*</span>
-                    </label>
-                    <Input
-                      id="cadeia-municipio"
-                      list="ba-municipios-list"
-                      value={formValues.municipio_sede}
-                      error={Boolean(formErrors.municipio_sede)}
-                      onChange={(e) => handleMunicipalityChange('municipio_sede', e.target.value)}
-                      placeholder="Ex: Ilhéus"
-                    />
-                    <FieldError message={formErrors.municipio_sede} />
-                  </div>
-
-                  <div>
-                    <label htmlFor="cadeia-territorio" className={INPUT_LABEL_CLASS}>
-                      Território de Identidade
-                    </label>
-                    <Select
-                      id="cadeia-territorio"
-                      value={formValues.id_territorio}
-                      onChange={(e) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          id_territorio: e.target.value,
-                          nome_territorio: territoryNameById.get(Number(e.target.value)) || '',
-                        }))
-                      }
-                    >
-                      <option value="">Selecionar território...</option>
-                      {territoryOptions.map((t) => (
-                        <option key={t.id} value={String(t.id)}>
-                          {t.name}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-
                 <div>
-                  <label htmlFor="cadeia-fonte" className={INPUT_LABEL_CLASS}>
-                    Fonte / URL de Referência
+                  <label htmlFor="curso-sigla" className={INPUT_LABEL_CLASS}>
+                    Sigla IES
                   </label>
                   <Input
-                    id="cadeia-fonte"
-                    value={formValues.fonte}
-                    onChange={(e) => setFormValues((prev) => ({ ...prev, fonte: e.target.value }))}
-                    placeholder="https://..."
+                    id="curso-sigla"
+                    value={formValues.sigla}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, sigla: e.target.value }))}
+                    placeholder="UFBA"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="curso-categoria" className={INPUT_LABEL_CLASS}>
+                    Área / Categoria <span className="text-rose-600">*</span>
+                  </label>
+                  <Select
+                    id="curso-categoria"
+                    value={formValues.categoria}
+                    error={Boolean(formErrors.categoria)}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, categoria: e.target.value }))
+                    }
+                  >
+                    {Array.from(new Set([...DEFAULT_CURSO_CATEGORIES, ...categoryOptions])).map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </Select>
+                  <FieldError message={formErrors.categoria} />
                 </div>
 
                 <div>
-                  <label htmlFor="cadeia-ref" className={INPUT_LABEL_CLASS}>
-                    Nota Técnica / Texto de Referência
+                  <label htmlFor="curso-modalidade" className={INPUT_LABEL_CLASS}>
+                    Modalidade
                   </label>
-                  <textarea
-                    id="cadeia-ref"
-                    rows={3}
-                    value={formValues.texto_referencia}
+                  <Select
+                    id="curso-modalidade"
+                    value={formValues.modalidade}
                     onChange={(e) =>
-                      setFormValues((prev) => ({ ...prev, texto_referencia: e.target.value }))
+                      setFormValues((prev) => ({
+                        ...prev,
+                        modalidade: e.target.value,
+                        ead: e.target.value === 'EAD',
+                      }))
                     }
-                    placeholder="Resumo técnico ou justificativa de potencial..."
-                    className="w-full rounded-subcard border border-border bg-surface p-3 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="Presencial">Presencial</option>
+                    <option value="EAD">EAD</option>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="curso-municipio" className={INPUT_LABEL_CLASS}>
+                    Município <span className="text-rose-600">*</span>
+                  </label>
+                  <Input
+                    id="curso-municipio"
+                    list="ba-municipios-list"
+                    value={formValues.municipio}
+                    error={Boolean(formErrors.municipio)}
+                    onChange={(e) => handleMunicipalityChange('municipio', e.target.value)}
+                    placeholder="Ex: Feira de Santana"
+                  />
+                  <FieldError message={formErrors.municipio} />
+                </div>
+
+                <div>
+                  <label htmlFor="curso-territorio" className={INPUT_LABEL_CLASS}>
+                    Território de Identidade
+                  </label>
+                  <Select
+                    id="curso-territorio"
+                    value={formValues.id_territorio}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        id_territorio: e.target.value,
+                        territorio_identidade:
+                          territoryNameById.get(Number(e.target.value)) || '',
+                      }))
+                    }
+                  >
+                    <option value="">Selecionar território...</option>
+                    {territoryOptions.map((t) => (
+                      <option key={t.id} value={String(t.id)}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeEntity === 'cadeias' && (
+            <>
+              <div>
+                <label htmlFor="cadeia-entidade" className={INPUT_LABEL_CLASS}>
+                  Nome do Arranjo / Indicação Geográfica <span className="text-rose-600">*</span>
+                </label>
+                <Input
+                  id="cadeia-entidade"
+                  value={formValues.entidade}
+                  error={Boolean(formErrors.entidade)}
+                  onChange={(e) => {
+                    setFormValues((prev) => ({ ...prev, entidade: e.target.value }));
+                    if (formErrors.entidade) setFormErrors((p) => ({ ...p, entidade: undefined }));
+                  }}
+                  placeholder="Ex: Cacau do Sul da Bahia"
+                />
+                <FieldError message={formErrors.entidade} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="cadeia-tipo" className={INPUT_LABEL_CLASS}>
+                    Tipo <span className="text-rose-600">*</span>
+                  </label>
+                  <Select
+                    id="cadeia-tipo"
+                    value={formValues.tipo}
+                    error={Boolean(formErrors.tipo)}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, tipo: e.target.value }))}
+                  >
+                    {Array.from(new Set([...DEFAULT_CADEIA_TYPES, ...categoryOptions])).map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </Select>
+                  <FieldError message={formErrors.tipo} />
+                </div>
+
+                <div>
+                  <label htmlFor="cadeia-segmento" className={INPUT_LABEL_CLASS}>
+                    Segmento / Produto
+                  </label>
+                  <Input
+                    id="cadeia-segmento"
+                    value={formValues.segmento}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, segmento: e.target.value }))}
+                    placeholder="Ex: Cacauicultura / Fruticultura"
                   />
                 </div>
-              </>
-            )}
-          </form>
-        </Drawer>
+              </div>
 
-        {/* DRAWER DE HISTORICO DE ALTERACOES */}
-        <Drawer
-          open={isHistoryOpen}
-          onClose={() => setIsHistoryOpen(false)}
-          title="Histórico de Alterações (Rascunho)"
-          subtitle="Operações locais registradas nesta sessão e persistidas no navegador."
-          footer={
-            <Button variant="secondary" size="md" onClick={() => setIsHistoryOpen(false)}>
-              Fechar
-            </Button>
-          }
-        >
-          {auditLog.length > 0 ? (
-            <div className="divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
-              {auditLog.map((entry) => {
-                const actionLabel =
-                  entry.action === 'create'
-                    ? 'Criado'
-                    : entry.action === 'update'
-                      ? 'Editado'
-                      : 'Excluído';
-                const actionVariant =
-                  entry.action === 'create'
-                    ? 'success'
-                    : entry.action === 'update'
-                      ? 'warning'
-                      : 'danger';
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="cadeia-municipio" className={INPUT_LABEL_CLASS}>
+                    Município Sede <span className="text-rose-600">*</span>
+                  </label>
+                  <Input
+                    id="cadeia-municipio"
+                    list="ba-municipios-list"
+                    value={formValues.municipio_sede}
+                    error={Boolean(formErrors.municipio_sede)}
+                    onChange={(e) => handleMunicipalityChange('municipio_sede', e.target.value)}
+                    placeholder="Ex: Ilhéus"
+                  />
+                  <FieldError message={formErrors.municipio_sede} />
+                </div>
 
-                return (
-                  <div key={entry.id} className="py-3 flex items-start justify-between gap-3">
-                    <div className="min-w-0 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge variant={actionVariant}>{actionLabel}</Badge>
-                        <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                          {entry.entity}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
-                        {entry.label}
-                      </p>
-                    </div>
-                    <time className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0">
-                      {new Date(entry.timestamp).toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </time>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <EmptyState
-              title="Nenhuma operação registrada"
-              description="Crie, edite ou remova registros para visualizar o histórico local."
-            />
+                <div>
+                  <label htmlFor="cadeia-territorio" className={INPUT_LABEL_CLASS}>
+                    Território de Identidade
+                  </label>
+                  <Select
+                    id="cadeia-territorio"
+                    value={formValues.id_territorio}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        id_territorio: e.target.value,
+                        nome_territorio: territoryNameById.get(Number(e.target.value)) || '',
+                      }))
+                    }
+                  >
+                    <option value="">Selecionar território...</option>
+                    {territoryOptions.map((t) => (
+                      <option key={t.id} value={String(t.id)}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="cadeia-fonte" className={INPUT_LABEL_CLASS}>
+                  Fonte / URL de Referência
+                </label>
+                <Input
+                  id="cadeia-fonte"
+                  value={formValues.fonte}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, fonte: e.target.value }))}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <div>
+                <label htmlFor="cadeia-ref" className={INPUT_LABEL_CLASS}>
+                  Nota Técnica / Texto de Referência
+                </label>
+                <textarea
+                  id="cadeia-ref"
+                  rows={3}
+                  value={formValues.texto_referencia}
+                  onChange={(e) =>
+                    setFormValues((prev) => ({ ...prev, texto_referencia: e.target.value }))
+                  }
+                  placeholder="Resumo técnico ou justificativa de potencial..."
+                  className="w-full rounded-subcard border border-border bg-surface p-3 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
+            </>
           )}
-        </Drawer>
+        </form>
+      </Drawer>
 
-        {/* DIALOG DE CONFIRMACAO DE EXCLUSAO */}
-        <Dialog
-          open={Boolean(deletingTarget)}
-          onClose={() => setDeletingTarget(null)}
-          title="Confirmar exclusão"
-          description="O registro será removido da visualização do painel neste rascunho local."
-          size="sm"
-          footer={
-            <>
-              <Button variant="secondary" size="md" onClick={() => setDeletingTarget(null)}>
-                Cancelar
-              </Button>
-              <Button variant="danger" size="md" onClick={handleConfirmDelete}>
-                Excluir registro
-              </Button>
-            </>
-          }
-        >
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Deseja remover <strong className="text-zinc-900 dark:text-zinc-100">{deletingTarget?.primary}</strong>{' '}
-              ({deletingTarget?.municipality})? Você pode restaurar a base oficial a qualquer momento.
-            </p>
+      {/* DRAWER DE HISTORICO DE ALTERACOES */}
+      <Drawer
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Histórico de Alterações (Rascunho)"
+        subtitle="Operações locais registradas nesta sessão e persistidas no navegador."
+        footer={
+          <Button variant="secondary" size="md" onClick={() => setIsHistoryOpen(false)}>
+            Fechar
+          </Button>
+        }
+      >
+        {auditLog.length > 0 ? (
+          <div className="divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
+            {auditLog.map((entry) => {
+              const actionLabel =
+                entry.action === 'create'
+                  ? 'Criado'
+                  : entry.action === 'update'
+                    ? 'Editado'
+                    : 'Excluído';
+              const actionVariant =
+                entry.action === 'create'
+                  ? 'success'
+                  : entry.action === 'update'
+                    ? 'warning'
+                    : 'danger';
+
+              return (
+                <div key={entry.id} className="py-3 flex items-start justify-between gap-3">
+                  <div className="min-w-0 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={actionVariant}>{actionLabel}</Badge>
+                      <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        {entry.entity}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                      {entry.label}
+                    </p>
+                  </div>
+                  <time className="text-xs text-zinc-500 dark:text-zinc-400 tabular-nums shrink-0">
+                    {new Date(entry.timestamp).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </time>
+                </div>
+              );
+            })}
           </div>
-        </Dialog>
+        ) : (
+          <EmptyState
+            title="Nenhuma operação registrada"
+            description="Crie, edite ou remova registros para visualizar o histórico local."
+          />
+        )}
+      </Drawer>
 
-        {/* DIALOG DE CONFIRMACAO DE RESTAURACAO */}
-        <Dialog
-          open={isResetDialogOpen}
-          onClose={() => setIsResetDialogOpen(false)}
-          title="Restaurar base oficial"
-          description="Esta ação descarta todas as alterações locais do rascunho CRUD."
-          size="sm"
-          footer={
-            <>
-              <Button variant="secondary" size="md" onClick={() => setIsResetDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button variant="danger" size="md" onClick={handleConfirmReset}>
-                Restaurar base
-              </Button>
-            </>
-          }
-        >
+      {/* DIALOG DE CONFIRMACAO DE EXCLUSAO */}
+      <Dialog
+        open={Boolean(deletingTarget)}
+        onClose={() => setDeletingTarget(null)}
+        title="Confirmar exclusão"
+        description="O registro será removido da visualização do painel neste rascunho local."
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="md" onClick={() => setDeletingTarget(null)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" size="md" onClick={handleConfirmDelete}>
+              Excluir registro
+            </Button>
+          </>
+        }
+      >
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
           <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-            Existem <strong className="tabular-nums text-zinc-900 dark:text-zinc-100">{crudStats?.total || 0}</strong>{' '}
-            alteração(ões) pendente(s) no rascunho local. Deseja reverter todos os módulos para os dados originais?
+            Deseja remover <strong className="text-zinc-900 dark:text-zinc-100">{deletingTarget?.primary}</strong>{' '}
+            ({deletingTarget?.municipality})? Você pode restaurar a base oficial a qualquer momento.
           </p>
-        </Dialog>
+        </div>
+      </Dialog>
+
+      {/* DIALOG DE CONFIRMACAO DE RESTAURACAO */}
+      <Dialog
+        open={isResetDialogOpen}
+        onClose={() => setIsResetDialogOpen(false)}
+        title="Restaurar base oficial"
+        description="Esta ação descarta todas as alterações locais do rascunho CRUD."
+        size="sm"
+        footer={
+          <>
+            <Button variant="secondary" size="md" onClick={() => setIsResetDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger" size="md" onClick={handleConfirmReset}>
+              Restaurar base
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          Existem <strong className="tabular-nums text-zinc-900 dark:text-zinc-100">{crudStats?.total || 0}</strong>{' '}
+          alteração(ões) pendente(s) no rascunho local. Deseja reverter todos os módulos para os dados originais?
+        </p>
+      </Dialog>
     </main>
   );
 }

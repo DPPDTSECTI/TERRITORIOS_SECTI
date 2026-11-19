@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1795025295.187566,
-    "seen": 1795025321.592395,
-    "ast_hash": "58021fb9e6159aa80190923b58c34439",
+    "mtime": 1795029774.6531632,
+    "seen": 1795029923.090071,
+    "ast_hash": "ed0bed7f7a5a9e491a06ecfcb3bb07ee",
     "semantic_hash": ""
   },
   "src/__tests__/lib/format.test.js": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "src/components/AdminPage.jsx": {
-    "mtime": 1795026489.8807788,
-    "seen": 1795026507.1058023,
-    "ast_hash": "a5f592e956b0daf103b3e497c830eedf",
+    "mtime": 1795107652.4090314,
+    "seen": 1795108288.238732,
+    "ast_hash": "2e109d6ac90bbbb61edf4aa341b7b4fa",
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
@@ -192,9 +192,9 @@
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1795026782.0226555,
-    "seen": 1795026798.7678843,
-    "ast_hash": "082bfd4751705aec74a6b35504d85c67",
+    "mtime": 1795030051.7797956,
+    "seen": 1795030073.795884,
+    "ast_hash": "1afa352739374fd1a49fa08aad81e42d",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -498,9 +498,9 @@
     "semantic_hash": ""
   },
   "src/context/DataContext.jsx": {
-    "mtime": 1794593624.655832,
-    "seen": 1794598038.8677096,
-    "ast_hash": "6694ce67181e145c2290e90fd7ff7a44",
+    "mtime": 1795108152.5323005,
+    "seen": 1795108288.238732,
+    "ast_hash": "fe51559e53b84133e30e5636dac85bc3",
     "semantic_hash": ""
   },
   "src/context/ThemeContext.jsx": {
@@ -558,9 +558,9 @@
     "semantic_hash": ""
   },
   "src/services/supabase.js": {
-    "mtime": 1790188651.1879382,
-    "seen": 1794507358.3044078,
-    "ast_hash": "f51e7573aa05420dd7ef5d9cb847e5c0",
+    "mtime": 1795108138.8140173,
+    "seen": 1795108288.238732,
+    "ast_hash": "2f8f6176ea6b2f7e1c6c8d9aadf11770",
     "semantic_hash": ""
   },
   "src/utils/clientExport.js": {
@@ -654,8 +654,8 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1795024703.6086142,
-    "seen": 1795024716.1929514,
+    "mtime": 1795031589.5421302,
+    "seen": 1795031708.74798,
     "ast_hash": "270e3f09bc0b0d3c54df38b0158083cc",
     "semantic_hash": ""
   },
@@ -786,15 +786,39 @@
     "semantic_hash": ""
   },
   "src/components/auth/ProtectedRoute.jsx": {
-    "mtime": 1795024985.862012,
-    "seen": 1795025288.6660447,
-    "ast_hash": "9bceadd4d3abdab135029070a16616b5",
+    "mtime": 1795108164.382455,
+    "seen": 1795108288.238732,
+    "ast_hash": "bf904960100ad3ba1a679d5549d51c84",
     "semantic_hash": ""
   },
   "src/context/AuthContext.jsx": {
     "mtime": 1795024963.2207906,
     "seen": 1795025288.6660447,
     "ast_hash": "7456eb93faa516604e1b9bd5a0d574ec",
+    "semantic_hash": ""
+  },
+  "src/__tests__/utils/telemetry.test.js": {
+    "mtime": 1795107646.187272,
+    "seen": 1795108288.238732,
+    "ast_hash": "7a87bd87466799cde132f77f0d16ccda",
+    "semantic_hash": ""
+  },
+  "src/components/MonitoringPanel.jsx": {
+    "mtime": 1795108167.2381003,
+    "seen": 1795108288.238732,
+    "ast_hash": "74f782f76e99c5f4bfb4b072d5f0c296",
+    "semantic_hash": ""
+  },
+  "src/context/TelemetryContext.jsx": {
+    "mtime": 1795108161.6389296,
+    "seen": 1795108288.238732,
+    "ast_hash": "2b511c6833d0aa01e4768f6ce5843e8c",
+    "semantic_hash": ""
+  },
+  "src/utils/telemetry.js": {
+    "mtime": 1795107646.275554,
+    "seen": 1795108288.238732,
+    "ast_hash": "c45d18189982a690c16d1161a12986ac",
     "semantic_hash": ""
   },
   "package-lock.json": {
