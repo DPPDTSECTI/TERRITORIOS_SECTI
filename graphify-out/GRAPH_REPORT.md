@@ -6,12 +6,12 @@
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 769 nodes · 2508 edges · 37 communities (27 shown, 10 thin omitted)
+- 769 nodes · 2510 edges · 39 communities (26 shown, 13 thin omitted)
 - Extraction: 97% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `39f3b10c`
+- Built from commit: `d52d2695`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - exportReportClient.js
 - main.jsx
 - SideMap.jsx
-- package.json
+- @dnd-kit/core@^6.3.1
 - Design System SECTI Territorios (Bento Grid)
 - RelatorioPage.jsx
 - testReactToPrintComparison.mjs
@@ -37,20 +37,22 @@
 - CursosPage.jsx
 - notes
 - vercel.json
-- @dnd-kit/sortable@^10.0.0
+- clsx
 - simplify-topojson.mjs
 - TelemetryContext.jsx
 - AUDITORIA.md Auditoria do repositorio
 - ThemeContext.jsx
-- clientExport.js
+- @fontsource-variable/lexend
 - AdminPage.jsx
-- react-dom
-- @dnd-kit/utilities@^3.2.2
+- playwright-core
+- topojson-client
 - react-helmet-async
 - supercluster
 - react-joyride
-- topojson-client
+- @radix-ui/react-dropdown-menu
 - xlsx
+- @radix-ui/react-tooltip
+- @sparticuz/chromium
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 65 edges
@@ -71,23 +73,23 @@
   api/export-pdf.js → scripts/captureReports.mjs
 - `handler()` --calls--> `captureReportWithPlaywright()`  [EXTRACTED]
   api/export-png.js → scripts/captureReports.mjs
-- `Tipografia Plus Jakarta Sans e tabular-nums` --conceptually_related_to--> `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)`  [AMBIGUOUS]
-  docs/DESIGN_SYSTEM.md → docs/SISTEMA.md
 - `README Painel Territorial CT&I` --references--> `INGESTAO-DE-DADOS.md Ingestao e fluxo de dados`  [EXTRACTED]
   README.md → docs/INGESTAO-DE-DADOS.md
+- `Tipografia Plus Jakarta Sans e tabular-nums` --conceptually_related_to--> `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)`  [AMBIGUOUS]
+  docs/DESIGN_SYSTEM.md → docs/SISTEMA.md
 
 ## Import Cycles
 - None detected.
 
-## Communities (37 total, 10 thin omitted)
+## Communities (39 total, 13 thin omitted)
 
 ### Community 0 - "react"
 Cohesion: 0.07
 Nodes (70): Layout, sidebar, scroll navigator e tour guiado, framer-motion, @radix-ui/react-dialog, react, react-router-dom, LoginPage(), ProtectedRoute(), FontesReferenciasSection() (+62 more)
 
 ### Community 1 - "exportReportClient.js"
-Cohesion: 0.36
-Nodes (8): captureReportElementToCanvas(), captureReportViaIframe(), downloadCanvasAsPng(), exportReportAsPdf(), exportReportAsPng(), getReportRoute(), patchCanvasGradient(), waitForReportReady()
+Cohesion: 0.17
+Nodes (16): html2canvas@^1.4.1, jspdf@^4.2.0, html2canvas, jspdf, captureDomElement(), captureReportViaIframe(), downloadCanvasAsPdf(), downloadCanvasAsPng() (+8 more)
 
 ### Community 2 - "main.jsx"
 Cohesion: 0.21
@@ -96,10 +98,6 @@ Nodes (5): [Media] Robustez: localStorage sem try/catch, ErrorBoundary/404, SW r
 ### Community 3 - "SideMap.jsx"
 Cohesion: 0.09
 Nodes (58): [Baixa] Mapas: codigo morto, arquivos monoliticos, CSP, sanitizacao, [Media] Mapas: ~247 hex hardcoded, duplicacao SideMap/PtiMap, performance, acessibilidade, Mapa coropletico da Bahia (escala de azuis), leaflet@^1.9.4, leaflet, react-leaflet, getContrastTextColor(), getSemanticColors() (+50 more)
-
-### Community 4 - "package.json"
-Cohesion: 0.12
-Nodes (16): @dnd-kit/core@^6.3.1, @fontsource-variable/lexend@^5.3.0, @fontsource-variable/plus-jakarta-sans@^5.3.0, @radix-ui/react-tooltip@^1.4.1, @vercel/analytics@^2.0.1, vite-plugin-node-polyfills@^0.28.0, description, name (+8 more)
 
 ### Community 5 - "Design System SECTI Territorios (Bento Grid)"
 Cohesion: 0.13
@@ -122,8 +120,8 @@ Cohesion: 0.20
 Nodes (10): scripts, build, dev, generate-json, generate-json:file, optimize-images, preview, simplify-map (+2 more)
 
 ### Community 10 - "devDependencies"
-Cohesion: 0.12
-Nodes (16): devDependencies, autoprefixer@^10.4.20, mapshaper@^0.7.49, postcss@^8.4.49, sharp@^0.35.3, tailwindcss@^3.4.0, vite@^6.4.3, @vitejs/plugin-react@^4.3.4 (+8 more)
+Cohesion: 0.13
+Nodes (20): description, devDependencies, autoprefixer@^10.4.20, mapshaper@^0.7.49, postcss@^8.4.49, sharp@^0.35.3, tailwindcss@^3.4.0, vite@^6.4.3 (+12 more)
 
 ### Community 11 - "AccessibilityBar.jsx"
 Cohesion: 0.26
@@ -142,8 +140,8 @@ Cohesion: 0.11
 Nodes (38): [Alta] Falhas de consulta silenciosas e cache parcial por 10 min, [Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD, [Alta] Falha no TopoJSON deixa spinner infinito sem retry, INGESTAO-DE-DADOS.md Ingestao e fluxo de dados, Cache: versao da chave e heuristica distCadeias>88, Carga do Supabase no DataContext (12 consultas), Glossario (IFDM, CT&I, PTI, EAD, RLS), Lacunas: ETL, esquema, RLS fora do repositorio (+30 more)
 
 ### Community 15 - "dependencies"
-Cohesion: 0.10
-Nodes (21): dependencies, clsx@^2.1.1, @dnd-kit/modifiers@^9.0.0, framer-motion@^12.43.0, lucide-react@^1.18.0, playwright-core@^1.63.0, @radix-ui/react-dialog@^1.3.1, @radix-ui/react-dropdown-menu@^2.2.1 (+13 more)
+Cohesion: 0.09
+Nodes (23): dependencies, @dnd-kit/modifiers@^9.0.0, @dnd-kit/sortable@^10.0.0, @fontsource-variable/plus-jakarta-sans@^5.3.0, framer-motion@^12.43.0, lucide-react@^1.18.0, @radix-ui/react-dialog@^1.3.1, react@^18.3.1 (+15 more)
 
 ### Community 16 - "capture-redesign.mjs"
 Cohesion: 0.18
@@ -181,35 +179,35 @@ Nodes (16): AUDITORIA.md Auditoria do repositorio, [Alta] isMunicipioSemiarido(X
 Cohesion: 0.25
 Nodes (7): [Media] Relatorios: PDF raster, laco autoPrint, codigo morto, deps pesadas, artefatos em scripts/, Arquitetura SPA sem backend, somente leitura, Mapas PtiMap e SideMap (Leaflet), Supabase (Postgres, chave anon), ThemeContext (tema claro/escuro), ExportPdfButton(), ThemeContext
 
-### Community 27 - "clientExport.js"
-Cohesion: 0.31
-Nodes (8): html2canvas@^1.4.1, jspdf@^4.2.0, html2canvas, jspdf, captureDomElement(), captureReportViaIframe(), downloadCanvasAsPdf(), downloadCanvasAsPng()
-
 ### Community 28 - "AdminPage.jsx"
 Cohesion: 0.07
 Nodes (29): [Alta] /admin e mock publico (CRUD em useState, sem auth), Pagina /admin (maquete sem autenticacao), AdminPage(), buildPayloadFromForm(), cleanTerritoryLabel(), CrudStatusPill(), DEFAULT_ATIVO_TYPES, DEFAULT_CADEIA_TYPES (+21 more)
 
+### Community 30 - "topojson-client"
+Cohesion: 0.33
+Nodes (4): @dnd-kit/utilities@^3.2.2, topojson-client@^3.1.0, @dnd-kit/utilities, topojson-client
+
 ## Ambiguous Edges - Review These
-- `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)` → `Tipografia Plus Jakarta Sans e tabular-nums`  [AMBIGUOUS]
-  docs/DESIGN_SYSTEM.md · relation: conceptually_related_to
 - `[Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD` → `[Alta] ETL e correcoes de dados hard-coded na UI, fallback silencioso para Salvador`  [AMBIGUOUS]
   docs/AUDITORIA.md · relation: conceptually_related_to
+- `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)` → `Tipografia Plus Jakarta Sans e tabular-nums`  [AMBIGUOUS]
+  docs/DESIGN_SYSTEM.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **7 isolated node(s):** `Deploy Vercel (cron, headers, rewrites)`, `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Badges semanticos de status`, `Geometria Bento Grid (card, sub-card, pilula)` (+2 more)
+- **7 isolated node(s):** `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Deploy Vercel (cron, headers, rewrites)`, `Badges semanticos de status`, `Geometria Bento Grid (card, sub-card, pilula)` (+2 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 162 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `main.jsx`, `SideMap.jsx`, `package.json`, `RelatorioPage.jsx`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `App.jsx`, `DataContext.jsx`, `dependencies`, `CursosPage.jsx`, `TelemetryContext.jsx`, `ThemeContext.jsx`, `AdminPage.jsx`?**
+- **Why does `react` connect `react` to `main.jsx`, `SideMap.jsx`, `RelatorioPage.jsx`, `devDependencies`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `App.jsx`, `DataContext.jsx`, `dependencies`, `CursosPage.jsx`, `TelemetryContext.jsx`, `ThemeContext.jsx`, `AdminPage.jsx`?**
   _High betweenness centrality (0.149) - this node is a cross-community bridge._
-- **What connects `Deploy Vercel (cron, headers, rewrites)`, `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao` to the rest of the system?**
+- **What connects `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Deploy Vercel (cron, headers, rewrites)` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
   _Cohesion score 0.07454863133372161 - nodes in this community are weakly interconnected._
-- **Why does `lucide-react` connect `RelatorioPage.jsx` to `react`, `SideMap.jsx`, `package.json`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `DataContext.jsx`, `dependencies`, `CursosPage.jsx`, `ThemeContext.jsx`, `AdminPage.jsx`?**
+- **Why does `lucide-react` connect `RelatorioPage.jsx` to `react`, `SideMap.jsx`, `devDependencies`, `AccessibilityBar.jsx`, `RelatorioPage.jsx`, `DataContext.jsx`, `dependencies`, `CursosPage.jsx`, `ThemeContext.jsx`, `AdminPage.jsx`?**
   _High betweenness centrality (0.064) - this node is a cross-community bridge._
 - **Should `SideMap.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.09192546583850932 - nodes in this community are weakly interconnected._
@@ -217,7 +215,7 @@ _Questions this graph is uniquely positioned to answer:_
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._
 
-- **What is the exact relationship between `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)` and `Tipografia Plus Jakarta Sans e tabular-nums`?**
-  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `[Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD` and `[Alta] ETL e correcoes de dados hard-coded na UI, fallback silencioso para Salvador`?**
+  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
+- **What is the exact relationship between `Stack (React 18, Vite, Tailwind, Recharts, Leaflet, Supabase)` and `Tipografia Plus Jakarta Sans e tabular-nums`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
