@@ -4,11 +4,15 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { DataProvider, DataContext } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { TelemetryProvider } from './context/TelemetryContext';
 import { Analytics } from '@vercel/analytics/react';
 
 import Sidebar from './components/Sidebar';
 import TourGuide from './components/TourGuide';
 import AccessibilityBar from './components/AccessibilityBar';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import LoginPage from './components/auth/LoginPage';
 import { ToastProvider, Skeleton, KpiSkeleton } from './components/ui';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
@@ -276,7 +280,8 @@ function AnimatedRoutes() {
             <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
-            <Route path="/admin" element={<PageWrapper><AdminPage /></PageWrapper>} />
+            <Route path="/admin" element={<PageWrapper><ProtectedRoute><AdminPage /></ProtectedRoute></PageWrapper>} />
+            <Route path="/login" element={<PageWrapper><LoginPage /></PageWrapper>} />
 
             {/* ROTAS DE RELATÓRIO EXECUTIVO / PDF */}
             <Route path="/relatorio/sintese" element={<PageWrapper><RelatorioSintesePage /></PageWrapper>} />
@@ -317,13 +322,17 @@ export default function AppWrapper() {
     <MotionConfig reducedMotion="user">
       <HelmetProvider>
         <ThemeProvider>
-          <Router>
-            <DataProvider>
-              <ToastProvider>
-                <MainApp />
-              </ToastProvider>
-            </DataProvider>
-          </Router>
+          <AuthProvider>
+            <Router>
+              <DataProvider>
+                <TelemetryProvider>
+                  <ToastProvider>
+                    <MainApp />
+                  </ToastProvider>
+                </TelemetryProvider>
+              </DataProvider>
+            </Router>
+          </AuthProvider>
         </ThemeProvider>
       </HelmetProvider>
     </MotionConfig>
