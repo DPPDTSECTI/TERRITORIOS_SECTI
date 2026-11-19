@@ -20,6 +20,11 @@ export function CtrlScrollZoom() {
     }
 
     const handleWheel = (e) => {
+      const targetEl = e.target instanceof Element ? e.target : e.target?.parentElement;
+      if (targetEl && targetEl.closest('.leaflet-popup, .leaflet-control, [data-no-map-zoom]')) {
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
 

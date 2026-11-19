@@ -43,13 +43,11 @@ export function DetailIsland({
   return (
     <aside
       aria-label={`Detalhes de ${title}`}
-      className={`flex flex-col justify-between bg-white dark:bg-zinc-900 border-2 ${
-        filtroSemiarido
-          ? 'border-amber-500/70 dark:border-amber-500/60 shadow-sm'
-          : 'border-primary-500/70 dark:border-primary-400/60 shadow-sm'
-      } ${
-        compact ? 'rounded-card p-4 sm:p-5' : 'rounded-panel p-6 lg:p-7'
-      } overflow-hidden animate-in fade-in zoom-in-[0.98] slide-in-from-right-6 duration-200 select-text ${className}`}
+      className={`flex flex-col justify-between bg-white dark:bg-zinc-900 border ${filtroSemiarido
+        ? 'border-amber-400/50 dark:border-amber-500/40 shadow-xs'
+        : 'border-zinc-200/80 dark:border-zinc-800/80 shadow-xs'
+        } ${compact ? 'rounded-card p-4 sm:p-5' : 'rounded-panel p-6 lg:p-7'
+        } overflow-hidden animate-in fade-in zoom-in-[0.98] slide-in-from-right-6 duration-200 select-text ${className}`}
     >
       {/* CABEÇALHO FIXO DA ILHA */}
       <div className={`flex items-start justify-between gap-3 ${compact ? 'pb-3' : 'pb-4'} border-b border-zinc-200/80 dark:border-zinc-800/80 shrink-0`}>
@@ -111,15 +109,14 @@ export function DetailIsland({
             {statusPills.map((pill, idx) => (
               <span
                 key={idx}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${
-                  pill.variant === 'success'
-                    ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
-                    : pill.variant === 'warning'
-                      ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
-                      : pill.variant === 'primary'
-                        ? 'bg-primary-500/10 text-primary-700 dark:text-primary-300 border-primary-500/20'
-                        : 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20'
-                }`}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${pill.variant === 'success'
+                  ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                  : pill.variant === 'warning'
+                    ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                    : pill.variant === 'primary'
+                      ? 'bg-primary-500/10 text-primary-700 dark:text-primary-300 border-primary-500/20'
+                      : 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20'
+                  }`}
               >
                 {pill.icon}
                 <span>{pill.label}</span>
@@ -130,31 +127,29 @@ export function DetailIsland({
 
         {/* GRADE DE METADADOS E INDICADORES */}
         {metrics.length > 0 && (
-          <div className={`grid ${compact ? 'grid-cols-2 gap-2.5' : 'grid-cols-2 sm:grid-cols-3 gap-3'} shrink-0`}>
-            {metrics.map((m, idx) => (
-              <div
-                key={idx}
-                className={`rounded-subcard bg-zinc-50/90 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-800 ${
-                  compact ? 'p-3' : 'p-3.5'
-                } flex flex-col justify-between ${
-                  m.fullWidth
+          <div className={`rounded-xl bg-zinc-50/80 dark:bg-zinc-800/40 ${compact ? 'p-3' : 'p-3.5'} shrink-0`}>
+            <div className={`grid ${compact ? 'grid-cols-2 gap-x-4 gap-y-2.5' : 'grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3'}`}>
+              {metrics.map((m, idx) => (
+                <div
+                  key={idx}
+                  className={`flex flex-col justify-between min-w-0 ${m.fullWidth
                     ? (compact ? 'col-span-2' : 'col-span-2 sm:col-span-3')
                     : 'col-span-1'
-                }`}
-              >
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 truncate">
-                  {m.label}
-                </span>
-                <span
-                  className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} font-bold text-zinc-900 dark:text-zinc-100 mt-1 break-words leading-snug ${
-                    m.tabular ? 'tabular-nums' : ''
-                  }`}
-                  title={String(m.value ?? '-')}
+                    }`}
                 >
-                  {m.value ?? '-'}
-                </span>
-              </div>
-            ))}
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400 truncate">
+                    {m.label}
+                  </span>
+                  <span
+                    className={`${compact ? 'text-sm' : 'text-sm sm:text-base'} font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5 break-words leading-snug ${m.tabular ? 'tabular-nums' : ''
+                      }`}
+                    title={String(m.value ?? '-')}
+                  >
+                    {m.value ?? '-'}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -163,7 +158,7 @@ export function DetailIsland({
 
         {/* CITAÇÃO / REFERÊNCIA BIBLIOGRÁFICA */}
         {referenceQuote && (
-          <div className="rounded-subcard bg-amber-500/10 dark:bg-amber-950/35 border border-amber-500/25 p-4">
+          <div className="rounded-xl bg-amber-500/10 dark:bg-amber-950/35 p-3.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 block mb-1.5">
               Referência / Citação do Artigo
             </span>
@@ -201,11 +196,10 @@ export function DetailIsland({
               href={externalUrl}
               target="_blank"
               rel="noreferrer"
-              className={`inline-flex items-center justify-center gap-2 ${compact ? 'h-9 px-3 text-xs' : 'h-10 px-4 text-xs sm:text-sm'} rounded-control font-semibold text-white transition-colors shadow-xs ${
-                filtroSemiarido
-                  ? 'bg-amber-600 hover:bg-amber-500'
-                  : 'bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white'
-              }`}
+              className={`inline-flex items-center justify-center gap-2 ${compact ? 'h-9 px-3 text-xs' : 'h-10 px-4 text-xs sm:text-sm'} rounded-control font-semibold text-white transition-colors shadow-xs ${filtroSemiarido
+                ? 'bg-amber-600 hover:bg-amber-500'
+                : 'bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white'
+                }`}
             >
               <span className="truncate">{externalLabel}</span>
               <ExternalLink size={compact ? 14 : 15} className="shrink-0" />

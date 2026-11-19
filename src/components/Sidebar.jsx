@@ -275,17 +275,22 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             <PanelMark className="w-7 h-7" />
           </button>
 
-          <span
+          <div
             className={cn(
-              'text-subtitle font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1',
-              filtroSemiarido ? 'text-amber-950 dark:text-amber-100' : 'text-text-primary',
+              'flex items-center overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1 min-w-0',
               isExpanded
                 ? 'opacity-100'
                 : 'w-0 opacity-0 -translate-x-2 pointer-events-none'
             )}
           >
-            {username}
-          </span>
+            <img
+              src="/img/pti-bahia-logo.webp"
+              alt={username}
+              width={115}
+              height={26}
+              className="h-6 w-auto max-w-[122px] object-contain object-left select-none shrink-0 dark:brightness-125"
+            />
+          </div>
 
           <IconButton
             size="sm"
