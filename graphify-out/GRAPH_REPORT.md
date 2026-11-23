@@ -1,17 +1,17 @@
 # Graph Report - TERRITORIOS_SECTI  (2026-11-23)
 
 ## Corpus Check
-- 122 files · ~179,079 words
+- 123 files · ~179,158 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 776 nodes · 2545 edges · 43 communities (31 shown, 12 thin omitted)
+- 777 nodes · 2540 edges · 44 communities (31 shown, 13 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b14ef789`
+- Built from commit: `b374dca2`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -85,7 +85,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (43 total, 12 thin omitted)
+## Communities (44 total, 13 thin omitted)
 
 ### Community 0 - "react"
 Cohesion: 0.08
@@ -140,7 +140,7 @@ Cohesion: 0.13
 Nodes (30): [Alta] reportAggregation e funcoes de normalization so usados por testes, vitest, CardLista(), addCountedEntry(), buildEntitySearchData(), deduplicateSuggestions(), getNormalizedCharMap(), IGNORED_SEARCH_VALUES (+22 more)
 
 ### Community 13 - "App.jsx"
-Cohesion: 0.11
+Cohesion: 0.10
 Nodes (28): AdminPage, AnimatedRoutes(), AppWrapper(), AtivosPage, CadeiaPage, CursosPage, DashboardPainel, generateRandomState() (+20 more)
 
 ### Community 14 - "package.json"
@@ -219,8 +219,8 @@ Nodes (5): [Media] Filtros de Ativos/Cursos/Cadeia em useState local, fora da UR
 
 ## Knowledge Gaps
 - **7 isolated node(s):** `Glossario (IFDM, CT&I, PTI, EAD, RLS)`, `Procedimentos de atualizacao`, `Deploy Vercel (cron, headers, rewrites)`, `Badges semanticos de status`, `Geometria Bento Grid (card, sub-card, pilula)` (+2 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 158 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 159 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

@@ -92,18 +92,6 @@ export default function UserHeaderProfile() {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    navigate('/admin');
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-left cursor-pointer"
-                >
-                  <SlidersHorizontal size={14} className="text-zinc-400" />
-                  <span>Painel CRUD</span>
-                </button>
-
-                <button
-                  type="button"
                   onClick={handleLogout}
                   className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors text-left cursor-pointer"
                 >

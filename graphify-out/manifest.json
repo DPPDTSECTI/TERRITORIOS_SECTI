@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1795452102.1379912,
-    "seen": 1795452268.428996,
-    "ast_hash": "b0201551765e3543d995bd70bdcad850",
+    "mtime": 1795457144.5869312,
+    "seen": 1795457196.1285417,
+    "ast_hash": "b254ebfcbd2043896487804b25344072",
     "semantic_hash": ""
   },
   "src/__tests__/auth/authContext.test.js": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1795452108.2007976,
-    "seen": 1795452268.428996,
-    "ast_hash": "4cf9cdb42ac24439b2e1bea964fd1285",
+    "mtime": 1795457133.6654222,
+    "seen": 1795457196.1295395,
+    "ast_hash": "0ce879277a6f6cf7afa70be95fe197e8",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -240,9 +240,9 @@
     "semantic_hash": ""
   },
   "src/components/UserHeaderProfile.jsx": {
-    "mtime": 1795452124.8953762,
-    "seen": 1795452268.428996,
-    "ast_hash": "94750ca88ac83734f3a66cd29fe2aa24",
+    "mtime": 1795457147.9570525,
+    "seen": 1795457196.1295395,
+    "ast_hash": "45bd6038de932e536925f90e0baf9450",
     "semantic_hash": ""
   },
   "src/components/auth/LoginPage.jsx": {
@@ -831,6 +831,12 @@
     "mtime": 1790188651.1295295,
     "seen": 1795109874.0258706,
     "ast_hash": "8bbd8c2f5d9eeccaa8704d3db8e096af",
+    "semantic_hash": ""
+  },
+  "deploy.ps1": {
+    "mtime": 1795456965.6243644,
+    "seen": 1795457196.1285417,
+    "ast_hash": "176bcd0ab23670b471c2b8f91cc0d74e",
     "semantic_hash": ""
   },
   "package-lock.json": {

@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useContext, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import { DataProvider, DataContext } from './context/DataContext';
@@ -279,8 +279,8 @@ function AnimatedRoutes() {
             <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />
-            <Route path="/admin" element={<PageWrapper><ProtectedRoute><AdminPage /></ProtectedRoute></PageWrapper>} />
-            <Route path="/login" element={<PageWrapper><LoginPage /></PageWrapper>} />
+            <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/login" element={<Navigate to="/dashboard" replace />} />
 
             {/* ROTAS DE RELATÓRIO EXECUTIVO / PDF */}
             <Route path="/relatorio/sintese" element={<PageWrapper><RelatorioSintesePage /></PageWrapper>} />

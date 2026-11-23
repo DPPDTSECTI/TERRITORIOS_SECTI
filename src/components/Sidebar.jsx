@@ -334,12 +334,6 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               {modulesItems.map(renderNavItem)}
             </div>
           )}
-
-          {/* SEÇÃO: ADMINISTRAÇÃO / CRUD */}
-          <div className="mt-3 flex flex-col gap-1 w-full shrink-0">
-            {renderSectionLabel('Gestão')}
-            {adminItems.map(renderNavItem)}
-          </div>
         </nav>
 
         {/* ================= RODAPÉ DA SIDEBAR: BRASÃO, MODO ESCURO & TUTORIAL ================= */}
