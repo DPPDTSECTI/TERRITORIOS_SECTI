@@ -248,7 +248,7 @@ export default function TourGuide() {
   }));
 
   useEffect(() => {
-    if (location.pathname === '/territorios') {
+    if (location.pathname === '/dashboard') {
       const hasSeenTour = sessionStorage.getItem('hasSeenTour');
       if (!hasSeenTour) {
         sessionStorage.setItem('hasSeenTour', 'true');
@@ -269,10 +269,10 @@ export default function TourGuide() {
     // Escutar evento para reiniciar o tour
     const handleStartTour = () => {
       setTourKey(prev => prev + 1);
-      if (location.pathname === '/territorios' || location.pathname === '/relatorio') {
+      if (location.pathname === '/dashboard' || location.pathname === '/relatorio') {
         setRun(true);
       } else {
-        navigate('/territorios');
+        navigate('/dashboard');
         setTimeout(() => setRun(true), 1000);
       }
     };
@@ -290,7 +290,7 @@ export default function TourGuide() {
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status) || type === 'tour:end' || action === 'skip' || action === 'close') {
       setRun(false);
       // Salvar no sessionStorage para não mostrar novamente nesta sessão
-      if (location.pathname === '/territorios') {
+      if (location.pathname === '/dashboard') {
         sessionStorage.setItem('hasSeenTour', 'true');
       } else if (location.pathname === '/relatorio') {
         sessionStorage.setItem('hasSeenRelatorioTour', 'true');

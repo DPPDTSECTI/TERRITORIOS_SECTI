@@ -40,7 +40,7 @@ const modulosPlataforma = [
     icon: Compass,
     title: 'Visão Geral & Dashboard Integrado',
     btnLabel: 'Acessar Visão Geral & Dashboard',
-    rota: '/territorios',
+    rota: '/dashboard',
     descricao: 'Centro de comando executivo com mapa dinâmico da Bahia e cards analíticos de inteligência territorial.',
     destaques: [
       'KPIs consolidados com atualização em tempo real ao selecionar territórios.',
@@ -282,12 +282,12 @@ export default function LandingHero() {
           {/* Assinatura Institucional: Governo do Estado primeiro, depois marca do painel */}
           <div className="flex items-center gap-4 sm:gap-5 select-none">
             <img
-              src="/img/secti-govba-horizontal.svg"
+              src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
               alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-11 sm:h-14 w-auto object-contain shrink-0 block dark:hidden"
             />
             <img
-              src="/img/secti-govba-horizontal-branco.svg"
+              src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal-branco.svg`}
               alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-11 sm:h-14 w-auto object-contain shrink-0 hidden dark:block"
             />
@@ -297,7 +297,7 @@ export default function LandingHero() {
             <div className="flex items-center gap-3 sm:gap-3.5">
               <PanelMark className="h-9 sm:h-11 w-auto" />
               <img
-                src="/img/pti-bahia-logo.webp"
+                src={`${import.meta.env.BASE_URL}img/pti-bahia-logo.webp`}
                 alt="PTI Bahia"
                 width={150}
                 height={34}
@@ -327,7 +327,7 @@ export default function LandingHero() {
             <Button
               variant="primary"
               size="lg"
-              onClick={() => navigate('/territorios')}
+              onClick={() => navigate('/dashboard')}
               iconRight={<ArrowRight size={18} />}
             >
               Explorar Territórios
@@ -598,7 +598,7 @@ export default function LandingHero() {
         <div className="max-w-[1600px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-caption text-text-muted">
           <div className="flex items-center gap-3">
             <img
-              src={isDark ? '/img/secti-govba-horizontal-branco.svg' : '/img/secti-govba-horizontal.svg'}
+              src={isDark ? `${import.meta.env.BASE_URL}img/secti-govba-horizontal-branco.svg` : `${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
               alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
               className="h-8 w-auto object-contain opacity-80"
             />

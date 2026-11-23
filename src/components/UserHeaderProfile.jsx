@@ -28,7 +28,7 @@ export default function UserHeaderProfile() {
   const handleLogout = async () => {
     setDropdownOpen(false);
     await signOut();
-    navigate('/territorios');
+    navigate('/dashboard');
   };
 
   return (
@@ -36,12 +36,12 @@ export default function UserHeaderProfile() {
       {/* BRASÃO / LOGOMARCA COM TRANSIÇÃO CLARO/ESCURO */}
       <div className="flex items-center">
         <img
-          src="/img/secti-govba-horizontal.svg"
+          src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
           alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
           className="h-10 w-auto object-contain shrink-0 block dark:hidden select-none"
         />
         <img
-          src="/img/secti-govba-horizontal-branco.svg"
+          src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal-branco.svg`}
           alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
           className="h-10 w-auto object-contain shrink-0 hidden dark:block select-none"
         />

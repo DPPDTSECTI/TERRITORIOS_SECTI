@@ -233,6 +233,8 @@ function downloadCanvasAsPdf(canvas, filename) {
   pdf.save(filename);
 }
 
+const withBaseUrl = (path) => (path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path);
+
 /**
  * Cria um iframe padronizado em 1920x1080 em viewport real para carregar o relatório,
  * garantindo proporção, opacidade 100% e dados completos antes da captura.
@@ -245,7 +247,7 @@ async function captureReportViaIframe(route, scale = 2) {
 
     const iframe = document.createElement('iframe');
     iframe.id = iframeId;
-    iframe.src = route;
+    iframe.src = withBaseUrl(route);
 
     // IMPORTANTE: opacity DEVE ser 1 para que o html2canvas capture com 100% de cor e nitidez
     // O z-index negativo (-999999) posiciona o iframe atrás da página, tornando-o imperceptível ao usuário
@@ -517,6 +519,6 @@ export async function exportReportAsPdf({
     return true;
   }
   const route = getReportRoute(type, territorioId, modo) + '&autoPrint=1';
-  window.open(route, '_blank');
+  window.open(withBaseUrl(route), '_blank');
   return true;
 }

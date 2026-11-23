@@ -6,7 +6,7 @@ const MAX_TELEMETRY_EVENTS = 300;
 
 export const ROUTE_LABELS = {
   '/': 'Início (Landing)',
-  '/territorios': 'Visão Geral',
+  '/dashboard': 'Visão Geral',
   '/ativos': 'Ativos CT&I',
   '/cursos': 'Cursos CT&I',
   '/cadeia': 'Cadeias Produtivas',

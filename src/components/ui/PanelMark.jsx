@@ -7,7 +7,7 @@ import { cn } from '../../lib/cn';
 export function PanelMark({ className, 'aria-hidden': ariaHidden = true, alt = 'Painel Territorial CT&I' }) {
   return (
     <img
-      src="/img/favicon-96x96.webp"
+      src={`${import.meta.env.BASE_URL}img/favicon-96x96.webp`}
       alt={ariaHidden ? '' : alt}
       aria-hidden={ariaHidden}
       className={cn('shrink-0 select-none object-contain', className)}

@@ -82,13 +82,13 @@ export default function ExportPdfButton({
     } catch (err) {
       console.warn('[ExportPdfButton Playwright] Falha no endpoint Playwright, acionando fallback nativo com auto-impressão:', err);
       const routeMap = {
-        ativos: '/relatorio/ativos',
-        cursos: '/relatorio/cursos',
-        cadeias: '/relatorio/cadeias',
-        sintese: '/relatorio/sintese'
+        ativos: 'relatorio/ativos',
+        cursos: 'relatorio/cursos',
+        cadeias: 'relatorio/cadeias',
+        sintese: 'relatorio/sintese'
       };
-      const reportRoute = routeMap[type] || '/relatorio/sintese';
-      const fallbackUrl = `${reportRoute}?${terrParam}${modoParam}${themeParam}&autoPrint=1`;
+      const reportRoute = routeMap[type] || 'relatorio/sintese';
+      const fallbackUrl = `${import.meta.env.BASE_URL}${reportRoute}?${terrParam}${modoParam}${themeParam}&autoPrint=1`;
       window.open(fallbackUrl, '_blank');
     } finally {
       setInternalLoading(false);

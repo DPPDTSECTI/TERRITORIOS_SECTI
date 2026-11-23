@@ -840,7 +840,7 @@ export default function AdminPage() {
               title="Encerrar sessão"
               onClick={async () => {
                 await signOut();
-                navigate('/territorios');
+                navigate('/dashboard');
               }}
               className="text-text-secondary hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
             >

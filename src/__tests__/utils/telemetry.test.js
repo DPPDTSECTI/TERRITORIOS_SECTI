@@ -9,7 +9,7 @@ import {
 
 describe('Telemetry & Monitoring utilities', () => {
   it('resolves readable module labels for routes', () => {
-    expect(getRouteLabel('/territorios')).toBe('Visão Geral');
+    expect(getRouteLabel('/dashboard')).toBe('Visão Geral');
     expect(getRouteLabel('/admin?tab=monitoramento')).toBe('Gestão CRUD & Monitoramento');
     expect(getRouteLabel('/rota-desconhecida')).toBe('/rota-desconhecida');
   });
@@ -45,7 +45,7 @@ describe('Telemetry & Monitoring utilities', () => {
     const authEvent = createTelemetryEvent({
       type: 'route_view',
       category: 'access',
-      route: '/territorios',
+      route: '/dashboard',
       user: {
         email: 'admin@secti.ba.gov.br',
         user_metadata: { name: 'Administrador SECTI', role: 'admin' },
@@ -80,7 +80,7 @@ describe('Telemetry & Monitoring utilities', () => {
         timestamp: '2026-11-18T14:00:00.000Z',
         type: 'route_view',
         category: 'access',
-        route: '/territorios',
+        route: '/dashboard',
         user: { email: 'admin@secti.ba.gov.br', user_metadata: { name: 'Admin', role: 'admin' } },
         sessionId: 's1',
       }),
@@ -90,7 +90,7 @@ describe('Telemetry & Monitoring utilities', () => {
         type: 'territory_select',
         category: 'interaction',
         detail: 'Metropolitano de Salvador',
-        route: '/territorios',
+        route: '/dashboard',
         user: { email: 'admin@secti.ba.gov.br', user_metadata: { name: 'Admin', role: 'admin' } },
         sessionId: 's1',
         metadata: { territoryName: 'Metropolitano de Salvador' },
@@ -146,7 +146,7 @@ describe('Telemetry & Monitoring utilities', () => {
     expect(aggregated.totalPageViews).toBe(1);
     expect(aggregated.totalInteractions).toBe(1);
     expect(aggregated.totalCrudActions).toBe(2);
-    expect(aggregated.moduleRanking[0]).toMatchObject({ route: '/territorios', count: 1, percentage: 100 });
+    expect(aggregated.moduleRanking[0]).toMatchObject({ route: '/dashboard', count: 1, percentage: 100 });
     expect(aggregated.territoryRanking[0]).toMatchObject({
       name: 'Metropolitano de Salvador',
       count: 1,

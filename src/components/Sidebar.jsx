@@ -103,7 +103,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
   ];
 
   const modulesItems = [
-    { path: '/territorios', label: 'Visão Geral', icon: LayoutGrid, tourClass: 'tour-nav-visao' },
+    { path: '/dashboard', label: 'Visão Geral', icon: LayoutGrid, tourClass: 'tour-nav-visao' },
     { path: '/ativos', label: 'Ativos', icon: Database, tourClass: 'tour-nav-ativos' },
     { path: '/cadeia', label: 'Cadeia', icon: GitPullRequest, tourClass: 'tour-nav-cadeias' },
     { path: '/cursos', label: 'Cursos CT&I', icon: GraduationCap, tourClass: 'tour-nav-cursos' },
@@ -284,7 +284,7 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
             )}
           >
             <img
-              src="/img/pti-bahia-logo.webp"
+              src={`${import.meta.env.BASE_URL}img/pti-bahia-logo.webp`}
               alt={username}
               width={115}
               height={26}
@@ -364,12 +364,12 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
               title="Governo do Estado da Bahia — SECTI"
             >
               <img
-                src="/img/secti-govba-horizontal.svg"
+                src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
                 alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
                 className="h-12 w-auto max-w-[175px] object-contain block dark:hidden select-none"
               />
               <img
-                src="/img/secti-govba-horizontal-branco.svg"
+                src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal-branco.svg`}
                 alt="Governo da Bahia – Secretaria de Ciência, Tecnologia e Inovação"
                 className="h-12 w-auto max-w-[175px] object-contain hidden dark:block select-none"
               />

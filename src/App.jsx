@@ -6,7 +6,6 @@ import { DataProvider, DataContext } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { TelemetryProvider } from './context/TelemetryContext';
-import { Analytics } from '@vercel/analytics/react';
 
 import Sidebar from './components/Sidebar';
 import TourGuide from './components/TourGuide';
@@ -275,7 +274,7 @@ function AnimatedRoutes() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><LandingHero /></PageWrapper>} />
             <Route path="/sobre" element={<PageWrapper><SobrePage /></PageWrapper>} />
-            <Route path="/territorios" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
+            <Route path="/dashboard" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
             <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
             <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
@@ -310,7 +309,6 @@ function MainApp() {
 
       <TourGuide />
       <GlobalScroll />
-      <Analytics />
 
       <AnimatedRoutes />
     </>
@@ -323,7 +321,7 @@ export default function AppWrapper() {
       <HelmetProvider>
         <ThemeProvider>
           <AuthProvider>
-            <Router>
+            <Router basename={import.meta.env.BASE_URL.replace(/\/+$/, '') || '/'}>
               <DataProvider>
                 <TelemetryProvider>
                   <ToastProvider>

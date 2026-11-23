@@ -1056,13 +1056,13 @@ export default function RelatorioPage() {
     } catch (err) {
       console.warn('[Exportação PDF Playwright] Falha no serviço Playwright, acionando fallback nativo com auto-impressão:', err);
       const routeMap = {
-        ativos: '/relatorio/ativos',
-        cursos: '/relatorio/cursos',
-        cadeias: '/relatorio/cadeias',
-        sintese: '/relatorio/sintese'
+        ativos: 'relatorio/ativos',
+        cursos: 'relatorio/cursos',
+        cadeias: 'relatorio/cadeias',
+        sintese: 'relatorio/sintese'
       };
-      const reportRoute = routeMap[type] || '/relatorio/sintese';
-      const fallbackUrl = `${reportRoute}?${terrParam}&modo=${reportMode}${themeParam}&autoPrint=1`;
+      const reportRoute = routeMap[type] || 'relatorio/sintese';
+      const fallbackUrl = `${import.meta.env.BASE_URL}${reportRoute}?${terrParam}&modo=${reportMode}${themeParam}&autoPrint=1`;
       window.open(fallbackUrl, '_blank');
       toast({
         title: 'Modo Impressão Ativado',
@@ -1083,7 +1083,7 @@ export default function RelatorioPage() {
 
     const modoParam = `&modo=${reportMode}`;
     const themeParam = `&theme=light`;
-    const analiseUrl = `/relatorio/analise?tipo=${targetType}&${terrParam}${modoParam}${themeParam}&autoPrint=1`;
+    const analiseUrl = `${import.meta.env.BASE_URL}relatorio/analise?tipo=${targetType}&${terrParam}${modoParam}${themeParam}&autoPrint=1`;
 
     setIsExportingAnalise(true);
 

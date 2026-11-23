@@ -194,7 +194,7 @@ export function loadBahiaTopologia() {
     return Promise.resolve(cachedTopologia);
   }
   if (!loadingPromise) {
-    loadingPromise = fetch('/BA_(1)9396399957704198.json')
+    loadingPromise = fetch(`${import.meta.env.BASE_URL}BA_(1)9396399957704198.json`)
       .then((resp) => resp.json())
       .then((topology) => {
         cachedTopologia = buildTopologiaPayload(topology);

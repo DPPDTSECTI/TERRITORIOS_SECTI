@@ -52,7 +52,7 @@ const secoesPlataforma = [
     icon: Compass,
     title: 'Visão Geral & Dashboard Integrado',
     btnLabel: 'Acessar Visão Geral & Dashboard',
-    rota: '/territorios',
+    rota: '/dashboard',
     descricao: 'Centro de comando executivo com mapa dinâmico da Bahia e cards de inteligência territorial reordenáveis.',
     destaques: [
       'KPIs consolidados com atualização em tempo real ao selecionar territórios.',

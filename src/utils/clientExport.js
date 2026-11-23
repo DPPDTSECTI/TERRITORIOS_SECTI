@@ -209,7 +209,7 @@ export async function captureReportViaIframe(route, format = 'pdf', filename = '
       reject(err);
     };
 
-    iframe.src = route;
+    iframe.src = route.startsWith('/') ? `${import.meta.env.BASE_URL}${route.slice(1)}` : route;
     document.body.appendChild(iframe);
   });
 }

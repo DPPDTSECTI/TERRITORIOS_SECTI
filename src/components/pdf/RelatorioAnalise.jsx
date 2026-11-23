@@ -844,7 +844,7 @@ export default function RelatorioAnalisePage() {
                 <div className="flex flex-col gap-6 pt-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-6">
                     <img
-                      src="/img/secti-govba-horizontal.svg"
+                      src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
                       alt="SECTI • Governo do Estado da Bahia"
                       className="h-12 w-auto object-contain object-left select-none"
                     />
@@ -1044,7 +1044,7 @@ export default function RelatorioAnalisePage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3.5">
                     <img
-                      src="/img/secti-govba-horizontal.svg"
+                      src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
                       alt="SECTI • Governo do Estado da Bahia"
                       className="h-9 w-auto object-contain shrink-0 select-none"
                     />
@@ -1446,7 +1446,7 @@ export default function RelatorioAnalisePage() {
               <div className="avoid-break mt-8 pt-4 border-t border-zinc-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[9px] text-zinc-500 gap-2">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/img/secti-govba-horizontal.svg"
+                    src={`${import.meta.env.BASE_URL}img/secti-govba-horizontal.svg`}
                     alt="SECTI • Bahia"
                     className="h-5 w-auto object-contain opacity-85 select-none"
                   />

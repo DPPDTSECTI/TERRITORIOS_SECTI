@@ -152,7 +152,7 @@ export default function LoginPage({ returnUrl }) {
               size="sm"
               aria-label="Voltar à visualização pública"
               title="Voltar à visualização pública"
-              onClick={() => navigate('/territorios')}
+              onClick={() => navigate('/dashboard')}
               className="rounded-full text-text-secondary hover:text-text-primary shrink-0"
             >
               <ArrowLeft size={15} strokeWidth={2} />
