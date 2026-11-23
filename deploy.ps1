@@ -17,7 +17,7 @@ scp -r dist/* "${SERVER}:${REMOTE_DIR}/"
 if ($LASTEXITCODE -ne 0) { throw "Upload falhou." }
 
 Write-Host "`n=== 4/4: Ajustando permissoes ===" -ForegroundColor Cyan
-ssh $SERVER "find $REMOTE_DIR -type d -exec chmod 750 {} \; && find $REMOTE_DIR -type f -exec chmod 640 {} \;"
+ssh $SERVER "chgrp -R www-data $REMOTE_DIR && find $REMOTE_DIR -type d -exec chmod 2750 {} \; && find $REMOTE_DIR -type f -exec chmod 640 {} \;"
 if ($LASTEXITCODE -ne 0) { throw "Ajuste de permissoes falhou." }
 
 Write-Host "`nDEPLOY CONCLUIDO!" -ForegroundColor Green
