@@ -276,8 +276,9 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           </button>
 
           <div
+            title="PTI Bahia — Painel Territorial Interativo"
             className={cn(
-              'flex items-center overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1 min-w-0',
+              'flex flex-col justify-center overflow-hidden transition-all duration-200 ease-standard pl-2 flex-1 min-w-0 leading-none',
               isExpanded
                 ? 'opacity-100'
                 : 'w-0 opacity-0 -translate-x-2 pointer-events-none'
@@ -285,11 +286,21 @@ export default function Sidebar({ username = 'PTI Bahia', navOnly = false }) {
           >
             <img
               src={`${import.meta.env.BASE_URL}img/pti-bahia-logo.webp`}
-              alt={username}
+              alt={`${username} — Painel Territorial Interativo`}
               width={115}
               height={26}
-              className="h-6 w-auto max-w-[122px] object-contain object-left select-none shrink-0 dark:brightness-125"
+              className="h-[19px] w-auto max-w-[100px] object-contain object-left select-none shrink-0 dark:brightness-125"
             />
+            <span
+              className={cn(
+                'text-[9.5px] font-medium leading-tight tracking-tight truncate mt-0.5 select-none',
+                filtroSemiarido
+                  ? 'text-amber-900/75 dark:text-amber-200/75'
+                  : 'text-text-muted'
+              )}
+            >
+              Painel Territorial Interativo
+            </span>
           </div>
 
           <IconButton

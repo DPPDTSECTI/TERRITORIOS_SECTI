@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1795457133.6654222,
-    "seen": 1795457196.1295395,
-    "ast_hash": "0ce879277a6f6cf7afa70be95fe197e8",
+    "mtime": 1795458612.2299044,
+    "seen": 1795458766.9078095,
+    "ast_hash": "1d735d5910dc2a9e898347eef04bfee3",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -300,9 +300,9 @@
     "semantic_hash": ""
   },
   "src/components/hero.jsx": {
-    "mtime": 1795452113.570078,
-    "seen": 1795452268.428996,
-    "ast_hash": "cffd3efb39c063f8c1ea4f9e9207aa3a",
+    "mtime": 1795458608.954768,
+    "seen": 1795458766.9078095,
+    "ast_hash": "126cd00dd83da6ec3c477b88e7eb994d",
     "semantic_hash": ""
   },
   "src/components/maps/CtrlScrollZoom.jsx": {

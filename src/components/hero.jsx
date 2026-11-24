@@ -296,13 +296,19 @@ export default function LandingHero() {
 
             <div className="flex items-center gap-3 sm:gap-3.5">
               <PanelMark className="h-9 sm:h-11 w-auto" />
-              <img
-                src={`${import.meta.env.BASE_URL}img/pti-bahia-logo.webp`}
-                alt="PTI Bahia"
-                width={150}
-                height={34}
-                className="h-7 sm:h-8 w-auto object-contain select-none shrink-0 dark:brightness-125"
-              />
+              <div className="flex flex-col justify-center leading-none">
+                <img
+                  src={`${import.meta.env.BASE_URL}img/pti-bahia-logo.webp`}
+                  alt="PTI Bahia — Painel Territorial Interativo"
+                  title="PTI Bahia — Painel Territorial Interativo"
+                  width={150}
+                  height={34}
+                  className="h-6 sm:h-7 w-auto object-contain object-left select-none shrink-0 dark:brightness-125"
+                />
+                <span className="text-[11px] sm:text-xs font-medium tracking-tight text-text-secondary mt-1 whitespace-nowrap">
+                  Painel Territorial Interativo
+                </span>
+              </div>
             </div>
           </div>
         </div>
