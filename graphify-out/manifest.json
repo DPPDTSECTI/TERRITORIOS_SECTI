@@ -180,14 +180,14 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1795625307.4478986,
-    "seen": 1795627344.8878496,
+    "mtime": 1795633482.1349177,
+    "seen": 1795633497.3909273,
     "ast_hash": "23d1d42c6e17b5639f77abe20703705a",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1794853406.1282604,
-    "seen": 1795109874.0258706,
+    "mtime": 1795633482.773866,
+    "seen": 1795633497.3909273,
     "ast_hash": "bc3224c12c2bc7ba882e9e98dc60cf17",
     "semantic_hash": ""
   },
@@ -861,6 +861,18 @@
     "mtime": 1795626334.2662904,
     "seen": 1795627344.898401,
     "ast_hash": "3c2a0ffeb44b6cbcda86061ff1fb452b",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261124155639_onda_0_1_backup_integral_pre_migracao.sql": {
+    "mtime": 1795536378.9684217,
+    "seen": 1795633497.4217794,
+    "ast_hash": "a93fda24aff93f3e2f8993edbdcb074b",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261124175812_onda_1_estrutura_institucional_minima.sql": {
+    "mtime": 1795543141.147881,
+    "seen": 1795633497.4217794,
+    "ast_hash": "0c6f8f92b77137088806cc40cec4302b",
     "semantic_hash": ""
   },
   "package-lock.json": {
