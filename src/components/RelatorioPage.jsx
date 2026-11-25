@@ -15,10 +15,18 @@ import {
   BarChart3,
   Compass,
   FileSpreadsheet,
-  ChevronDown
+  ChevronDown,
+  Building2
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { DataContext } from '../context/DataContext';
+import {
+  computeInstituicoesAnalytics,
+  filterAtivosByInstituicao,
+  formatInstituicaoLabel,
+  buildAtivosExportRows,
+  SEM_INSTITUICAO_FILTER
+} from '../utils/instituicoes';
 import { useTheme } from '../context/ThemeContext';
 import {
   Button,
@@ -133,6 +141,7 @@ export default function RelatorioPage() {
     distribuicaoCadeias = [],
     listaCadeias = [],
     municipiosTerritorios = [],
+    instituicoesData = [],
     kpisGlobais = {},
     territoriesDynamicStats = {},
     loadingStats = false,
@@ -161,6 +170,7 @@ export default function RelatorioPage() {
   };
 
   const [tableSearch, setTableSearch] = useState('');
+  const [ativosInstituicaoFilter, setAtivosInstituicaoFilter] = useState('todas');
   const [sortField, setSortField] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedCadeia, setSelectedCadeia] = useState(null);
@@ -271,7 +281,14 @@ export default function RelatorioPage() {
         urlReferencia: a.url_referencia || '',
         tituloReferencia: a.titulo_referencia || '',
         rnp: hasRnp,
-        semiarido: isSemi
+        semiarido: isSemi,
+        id_instituicao: a.id_instituicao ?? null,
+        nome_instituicao: a.nome_instituicao || null,
+        sigla_instituicao: a.sigla_instituicao || null,
+        ict_status: a.ict_status || null,
+        natureza_instituicao: a.natureza_instituicao || null,
+        site_oficial: a.site_oficial || null,
+        parceiro_local: a.parceiro_local || null
       };
     });
   }, [ativosData]);
@@ -489,6 +506,11 @@ export default function RelatorioPage() {
     return list;
   }, [municipiosTerritorios, selectedTerritoryId, reportMode]);
 
+  const instituicoesAnalytics = useMemo(
+    () => computeInstituicoesAnalytics(instituicoesData, scopedAtivos),
+    [instituicoesData, scopedAtivos]
+  );
+
   // ESTATÍSTICAS INTEGRADAS DA SÍNTESE
   const statsSintese = useMemo(() => {
     const totalAtivos = scopedAtivos.length;
@@ -689,7 +711,8 @@ export default function RelatorioPage() {
     const q = normalize(tableSearch);
 
     if (reportType === 'ativos') {
-      list = scopedAtivos.map(a => ({
+      const ativosFiltrados = filterAtivosByInstituicao(scopedAtivos, ativosInstituicaoFilter);
+      list = ativosFiltrados.map(a => ({
         col1: a.nome_ativo || a.ativo || 'Ativo sem nome',
         col2: a.sigla || '-',
         col3: a.tipo || 'Geral',
@@ -767,7 +790,11 @@ export default function RelatorioPage() {
         normalize(row.col3).includes(q) ||
         normalize(row.col4).includes(q) ||
         normalize(row.col5).includes(q) ||
-        normalize(row.col6).includes(q)
+        normalize(row.col6).includes(q) ||
+        (reportType === 'ativos' && (
+          normalize(row.raw?.nome_instituicao || '').includes(q) ||
+          normalize(row.raw?.sigla_instituicao || '').includes(q)
+        ))
       );
     }
 
@@ -780,7 +807,7 @@ export default function RelatorioPage() {
     }
 
     return list;
-  }, [reportType, scopedAtivos, scopedCursos, scopedCadeias, scopedMunicipios, tableSearch, sortField, sortAsc]);
+  }, [reportType, scopedAtivos, ativosInstituicaoFilter, scopedCursos, scopedCadeias, scopedMunicipios, tableSearch, sortField, sortAsc]);
 
   // FUNÇÕES DE EXPORTAÇÃO EXCEL (.XLSX)
   const handleExportExcel = () => {
@@ -810,20 +837,7 @@ export default function RelatorioPage() {
       };
 
       // 1. DADOS BRUTOS DE ATIVOS DE CT&I
-      const rawAtivosData = scopedAtivos.map((a, idx) => ({
-        'ID': a.id_ativo || idx + 1,
-        'Nome do Ativo': a.nome_ativo || a.nome || 'Ativo sem nome',
-        'Sigla': a.sigla || '',
-        'Tipo de Ativo': a.tipo || 'Geral',
-        'Município': a.municipio || '',
-        'Território de Identidade': a.territorio_identidade || a.territorio || '',
-        'Conexão RNP': a.rnp ? 'Sim' : 'Não',
-        'Pertence ao Semiárido': a.semiarido ? 'Sim' : 'Não',
-        'Latitude': a.latitude != null ? a.latitude : '',
-        'Longitude': a.longitude != null ? a.longitude : '',
-        'Título Referência': a.tituloReferencia || a.titulo_referencia || '',
-        'URL Referência': a.urlReferencia || a.url_referencia || ''
-      }));
+      const rawAtivosData = buildAtivosExportRows(scopedAtivos);
 
       // 2. DADOS BRUTOS DE CURSOS SUPERIORES
       const rawCursosData = scopedCursos.map((c, idx) => ({
@@ -1643,6 +1657,7 @@ export default function RelatorioPage() {
                     onClick={() => {
                       setReportType(opt.id);
                       setTableSearch('');
+                      setAtivosInstituicaoFilter('todas');
                       setSortField(null);
                       setSelectedCadeia(null);
                     }}
@@ -1819,6 +1834,103 @@ export default function RelatorioPage() {
                 </div>
               </div>
 
+              {/* PANORAMA INSTITUCIONAL DE CT&I (MODELO INSTITUCIONAL INDEPENDENTE) */}
+              <section
+                aria-label="Panorama Institucional de CT&I"
+                className="p-5 rounded-2xl bg-surface-soft/70 dark:bg-surface-soft/40 border border-border/70 flex flex-col gap-4"
+              >
+                <SectionHeader
+                  title="Panorama Institucional de CT&I"
+                  subtitle="Base estadual de entidades institucionais (independente dos ativos físicos e das IES de cursos)"
+                  icon={Building2}
+                />
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-3 rounded-xl bg-surface border border-border/70">
+                    <span className="text-caption text-text-muted block">Instituições Cadastradas</span>
+                    <strong className="text-title font-bold text-text-primary tnum">
+                      {instituicoesAnalytics.kpis.total}
+                    </strong>
+                  </div>
+                  <div className="p-3 rounded-xl bg-surface border border-border/70">
+                    <span className="text-caption text-text-muted block">ICT — Sim</span>
+                    <strong className="text-title font-bold text-emerald-700 dark:text-emerald-400 tnum">
+                      {instituicoesAnalytics.kpis.sim}
+                    </strong>
+                  </div>
+                  <div className="p-3 rounded-xl bg-surface border border-border/70">
+                    <span className="text-caption text-text-muted block">ICT — Não</span>
+                    <strong className="text-title font-bold text-text-primary tnum">
+                      {instituicoesAnalytics.kpis.nao}
+                    </strong>
+                  </div>
+                  <div className="p-3 rounded-xl bg-surface border border-border/70">
+                    <span className="text-caption text-text-muted block">ICT — Pendente</span>
+                    <strong className="text-title font-bold text-amber-700 dark:text-amber-400 tnum">
+                      {instituicoesAnalytics.kpis.pendente}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-xl bg-surface border border-border/70 space-y-2">
+                    <h4 className="text-caption font-semibold uppercase tracking-wider text-text-muted">
+                      Distribuição por Natureza Institucional
+                    </h4>
+                    <ul className="divide-y divide-border/60 text-caption">
+                      {instituicoesAnalytics.porNatureza.map((item) => (
+                        <li key={item.natureza} className="py-1.5 flex items-center justify-between gap-2">
+                          <span className="text-text-secondary truncate" title={item.natureza}>
+                            {item.natureza}
+                          </span>
+                          <strong className="text-text-primary font-semibold tnum shrink-0">
+                            {item.count}
+                          </strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-surface border border-border/70 space-y-3">
+                    <h4 className="text-caption font-semibold uppercase tracking-wider text-text-muted">
+                      Vínculo com Ativos Físicos
+                    </h4>
+                    <div className="space-y-1.5 text-caption">
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-secondary">Instituições com ativos no escopo</span>
+                        <strong className="text-text-primary font-semibold tnum">
+                          {instituicoesAnalytics.comAtivos}
+                        </strong>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-secondary">Instituições sem ativos no escopo</span>
+                        <strong className="text-text-primary font-semibold tnum">
+                          {instituicoesAnalytics.semAtivos}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-border/60 space-y-1 text-caption">
+                      <span className="text-text-muted block font-medium">
+                        Cobertura nos ativos físicos do escopo ({instituicoesAnalytics.ativosEscopo.total}):
+                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-secondary">Ativos vinculados a instituições</span>
+                        <strong className="text-text-primary font-semibold tnum">
+                          {instituicoesAnalytics.ativosEscopo.vinculados} ({instituicoesAnalytics.ativosEscopo.taxaVinculo}%)
+                        </strong>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-secondary">Ativos sem vínculo institucional</span>
+                        <strong className="text-text-primary font-semibold tnum">
+                          {instituicoesAnalytics.ativosEscopo.semVinculo}
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
             </div>
           )}
 
@@ -1828,20 +1940,46 @@ export default function RelatorioPage() {
 
               {/* BARRA DE BUSCA E CONTAGEM DA TABELA */}
               <div className="flex flex-wrap items-center justify-between gap-3 mb-3 shrink-0 print:hidden min-w-0 relative z-30">
-                <div className="relative flex-1 max-w-sm min-w-[200px]">
-                  <SearchInput
-                    value={tableSearch}
-                    onChange={(e) => setTableSearch(e.target.value)}
-                    onClear={() => setTableSearch('')}
-                    suggestions={tableSearchData.suggestions}
-                    recommendations={tableSearchData.recommendations}
-                    placeholder={`Pesquisar nos ${tableData.length} registros...`}
-                    className={
-                      reportMode === 'semiarido'
-                        ? 'bg-surface-soft focus-visible:ring-amber-400 focus-visible:border-amber-500'
-                        : 'bg-surface-soft'
-                    }
-                  />
+                <div className="flex flex-wrap items-center gap-2.5 flex-1 min-w-0">
+                  <div className="relative flex-1 max-w-sm min-w-[200px]">
+                    <SearchInput
+                      value={tableSearch}
+                      onChange={(e) => setTableSearch(e.target.value)}
+                      onClear={() => setTableSearch('')}
+                      suggestions={tableSearchData.suggestions}
+                      recommendations={tableSearchData.recommendations}
+                      placeholder={`Pesquisar nos ${tableData.length} registros...`}
+                      className={
+                        reportMode === 'semiarido'
+                          ? 'bg-surface-soft focus-visible:ring-amber-400 focus-visible:border-amber-500'
+                          : 'bg-surface-soft'
+                      }
+                    />
+                  </div>
+
+                  {reportType === 'ativos' && (
+                    <div className="relative flex items-center min-w-[210px] max-w-xs">
+                      <Building2 className="w-3.5 h-3.5 text-text-muted pointer-events-none absolute left-3" />
+                      <select
+                        id="relatorio-ativos-instituicao"
+                        aria-label="Filtrar ativos do relatório por instituição"
+                        value={ativosInstituicaoFilter}
+                        onChange={(e) => setAtivosInstituicaoFilter(e.target.value)}
+                        className="w-full h-9 appearance-none pl-8 pr-8 rounded-control bg-surface-soft border border-border text-caption font-medium text-text-primary focus:outline-none focus:border-primary-600 cursor-pointer truncate"
+                      >
+                        <option value="todas">Todas as instituições</option>
+                        <option value={SEM_INSTITUICAO_FILTER}>Sem instituição vinculada</option>
+                        {[...instituicoesData]
+                          .sort((a, b) => String(a?.nome_instituicao || '').localeCompare(String(b?.nome_instituicao || ''), 'pt-BR'))
+                          .map((inst) => (
+                            <option key={inst.id_instituicao} value={String(inst.id_instituicao)}>
+                              {formatInstituicaoLabel(inst.nome_instituicao, inst.sigla)}
+                            </option>
+                          ))}
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-text-muted pointer-events-none absolute right-2.5" />
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-caption font-medium text-text-secondary shrink-0 tnum">
@@ -1971,6 +2109,17 @@ export default function RelatorioPage() {
                           >
                             <td className="py-2.5 px-3.5 font-medium text-text-primary" title={row.col1}>
                               <span className="line-clamp-2 leading-snug break-words">{row.col1}</span>
+                              {reportType === 'ativos' && row.raw?.nome_instituicao && (
+                                <span
+                                  className="mt-0.5 flex items-center gap-1 text-[11px] font-normal text-text-muted truncate"
+                                  title={formatInstituicaoLabel(row.raw.nome_instituicao, row.raw.sigla_instituicao)}
+                                >
+                                  <Building2 size={11} className="shrink-0" />
+                                  <span className="truncate">
+                                    {formatInstituicaoLabel(row.raw.nome_instituicao, row.raw.sigla_instituicao)}
+                                  </span>
+                                </span>
+                              )}
                             </td>
 
                             <td className="py-2.5 px-3.5 text-text-secondary font-medium" title={row.col2}>
@@ -2035,10 +2184,13 @@ export default function RelatorioPage() {
                             <span className="text-caption text-text-muted">
                               Tente ajustar o termo de pesquisa ou o filtro territorial.
                             </span>
-                            {tableSearch && (
+                            {(tableSearch || (reportType === 'ativos' && ativosInstituicaoFilter !== 'todas')) && (
                               <button
                                 type="button"
-                                onClick={() => setTableSearch('')}
+                                onClick={() => {
+                                  setTableSearch('');
+                                  setAtivosInstituicaoFilter('todas');
+                                }}
                                 className="mt-1 px-3 py-1.5 rounded-control text-caption font-semibold bg-surface-soft border border-border text-text-primary hover:bg-surface transition-colors cursor-pointer"
                               >
                                 Limpar filtros

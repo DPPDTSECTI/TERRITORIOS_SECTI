@@ -186,7 +186,7 @@ export default function RelatorioAnalisePage() {
   const enrichedCadeias = useMemo(() => {
     const mapCadeias = new Map();
     (distribuicaoCadeias || []).forEach(cad => {
-      const key = cad.nome_cadeia || cad.nome || cad.cadeia;
+      const key = cad.entidade || cad.cadeia_produtiva || cad.nome_cadeia || cad.nome || cad.cadeia;
       if (!key) return;
       if (!mapCadeias.has(key)) {
         mapCadeias.set(key, {
@@ -218,7 +218,7 @@ export default function RelatorioAnalisePage() {
     });
 
     (listaCadeias || []).forEach(cad => {
-      const key = cad.nome || cad.cadeia;
+      const key = cad.entidade || cad.cadeia_produtiva || cad.nome_cadeia || cad.nome || cad.cadeia;
       if (!key) return;
       if (!mapCadeias.has(key)) {
         mapCadeias.set(key, {

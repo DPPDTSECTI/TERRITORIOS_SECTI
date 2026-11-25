@@ -71,8 +71,8 @@ export function Drawer({
                 {!subtitle && <RadixDialog.Description className="sr-only">Detalhes e ações do painel lateral</RadixDialog.Description>}
 
                 {(title || onClose) && (
-                  <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b border-border/70">
-                    <div className="space-y-1 min-w-0 pr-6">
+                  <div className="flex items-start justify-between gap-3 p-5 sm:p-6 pr-16 sm:pr-20 border-b border-border/70">
+                    <div className="space-y-1 min-w-0 flex-1">
                       {title && (
                         <RadixDialog.Title className="text-title font-semibold text-text-primary tracking-tight">
                           {title}
@@ -90,7 +90,7 @@ export function Drawer({
                         <IconButton
                           aria-label="Fechar painel lateral"
                           size="sm"
-                          className="absolute right-4 top-4 text-text-muted hover:text-text-primary"
+                          className="shrink-0 text-text-muted hover:text-text-primary"
                         >
                           <X className="w-4 h-4" />
                         </IconButton>

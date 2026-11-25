@@ -111,11 +111,13 @@ export function DetailIsland({
                 key={idx}
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${pill.variant === 'success'
                   ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
-                  : pill.variant === 'warning'
-                    ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
-                    : pill.variant === 'primary'
-                      ? 'bg-primary-500/10 text-primary-700 dark:text-primary-300 border-primary-500/20'
-                      : 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20'
+                  : pill.variant === 'danger'
+                    ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+                    : pill.variant === 'warning'
+                      ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                      : pill.variant === 'primary'
+                        ? 'bg-primary-500/10 text-primary-700 dark:text-primary-300 border-primary-500/20'
+                        : 'bg-zinc-500/10 text-zinc-700 dark:text-zinc-300 border-zinc-500/20'
                   }`}
               >
                 {pill.icon}

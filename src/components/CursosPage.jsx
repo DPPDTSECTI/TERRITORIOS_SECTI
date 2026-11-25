@@ -13,19 +13,37 @@ import {
     Wifi,
     Laptop,
     SlidersHorizontal,
-    ChevronDown
+    ChevronDown,
+    CheckCircle2,
+    MinusCircle,
+    Clock,
+    Info,
+    Layers
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { DataContext } from '../context/DataContext';
 import { isMunicipioSemiarido } from '../constants/semiarido';
 import SideMap, { getHeatColor } from './maps/SideMap';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { normalize, classificarInstituicao } from '../utils/normalization';
 import {
+    normalizeIctStatus,
+    computeInstituicoesKpis,
+    buildAtivosByInstituicaoMap,
+    extractNaturezasInstitucionais,
+    filterInstituicoes,
+    enrichInstituicoesWithAtivos,
+    getAtivosDaInstituicao,
+    formatSafeUrl
+} from '../utils/instituicoes';
+import {
     Card,
     Button,
     Badge,
     Chip,
     SearchInput,
+    Select,
+    Drawer,
     Tabs,
     EmptyState,
     KpiSkeleton,
@@ -131,11 +149,21 @@ export function isCursoEad(c) {
     return cursoLower.includes('ead') || modLower.includes('distância') || modLower.includes('distancia') || modLower.includes('ead') || munLower.includes('ead');
 }
 
+const ICT_STATUS_META = {
+    sim: { label: 'ICT — Sim', shortLabel: 'Sim', badgeVariant: 'success' },
+    nao: { label: 'ICT — Não', shortLabel: 'Não', badgeVariant: 'danger' },
+    pendente: { label: 'ICT — Pendente', shortLabel: 'Pendente', badgeVariant: 'warning' },
+    outro: { label: 'Não definido', shortLabel: 'Outro', badgeVariant: 'neutral' },
+};
+
 export default function CursosPage() {
     const chartTheme = useChartTheme();
+    const [searchParams] = useSearchParams();
     const {
         cursosData = [],
         cursosEadData = [],
+        instituicoesData = [],
+        ativosData = [],
         territoriosData = [],
         kpisGlobais = {},
         loadingStats = false,
@@ -150,7 +178,13 @@ export default function CursosPage() {
     const [selectedCursoId, setSelectedCursoId] = useState(null);
     const [selectedCurso, setSelectedCurso] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' | 'ead' | 'areas' | 'ranking' | 'ies'
+    const [activeTab, setActiveTab] = useState(() => (
+        searchParams.get('tab') === 'ies' ? 'ies' : 'catalogo'
+    )); // 'catalogo' | 'ead' | 'areas' | 'ranking' | 'ies'
+    const [instSearch, setInstSearch] = useState('');
+    const [instIctStatus, setInstIctStatus] = useState('todos');
+    const [instNatureza, setInstNatureza] = useState('todas');
+    const [selectedInstituicao, setSelectedInstituicao] = useState(null);
     const [isMapExpanded, setIsMapExpanded] = useState(false);
     const [sidebarSearch, setSidebarSearch] = useState('');
     const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
@@ -182,6 +216,42 @@ export default function CursosPage() {
     const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
     const isEadTab = activeTab === 'ead';
     const baseCursosPool = isEadTab ? cursosEadData : cursosData;
+
+    // Indicadores e filtragem de Instituições de CT&I (Aba Instituições)
+    const instKpis = useMemo(
+        () => computeInstituicoesKpis(instituicoesData),
+        [instituicoesData]
+    );
+    const instAtivosMap = useMemo(
+        () => buildAtivosByInstituicaoMap(ativosData),
+        [ativosData]
+    );
+    const instNaturezas = useMemo(
+        () => extractNaturezasInstitucionais(instituicoesData),
+        [instituicoesData]
+    );
+    const filteredInstituicoes = useMemo(() => {
+        const filtered = filterInstituicoes(instituicoesData, {
+            search: instSearch,
+            ictStatus: instIctStatus,
+            natureza: instNatureza,
+        });
+        return enrichInstituicoesWithAtivos(filtered, instAtivosMap);
+    }, [instituicoesData, instSearch, instIctStatus, instNatureza, instAtivosMap]);
+    const selectedInstAtivos = useMemo(
+        () => getAtivosDaInstituicao(selectedInstituicao?.id_instituicao, instAtivosMap),
+        [selectedInstituicao, instAtivosMap]
+    );
+    const selectedInstSafeUrl = useMemo(
+        () => formatSafeUrl(selectedInstituicao?.site_oficial),
+        [selectedInstituicao]
+    );
+    const hasInstFilters = Boolean(instSearch.trim()) || instIctStatus !== 'todos' || instNatureza !== 'todas';
+    const handleClearInstFilters = () => {
+        setInstSearch('');
+        setInstIctStatus('todos');
+        setInstNatureza('todas');
+    };
 
     // Cursos (presenciais ou EaD na aba EaD) restritos ao território selecionado
     const territoryCursos = useMemo(() => {
@@ -770,6 +840,113 @@ export default function CursosPage() {
         }
     ];
 
+    const selectedInstDetails = useMemo(() => {
+        if (!selectedInstituicao) return null;
+        const ictStatus = normalizeIctStatus(selectedInstituicao.ict_status);
+        const ictMeta = ICT_STATUS_META[ictStatus] || ICT_STATUS_META.outro;
+        const accentColor =
+            ictStatus === 'sim'
+                ? '#10b981'
+                : ictStatus === 'nao'
+                    ? '#f43f5e'
+                    : ictStatus === 'pendente'
+                        ? '#f59e0b'
+                        : '#6366f1';
+        const hasCursosOffer = Boolean(
+            selectedInstituicao.sigla &&
+            iesRanking.some((item) => item.sigla === selectedInstituicao.sigla)
+        );
+
+        return {
+            title: selectedInstituicao.nome_instituicao || 'Detalhes da Instituição',
+            subtitle: [
+                selectedInstituicao.sigla || 'Sem sigla cadastrada',
+                selectedInstituicao.natureza_institucional || 'Natureza não informada',
+            ].join(' · '),
+            badgeText: ictMeta.label,
+            accentColor,
+            icon: Building2,
+            statusPills: [
+                { label: ictMeta.label, variant: ictMeta.badgeVariant },
+                {
+                    label: selectedInstituicao.ativa === false ? 'Inativa' : 'Ativa',
+                    variant: selectedInstituicao.ativa === false ? 'danger' : 'primary',
+                },
+                {
+                    label: `${selectedInstAtivos.length} ${selectedInstAtivos.length === 1 ? 'ativo vinculado' : 'ativos vinculados'}`,
+                    variant: 'neutral',
+                },
+            ],
+            metrics: [
+                { label: 'SIGLA', value: selectedInstituicao.sigla || '—' },
+                { label: 'NATUREZA INSTITUCIONAL', value: selectedInstituicao.natureza_institucional || 'Não informada' },
+                {
+                    label: 'ATIVOS VINCULADOS',
+                    value: `${selectedInstAtivos.length} ${selectedInstAtivos.length === 1 ? 'ativo' : 'ativos'}`,
+                    tabular: true,
+                },
+                ...(selectedInstituicao.observacao_ict
+                    ? [{ label: 'OBSERVAÇÃO ICT', value: selectedInstituicao.observacao_ict, fullWidth: true }]
+                    : []),
+            ],
+            extraSection: (
+                <div className="rounded-xl bg-zinc-50/80 dark:bg-zinc-800/40 p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                            Ativos Físicos Vinculados
+                        </span>
+                        <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 tabular-nums">
+                            {selectedInstAtivos.length} {selectedInstAtivos.length === 1 ? 'registro' : 'registros'}
+                        </span>
+                    </div>
+
+                    {selectedInstAtivos.length === 0 ? (
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400 py-2">
+                            Nenhum ativo físico vinculado a esta instituição até o momento.
+                        </p>
+                    ) : (
+                        <ul className="divide-y divide-zinc-200/60 dark:divide-zinc-700/60">
+                            {selectedInstAtivos.map((ativo) => (
+                                <li key={ativo.id_ativo} className="py-2.5 first:pt-0 last:pb-0 space-y-1">
+                                    <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 leading-snug">
+                                        {ativo.nome_ativo}
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                        {ativo.tipo && (
+                                            <span className="inline-flex items-center gap-1">
+                                                <Layers className="w-3.5 h-3.5 shrink-0" />
+                                                <span>{ativo.tipo}</span>
+                                            </span>
+                                        )}
+                                        {(ativo.municipio || ativo.territorio_identidade) && (
+                                            <span className="inline-flex items-center gap-1">
+                                                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                                                <span>{[ativo.municipio, ativo.territorio_identidade].filter(Boolean).join(' · ')}</span>
+                                            </span>
+                                        )}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            ),
+            externalUrl: selectedInstSafeUrl,
+            externalLabel: 'Fonte Oficial',
+            secondaryAction: hasCursosOffer
+                ? {
+                    label: `Filtrar ${selectedInstituicao.sigla}`,
+                    icon: <Building2 size={15} />,
+                    onClick: () => {
+                        setSelectedIES(selectedInstituicao.sigla);
+                        setSelectedInstituicao(null);
+                        setActiveTab('catalogo');
+                    },
+                }
+                : null,
+        };
+    }, [selectedInstituicao, selectedInstAtivos, selectedInstSafeUrl, iesRanking]);
+
     const activeDetailIsland = selectedCurso && selectedCursoDetails ? (
         <DetailIsland
             compact={isMapExpanded}
@@ -789,6 +966,29 @@ export default function CursosPage() {
             externalUrl={selectedCursoDetails.externalUrl}
             externalLabel="Fonte Oficial"
             secondaryAction={selectedCursoDetails.secondaryAction}
+            filtroSemiarido={filtroSemiarido}
+            className={
+                isMapExpanded
+                    ? 'flex-1 h-full w-full min-h-0'
+                    : 'absolute inset-x-0 top-0 bottom-0 lg:left-[calc(40%+5.6px)] lg:right-0 z-40'
+            }
+        />
+    ) : selectedInstituicao && selectedInstDetails ? (
+        <DetailIsland
+            compact={isMapExpanded}
+            isOpen={true}
+            onClose={() => setSelectedInstituicao(null)}
+            title={selectedInstDetails.title}
+            subtitle={selectedInstDetails.subtitle}
+            badgeText={selectedInstDetails.badgeText}
+            accentColor={selectedInstDetails.accentColor}
+            icon={selectedInstDetails.icon}
+            statusPills={selectedInstDetails.statusPills}
+            metrics={selectedInstDetails.metrics}
+            extraSection={selectedInstDetails.extraSection}
+            externalUrl={selectedInstDetails.externalUrl}
+            externalLabel={selectedInstDetails.externalLabel}
+            secondaryAction={selectedInstDetails.secondaryAction}
             filtroSemiarido={filtroSemiarido}
             className={
                 isMapExpanded
@@ -1140,8 +1340,8 @@ export default function CursosPage() {
                         <motion.div variants={fadeUp} className="flex-1 min-w-0 flex flex-col gap-4 h-full min-h-0">
 
                             {/* BARRA SUPERIOR DE ABAS E BUSCA */}
-                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 shrink-0 min-w-0 relative z-30 overflow-visible">
-                                <div className="flex items-center gap-2.5 flex-wrap min-w-0 shrink-0">
+                            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 shrink-0 min-w-0 relative z-30 overflow-visible">
+                                <div className="flex items-center gap-2 flex-wrap min-w-0 shrink-0">
                                     <Tabs
                                         items={[
                                             {
@@ -1175,39 +1375,46 @@ export default function CursosPage() {
                                         variant="pill"
                                         className="shrink-0"
                                         isSemiarido={filtroSemiarido}
-                                        trailing={(activeTab === 'catalogo' || activeTab === 'ead') ? (
-                                            <div className="relative h-full inline-flex items-center" ref={filterDropdownRef}>
+                                    />
+
+                                    {(activeTab === 'catalogo' || activeTab === 'ead' || activeTab === 'ies') && (() => {
+                                        const isIesTab = activeTab === 'ies';
+                                        const tabFiltersCount = isIesTab
+                                            ? (instIctStatus !== 'todos' ? 1 : 0) + (instNatureza !== 'todas' ? 1 : 0)
+                                            : activeFiltersCount;
+                                        return (
+                                            <div className="relative inline-flex items-center shrink-0" ref={filterDropdownRef}>
                                                 <button
                                                     type="button"
                                                     onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                                    className={`h-full inline-flex items-center justify-center gap-1.5 px-3 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${activeFiltersCount > 0 || isFilterDropdownOpen
+                                                    className={`h-9 inline-flex items-center justify-center gap-2 px-3.5 rounded-full text-caption transition-colors duration-120 whitespace-nowrap select-none cursor-pointer shadow-xs ${tabFiltersCount > 0 || isFilterDropdownOpen
                                                         ? (filtroSemiarido
-                                                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
-                                                            : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold'
+                                                            : 'bg-carbon dark:bg-primary-600 text-white font-semibold')
                                                         : (filtroSemiarido
-                                                            ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
-                                                            : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                            ? 'bg-amber-50/50 dark:bg-amber-950/30 border border-amber-300/70 dark:border-amber-700/60 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 font-medium'
+                                                            : 'bg-surface-soft dark:bg-surface-raised border border-border text-text-secondary hover:text-text-primary hover:bg-surface dark:hover:bg-surface-raised/70 font-medium')
                                                         }`}
-                                                    title="Filtros por Área, Rede de Ensino, Instituição e Região"
+                                                    title={isIesTab ? 'Filtros de Instituições' : 'Filtros por Área, Rede de Ensino, Instituição e Região'}
                                                 >
-                                                    <Filter
-                                                        size={14}
-                                                        className={
-                                                            activeFiltersCount > 0 || isFilterDropdownOpen
-                                                                ? 'text-white'
-                                                                : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted')
-                                                        }
-                                                    />
-                                                    <span>Filtros</span>
-                                                    {activeFiltersCount > 0 && (
-                                                        <span className={`w-4 h-4 rounded-full text-2xs font-bold inline-flex items-center justify-center shrink-0 ${filtroSemiarido ? 'bg-white text-amber-800' : 'bg-white text-primary-700'
-                                                            }`}>
-                                                            {activeFiltersCount}
+                                                    {tabFiltersCount > 0 ? (
+                                                        <span className={`w-4 h-4 rounded-full text-2xs font-bold inline-flex items-center justify-center shrink-0 tabular-nums ${filtroSemiarido ? 'bg-white text-amber-800' : 'bg-white text-primary-700'}`}>
+                                                            {tabFiltersCount}
                                                         </span>
+                                                    ) : (
+                                                        <Filter
+                                                            size={14}
+                                                            className={
+                                                                isFilterDropdownOpen
+                                                                    ? 'text-white'
+                                                                    : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted')
+                                                            }
+                                                        />
                                                     )}
+                                                    <span>Filtros</span>
                                                     <ChevronDown
                                                         size={13}
-                                                        className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${activeFiltersCount > 0 || isFilterDropdownOpen
+                                                        className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${tabFiltersCount > 0 || isFilterDropdownOpen
                                                             ? 'text-white/80'
                                                             : (filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted')
                                                             }`}
@@ -1215,7 +1422,71 @@ export default function CursosPage() {
                                                 </button>
 
                                                 {/* CAIXA COM DROPDOWN FLUTUANTE */}
-                                                {isFilterDropdownOpen && (
+                                                {isFilterDropdownOpen && isIesTab && (
+                                                    <div className={`absolute right-0 top-full mt-2 w-[320px] sm:w-[360px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${filtroSemiarido
+                                                        ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
+                                                        : 'border-border dark:border-zinc-800'
+                                                        }`}>
+                                                        <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800 min-h-[28px]">
+                                                            <div className="flex items-center gap-2">
+                                                                <Filter size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
+                                                                <span className="text-xs font-bold text-text-primary dark:text-zinc-100">Filtros de Instituições</span>
+                                                            </div>
+                                                            {hasInstFilters ? (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleClearInstFilters}
+                                                                    className="text-caption font-medium text-danger-600 dark:text-danger-400 hover:underline cursor-pointer"
+                                                                >
+                                                                    Limpar todos
+                                                                </button>
+                                                            ) : (
+                                                                <div className="h-4 w-16" aria-hidden="true" />
+                                                            )}
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-1.5">
+                                                            <label htmlFor="cursos-instituicoes-natureza" className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center gap-1.5">
+                                                                <Building2 size={13} />
+                                                                <span>Natureza institucional</span>
+                                                            </label>
+                                                            <div className="relative">
+                                                                <select
+                                                                    id="cursos-instituicoes-natureza"
+                                                                    value={instNatureza}
+                                                                    onChange={(e) => setInstNatureza(e.target.value)}
+                                                                    aria-label="Filtrar por natureza institucional"
+                                                                    className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'}`}
+                                                                >
+                                                                    <option value="todas" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                        Todas as naturezas
+                                                                    </option>
+                                                                    {instNaturezas.map((nat) => (
+                                                                        <option key={nat} value={nat} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                            {nat}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
+                                                                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between pt-2 border-t border-border/70 dark:border-zinc-800 text-caption font-medium">
+                                                            <span className="text-text-secondary dark:text-zinc-300">
+                                                                <strong className="text-text-primary dark:text-zinc-100 tnum">{filteredInstituicoes.length}</strong> de {instKpis.total} instituições
+                                                            </span>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setIsFilterDropdownOpen(false)}
+                                                                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-600 hover:bg-primary-500'}`}
+                                                            >
+                                                                Fechar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {isFilterDropdownOpen && !isIesTab && (
                                                     <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${filtroSemiarido
                                                         ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
                                                         : 'border-border dark:border-zinc-800'
@@ -1382,28 +1653,100 @@ export default function CursosPage() {
                                                     </div>
                                                 )}
                                             </div>
-                                        ) : null}
-                                    />
+                                        );
+                                    })()}
                                 </div>
 
                                 {/* INPUT DE BUSCA */}
-                                <div className="w-full lg:w-[calc((100%-26px)/3)] min-w-0 shrink-0">
-                                    <SearchInput
-                                        value={searchQuery}
-                                        onChange={(e) => {
-                                            setSearchQuery(e.target.value);
-                                            if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
-                                                setActiveTab('catalogo');
-                                            }
-                                        }}
-                                        onClear={() => setSearchQuery('')}
-                                        suggestions={cursosSearchData.suggestions}
-                                        recommendations={cursosSearchData.recommendations}
-                                        placeholder="Buscar curso, instituição ou cidade... (/)"
-                                        size="sm"
-                                    />
+                                <div className="w-full lg:w-[190px] xl:w-[220px] shrink-0 min-w-0">
+                                    {activeTab === 'ies' ? (
+                                        <SearchInput
+                                            value={instSearch}
+                                            onChange={(e) => setInstSearch(e.target.value)}
+                                            onClear={() => setInstSearch('')}
+                                            placeholder="Buscar instituição por nome ou sigla..."
+                                            aria-label="Buscar instituição por nome ou sigla"
+                                            size="sm"
+                                        />
+                                    ) : (
+                                        <SearchInput
+                                            value={searchQuery}
+                                            onChange={(e) => {
+                                                setSearchQuery(e.target.value);
+                                                if (e.target.value.trim() && activeTab !== 'catalogo' && activeTab !== 'ead') {
+                                                    setActiveTab('catalogo');
+                                                }
+                                            }}
+                                            onClear={() => setSearchQuery('')}
+                                            suggestions={cursosSearchData.suggestions}
+                                            recommendations={cursosSearchData.recommendations}
+                                            placeholder="Buscar curso, instituição ou cidade... (/)"
+                                            size="sm"
+                                        />
+                                    )}
                                 </div>
                             </div>
+
+                            {/* 4 KPIs DA ABA INSTITUIÇÕES (BOTÕES DE FILTRO ENTRE AS ABAS E A LISTA) */}
+                            {activeTab === 'ies' && (
+                                <section aria-label="Indicadores institucionais" className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
+                                    {[
+                                        { label: 'Total de Instituições', value: instKpis.total, icon: Building2, tone: 'default', filterValue: 'todos' },
+                                        { label: 'ICT — Sim', value: instKpis.sim, icon: CheckCircle2, tone: 'success', filterValue: 'sim' },
+                                        { label: 'ICT — Não', value: instKpis.nao, icon: MinusCircle, tone: 'danger', filterValue: 'nao' },
+                                        { label: 'ICT — Pendente', value: instKpis.pendente, icon: Clock, tone: 'warning', filterValue: 'pendente' },
+                                    ].map((kpi) => {
+                                        const IconComp = kpi.icon;
+                                        const isActive = instIctStatus === kpi.filterValue;
+                                        const baseSurface = filtroSemiarido
+                                            ? 'bg-gradient-to-br from-amber-50/80 via-surface to-surface dark:from-amber-950/30 dark:via-zinc-900 dark:to-zinc-900'
+                                            : 'bg-surface-soft text-text-primary';
+                                        const toneClasses = isActive
+                                            ? kpi.tone === 'success'
+                                                ? `${baseSurface} border-emerald-500/70 ring-2 ring-emerald-500/20`
+                                                : kpi.tone === 'danger'
+                                                    ? `${baseSurface} border-rose-500/70 ring-2 ring-rose-500/20`
+                                                    : kpi.tone === 'warning'
+                                                        ? `${baseSurface} border-amber-500/70 ring-2 ring-amber-500/20`
+                                                        : `${baseSurface} border-primary-500/70 ring-2 ring-primary-500/20`
+                                            : filtroSemiarido
+                                                ? `${baseSurface} border-amber-300/70 dark:border-amber-600/40 shadow-2xs hover:border-amber-400 dark:hover:border-amber-500`
+                                                : `${baseSurface} border-border/70 hover:border-border-strong`;
+
+                                        const iconClasses = kpi.tone === 'success'
+                                            ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-600 dark:text-emerald-400'
+                                            : kpi.tone === 'danger'
+                                                ? 'bg-rose-500/10 border-rose-500/25 text-rose-600 dark:text-rose-400'
+                                                : kpi.tone === 'warning'
+                                                    ? 'bg-amber-500/10 border-amber-500/25 text-amber-600 dark:text-amber-400'
+                                                    : isActive
+                                                        ? 'bg-primary/10 border-primary/25 text-primary'
+                                                        : 'bg-surface border-border/80 text-text-secondary shadow-2xs';
+
+                                        return (
+                                            <button
+                                                key={kpi.label}
+                                                type="button"
+                                                aria-pressed={isActive}
+                                                onClick={() => setInstIctStatus((prev) => (kpi.filterValue !== 'todos' && prev === kpi.filterValue ? 'todos' : kpi.filterValue))}
+                                                className={`px-4 py-3.5 rounded-card border flex items-center justify-between gap-3 text-left transition-all duration-150 ease-out active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${toneClasses}`}
+                                            >
+                                                <div className="min-w-0">
+                                                    <div className="text-xs font-medium text-text-secondary truncate" title={kpi.label}>
+                                                        {kpi.label}
+                                                    </div>
+                                                    <div className="text-2xl font-bold text-text-primary tabular-nums leading-tight mt-1">
+                                                        {kpi.value}
+                                                    </div>
+                                                </div>
+                                                <div className={`w-9 h-9 rounded-full shrink-0 flex items-center justify-center border ${iconClasses}`}>
+                                                    <IconComp size={17} strokeWidth={2} />
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </section>
+                            )}
 
                             {/* CONTEÚDO DAS ABAS */}
                             <div className="flex-1 min-w-0 bg-surface rounded-card border border-border shadow-card p-5 flex flex-col min-h-0 overflow-hidden">
@@ -1420,35 +1763,6 @@ export default function CursosPage() {
                                             </div>
 
                                             <div className="flex items-center gap-3">
-                                                {/* FILTROS DE REDE EMBUTIDOS NO HEADER DA LISTA */}
-                                                <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-                                                    <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
-                                                    <Chip
-                                                        selected={selectedRede === 'todas'}
-                                                        onClick={() => setSelectedRede('todas')}
-                                                        variant={filtroSemiarido ? 'warning' : 'neutral'}
-                                                        size="sm"
-                                                    >
-                                                        Todas
-                                                    </Chip>
-                                                    <Chip
-                                                        selected={selectedRede === 'publica'}
-                                                        onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
-                                                        variant="success"
-                                                        size="sm"
-                                                    >
-                                                        Pública
-                                                    </Chip>
-                                                    <Chip
-                                                        selected={selectedRede === 'privada'}
-                                                        onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
-                                                        variant="accent"
-                                                        size="sm"
-                                                    >
-                                                        Privada
-                                                    </Chip>
-                                                </div>
-
                                                 <div className="flex items-center gap-2">
                                                     {selectedCategory !== 'todas' && (
                                                         <Badge
@@ -1633,35 +1947,6 @@ export default function CursosPage() {
                                             </div>
 
                                             <div className="flex items-center gap-3">
-                                                {/* FILTROS DE REDE EMBUTIDOS NO HEADER DA LISTA EAD */}
-                                                <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
-                                                    <span className="text-caption font-medium text-text-muted pl-0.5">Rede:</span>
-                                                    <Chip
-                                                        selected={selectedRede === 'todas'}
-                                                        onClick={() => setSelectedRede('todas')}
-                                                        variant={filtroSemiarido ? 'warning' : 'neutral'}
-                                                        size="sm"
-                                                    >
-                                                        Todas
-                                                    </Chip>
-                                                    <Chip
-                                                        selected={selectedRede === 'publica'}
-                                                        onClick={() => setSelectedRede(prev => prev === 'publica' ? 'todas' : 'publica')}
-                                                        variant="success"
-                                                        size="sm"
-                                                    >
-                                                        Pública
-                                                    </Chip>
-                                                    <Chip
-                                                        selected={selectedRede === 'privada'}
-                                                        onClick={() => setSelectedRede(prev => prev === 'privada' ? 'todas' : 'privada')}
-                                                        variant="accent"
-                                                        size="sm"
-                                                    >
-                                                        Privada
-                                                    </Chip>
-                                                </div>
-
                                                 <div className="flex items-center gap-2">
                                                     {selectedCategory !== 'todas' && (
                                                         <Badge
@@ -2104,92 +2389,65 @@ export default function CursosPage() {
                                     </div>
                                 )}
 
-                                {/* ABA 5: TOP INSTITUIÇÕES */}
+                                {/* ABA 5: INSTITUIÇÕES DE CT&I */}
                                 {activeTab === 'ies' && (
                                     <div className="flex-1 flex flex-col min-h-0">
-                                        <div className="mb-3 shrink-0 flex items-center justify-between">
-                                            <div>
-                                                <h3 className="text-body-sm font-semibold text-text-primary">
-                                                    {selectedTerritory
-                                                        ? `Top Instituições em ${territoryName}`
-                                                        : 'Top Instituições Ofertantes de Cursos de CT&I'
-                                                    }
-                                                </h3>
-                                                <p className="text-caption text-text-secondary font-medium">
-                                                    Clique em uma instituição para filtrar no mapa
-                                                </p>
-                                            </div>
-                                            {selectedIES && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="xs"
-                                                    onClick={() => setSelectedIES(null)}
-                                                    className="text-danger-600 hover:text-danger-700 hover:bg-danger-50 dark:hover:bg-danger-950/40 text-caption font-semibold"
-                                                >
-                                                    Limpar Filtro
-                                                </Button>
-                                            )}
-                                        </div>
-
-                                        {/* LISTA RANKING IES */}
+                                        {/* LISTAGEM DE INSTITUIÇÕES */}
                                         <ScrollableList
                                             filtroSemiarido={filtroSemiarido}
-                                            resetKey={territoryName}
-                                            className="flex-1 overflow-y-auto pr-2.5 flex flex-col gap-2 min-h-0"
+                                            resetKey={`${instIctStatus}-${instNatureza}-${instSearch}`}
+                                            className="flex-1 overflow-y-auto pr-2.5 flex flex-col divide-y divide-border/60 min-h-0"
                                         >
-                                            {iesRanking.length > 0 ? (
-                                                iesRanking.map((ies, idx) => {
-                                                    const isSelected = selectedIES && (
-                                                        (ies.sigla && selectedIES.toUpperCase() === ies.sigla.toUpperCase()) ||
-                                                        selectedIES === ies.fullName
-                                                    );
-                                                    const totalScopedCount = activeScopedCursos.length || iesRanking.reduce((acc, x) => acc + x.count, 0) || 1;
-                                                    const pct = ((ies.count / totalScopedCount) * 100).toFixed(1);
-                                                    const remaining = Math.max(0, totalScopedCount - ies.count);
-                                                    const rankStr = String(idx + 1).padStart(2, '0');
-
-                                                    const fillColor = filtroSemiarido ? getSemanticColors().warningDeep : getSemanticColors().primaryBase;
-                                                    const negPillStyle = filtroSemiarido
-                                                        ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/25'
-                                                        : 'bg-surface-soft text-text-secondary border border-border';
-                                                    const totalPillStyle = filtroSemiarido
-                                                        ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border border-amber-300/70 dark:border-amber-700/40'
-                                                        : 'bg-surface-soft text-text-primary border border-border';
-
+                                            {loadingStats ? (
+                                                <div className="space-y-2.5 py-2">
+                                                    <ListRowSkeleton />
+                                                    <ListRowSkeleton />
+                                                    <ListRowSkeleton />
+                                                    <ListRowSkeleton />
+                                                </div>
+                                            ) : filteredInstituicoes.length > 0 ? (
+                                                filteredInstituicoes.map((inst) => {
+                                                    const ictKey = normalizeIctStatus(inst.ict_status);
+                                                    const ictMeta = ICT_STATUS_META[ictKey] || ICT_STATUS_META.outro;
                                                     return (
                                                         <div
-                                                            key={ies.sigla || ies.fullName}
-                                                            onClick={() => setSelectedIES(isSelected ? null : (ies.sigla || ies.fullName))}
-                                                            className={`p-2 rounded-xl transition-all cursor-pointer border ${isSelected
-                                                                ? (filtroSemiarido ? 'bg-amber-50/70 dark:bg-amber-950/40 border-amber-400 ring-2 ring-amber-500/20 shadow-xs' : 'bg-primary-50/60 dark:bg-primary-950/40 border-primary-400 ring-2 ring-primary-500/20 shadow-xs')
-                                                                : (filtroSemiarido ? 'bg-surface border-transparent hover:bg-amber-50/30 dark:hover:bg-amber-950/20 hover:border-amber-200' : 'bg-surface border-transparent hover:bg-surface-soft hover:border-border')
-                                                                }`}
+                                                            key={inst.id_instituicao}
+                                                            role="button"
+                                                            tabIndex={0}
+                                                            onClick={() => setSelectedInstituicao(inst)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                                    e.preventDefault();
+                                                                    setSelectedInstituicao(inst);
+                                                                }
+                                                            }}
+                                                            className="py-2.5 px-2.5 hover:bg-surface-soft/80 rounded-lg transition-colors duration-150 cursor-pointer flex items-center justify-between gap-3 focus-visible:outline-none focus-visible:bg-surface-soft"
                                                         >
-                                                            {/* RÓTULO COM RANK E NOME DA IES */}
-                                                            <div className="text-caption font-semibold text-text-primary leading-tight flex items-center justify-between mb-1 px-0.5">
-                                                                <div className="flex items-center gap-1.5 min-w-0">
-                                                                    <span className="w-5 text-[11px] font-bold text-text-muted dark:text-zinc-400 tabular-nums shrink-0">{idx + 1}º</span>
-                                                                    <span className="truncate">{ies.sigla}</span>
-                                                                    <span className="text-caption text-text-muted font-normal truncate hidden sm:inline">· {ies.fullName}</span>
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-center gap-2 min-w-0">
+                                                                    <span className="text-body-sm font-medium text-text-primary truncate" title={inst.nome_instituicao}>
+                                                                        {inst.nome_instituicao}
+                                                                    </span>
+                                                                    {inst.sigla && (
+                                                                        <span className="text-caption font-semibold text-text-muted shrink-0">
+                                                                            ({inst.sigla})
+                                                                        </span>
+                                                                    )}
+                                                                    {inst.ativa === false && (
+                                                                        <Badge variant="danger">Inativa</Badge>
+                                                                    )}
                                                                 </div>
-                                                                <span className="text-caption text-text-muted tabular-nums shrink-0 ml-2">
-                                                                    {ies.count} {ies.count === 1 ? 'curso' : 'cursos'}
-                                                                </span>
+                                                                <div className="text-caption text-text-muted truncate mt-0.5">
+                                                                    {inst.natureza_institucional || 'Natureza não informada'}
+                                                                </div>
                                                             </div>
 
-                                                            {/* BARRAS DE PÍLULAS */}
-                                                            <PillBar
-                                                                value={ies.count}
-                                                                totalScoped={totalScopedCount}
-                                                                remaining={remaining}
-                                                                percent={pct}
-                                                                color={fillColor}
-                                                                negPillStyle={negPillStyle}
-                                                                totalPillStyle={totalPillStyle}
-                                                                index={idx}
-                                                                valueTitle={`${ies.fullName}: ${ies.count} cursos (${pct}% da oferta · ${ies.municipios.size} ${ies.municipios.size === 1 ? 'cidade' : 'cidades'})`}
-                                                                percentTitle={`${pct}% da oferta (${ies.count} cursos)`}
-                                                            />
+                                                            <div className="flex items-center gap-2.5 shrink-0">
+                                                                <Badge variant={ictMeta.badgeVariant}>{ictMeta.shortLabel}</Badge>
+                                                                <span className="text-caption font-semibold text-text-primary tabular-nums min-w-[64px] text-right">
+                                                                    {inst.qtdAtivos} {inst.qtdAtivos === 1 ? 'ativo' : 'ativos'}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     );
                                                 })
@@ -2198,7 +2456,14 @@ export default function CursosPage() {
                                                     <EmptyState
                                                         icon={Building2}
                                                         title="Nenhuma instituição encontrada"
-                                                        description="Não foram encontradas instituições para os filtros selecionados."
+                                                        description="Nenhuma instituição corresponde aos critérios de busca ou filtros selecionados."
+                                                        action={
+                                                            hasInstFilters ? (
+                                                                <Button variant="secondary" size="sm" onClick={handleClearInstFilters}>
+                                                                    Limpar filtros
+                                                                </Button>
+                                                            ) : null
+                                                        }
                                                     />
                                                 </div>
                                             )}

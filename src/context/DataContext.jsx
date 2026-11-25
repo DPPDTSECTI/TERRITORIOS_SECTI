@@ -21,8 +21,8 @@ export const useData = () => {
   return context || {};
 };
 
-const CACHE_KEY = '@SectiPainel_Data_v15_SUPABASE_PROD';
-const LEGACY_CACHE_KEY = '@SectiPainel_Data_v14_SUPABASE_PROD';
+const CACHE_KEY = '@SectiPainel_Data_v16_SUPABASE_PROD';
+const LEGACY_CACHE_KEY = '@SectiPainel_Data_v15_SUPABASE_PROD';
 const CACHE_TIME_MS = 10 * 60 * 1000;
 
 export const DataProvider = ({ children }) => {
@@ -39,6 +39,7 @@ export const DataProvider = ({ children }) => {
   const [tiposCursos, setTiposCursos] = useState([]);
   const [tiposCadeias, setTiposCadeias] = useState([]);
   const [firjanData, setFirjanData] = useState([]);
+  const [instituicoesData, setInstituicoesData] = useState([]);
 
   const [loadingStats, setLoadingStats] = useState(true);
   const [selectedTerritory, setSelectedTerritory] = useState(null);
@@ -79,6 +80,7 @@ export const DataProvider = ({ children }) => {
             cache.ativos?.length > 0 &&
             cache.cursos?.length > 0 &&
             cache.distCadeias?.length > 88 &&
+            Array.isArray(cache.instituicoes) &&
             idadeDoCache < CACHE_TIME_MS
           ) {
             setBaseTerritoriosData(cache.stats || []);
@@ -92,6 +94,7 @@ export const DataProvider = ({ children }) => {
             setTiposCursos(cache.tiposCursos || []);
             setTiposCadeias(cache.tiposCadeias || []);
             setFirjanData(cache.firjanData || []);
+            setInstituicoesData(cache.instituicoes || []);
             setLoadingStats(false);
             return;
           }
@@ -116,7 +119,8 @@ export const DataProvider = ({ children }) => {
           tCadeiasRes,
           cursosRawRes,
           referenciasRes,
-          firjanRes
+          firjanRes,
+          instituicoesRes
         ] = await Promise.all([
           supabasePublic.from('stats_ti').select('*'),
           supabasePublic.from('lista_ativos_cti').select('*').range(0, 3000),
@@ -129,7 +133,8 @@ export const DataProvider = ({ children }) => {
           supabasePublic.from('tipo_cadeia').select('*'),
           supabasePublic.from('cursos').select('id_curso, ead').range(0, 3000),
           supabasePublic.from('referencias').select('id_referencia, titulo_referencia, texto_referencia, url_referencia'),
-          supabasePublic.from('firjan').select('*').range(0, 1000)
+          supabasePublic.from('firjan').select('*').range(0, 1000),
+          supabasePublic.from('instituicoes').select('*').order('nome_instituicao')
         ]);
 
         if (statsRes.error) console.error('Supabase stats_ti error:', statsRes.error);
@@ -139,6 +144,7 @@ export const DataProvider = ({ children }) => {
         if (listaCadeiasRes.error) console.error('Supabase lista_cadeia_produtiva error:', listaCadeiasRes.error);
         if (munTerRes.error) console.error('Supabase lista_municipioxterritorio error:', munTerRes.error);
         if (firjanRes.error) console.error('Supabase firjan error:', firjanRes.error);
+        if (instituicoesRes.error) console.error('Supabase instituicoes error:', instituicoesRes.error);
 
         // Mapeamento explícito de EAD da tabela base
         const eadMap = new Map((cursosRawRes?.data || []).map(r => [r.id_curso, Boolean(r.ead)]));
@@ -220,6 +226,7 @@ export const DataProvider = ({ children }) => {
           tiposCursos: tCursosRes?.data || [],
           tiposCadeias: tCadeiasRes?.data || [],
           firjanData: firjanRes?.data || [],
+          instituicoes: instituicoesRes?.data || [],
           timestamp: Date.now()
         };
 
@@ -242,6 +249,7 @@ export const DataProvider = ({ children }) => {
         setTiposCursos(novoCache.tiposCursos);
         setTiposCadeias(novoCache.tiposCadeias);
         setFirjanData(novoCache.firjanData);
+        setInstituicoesData(novoCache.instituicoes);
       } catch (err) {
         console.error("Erro crítico ao carregar dados do Supabase:", err);
       } finally {
@@ -511,6 +519,7 @@ export const DataProvider = ({ children }) => {
  tiposCursos,
  tiposCadeias,
  firjanData,
+ instituicoesData,
  territoriesDynamicStats,
  kpisGlobais, 
  loadingStats,

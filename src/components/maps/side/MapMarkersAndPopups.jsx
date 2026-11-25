@@ -2,11 +2,12 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Building2 } from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
 import { normalizeName } from './mapGeoUtils';
 import { createClusterIcon, createSingleAssetIconWithSvg, getSemiaridoPointColor } from './mapIcons';
 import { getSemanticColors } from '../../graph/chartTheme';
+import { formatInstituicaoLabel } from '../../../utils/instituicoes';
 
 export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
   const { isDark } = useTheme();
@@ -41,6 +42,18 @@ export function SingleAssetPopupContent({ ativo, filtroSemiarido = false }) {
         <span className="font-medium text-text-primary">{ativo.municipio}</span>
         {terrName ? ` · ${terrName}` : ''}
       </p>
+
+      {ativo.nome_instituicao && (
+        <div
+          className="flex items-center gap-1.5 text-xs text-text-secondary"
+          title={formatInstituicaoLabel(ativo.nome_instituicao, ativo.sigla_instituicao)}
+        >
+          <Building2 size={12} className="shrink-0 text-text-muted" />
+          <span className="truncate">
+            {formatInstituicaoLabel(ativo.nome_instituicao, ativo.sigla_instituicao)}
+          </span>
+        </div>
+      )}
 
       {ativo.rnp && (
         <div className={`inline-flex items-center gap-1.5 w-fit text-[11px] font-medium px-2 py-0.5 rounded-md ${filtroSemiarido

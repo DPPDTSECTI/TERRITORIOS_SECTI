@@ -276,6 +276,7 @@ function AnimatedRoutes() {
             <Route path="/sobre" element={<PageWrapper><SobrePage /></PageWrapper>} />
             <Route path="/dashboard" element={<PageWrapper><DashboardPainel /></PageWrapper>} />
             <Route path="/ativos" element={<PageWrapper><AtivosPage /></PageWrapper>} />
+            <Route path="/instituicoes" element={<Navigate to="/cursos?tab=ies" replace />} />
             <Route path="/cadeia" element={<PageWrapper><CadeiaPage /></PageWrapper>} />
             <Route path="/cursos" element={<PageWrapper><CursosPage /></PageWrapper>} />
             <Route path="/relatorio" element={<PageWrapper><RelatorioPage /></PageWrapper>} />

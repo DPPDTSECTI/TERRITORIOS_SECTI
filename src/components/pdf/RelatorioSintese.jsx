@@ -26,6 +26,7 @@ import {
 } from '../../constants/semiarido';
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
+import { computeInstituicoesAnalytics } from '../../utils/instituicoes';
 
 function normalizeName(value) {
   if (!value) return '';
@@ -64,6 +65,7 @@ export default function RelatorioSintese() {
     territoriosData = [],
     ativosData = [],
     cursosData = [],
+    instituicoesData = [],
     municipiosTerritorios = [],
     firjanData = [],
     territoriesDynamicStats = {},
@@ -233,6 +235,11 @@ export default function RelatorioSintese() {
     if (!isSemiarido) return scopedAtivos;
     return scopedAtivos.filter(a => isMunicipioSemiarido(a.municipio));
   }, [scopedAtivos, isSemiarido]);
+
+  const instituicoesAnalytics = useMemo(
+    () => computeInstituicoesAnalytics(instituicoesData, activeScopedAtivos),
+    [instituicoesData, activeScopedAtivos]
+  );
 
   // 5. DonutChart (Cursos por Área)
   const donutChartData = useMemo(() => {
@@ -684,6 +691,40 @@ export default function RelatorioSintese() {
           })}
         </div>
       </div>
+
+      {/* SÍNTESE INSTITUCIONAL INDEPENDENTE (ONDA 3.3.5) */}
+      <section
+        aria-label="Síntese Institucional de CT&I"
+        className={`w-full relative z-10 shrink-0 px-4 py-2 rounded-card border flex flex-wrap items-center justify-between gap-3 text-caption ${
+          isSemiarido
+            ? 'bg-white/90 dark:bg-zinc-900/90 border-amber-200/70 dark:border-amber-700/35 text-text-primary'
+            : 'bg-surface-soft border-border/70 text-text-primary'
+        }`}
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-text-primary">
+            <Building2 size={14} className={isSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+            <span>Base Institucional CT&amp;I:</span>
+          </span>
+          <span className="tnum font-semibold">{instituicoesAnalytics.kpis.total} instituições</span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">ICT Sim: <strong>{instituicoesAnalytics.kpis.sim}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">ICT Não: <strong>{instituicoesAnalytics.kpis.nao}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">ICT Pendente: <strong>{instituicoesAnalytics.kpis.pendente}</strong></span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap text-text-secondary">
+          <span className="tnum">Com ativos no escopo: <strong className="text-text-primary">{instituicoesAnalytics.comAtivos}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">Sem ativos: <strong className="text-text-primary">{instituicoesAnalytics.semAtivos}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">Ativos vinculados: <strong className="text-text-primary">{instituicoesAnalytics.ativosEscopo.vinculados} ({instituicoesAnalytics.ativosEscopo.taxaVinculo}%)</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">Sem vínculo: <strong className="text-text-primary">{instituicoesAnalytics.ativosEscopo.semVinculo}</strong></span>
+        </div>
+      </section>
 
       {/* GRID PRINCIPAL: MAPA À ESQUERDA + 4 GRÁFICOS DO PAINEL (2x2) À DIREITA */}
       <div className="flex-1 w-full flex gap-4 min-h-0 overflow-hidden relative z-10">

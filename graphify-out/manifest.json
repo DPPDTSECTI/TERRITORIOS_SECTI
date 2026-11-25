@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1795457144.5869312,
-    "seen": 1795457196.1285417,
-    "ast_hash": "b254ebfcbd2043896487804b25344072",
+    "mtime": 1795630124.5267136,
+    "seen": 1795630720.9251635,
+    "ast_hash": "c00202273cf703191378fbbe3f59b150",
     "semantic_hash": ""
   },
   "src/__tests__/auth/authContext.test.js": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1794853406.1221807,
-    "seen": 1795109874.0258706,
-    "ast_hash": "08da1e7fed07b7ff6e444dbff53e07d2",
+    "mtime": 1795625307.4478986,
+    "seen": 1795627344.8878496,
+    "ast_hash": "23d1d42c6e17b5639f77abe20703705a",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
@@ -192,15 +192,15 @@
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {
-    "mtime": 1795109778.4770517,
-    "seen": 1795109874.0258706,
-    "ast_hash": "308a9e7f55cdc064900a9f6d9966462c",
+    "mtime": 1795633099.9325297,
+    "seen": 1795633287.889034,
+    "ast_hash": "caf60f6443a0bdde90f61e67ea859c6d",
     "semantic_hash": ""
   },
   "src/components/DashboardPainel.jsx": {
-    "mtime": 1794512418.1211503,
-    "seen": 1795109874.0258706,
-    "ast_hash": "46199eef7ed09ea61b1520d55e1acd98",
+    "mtime": 1795633235.551081,
+    "seen": 1795633287.889034,
+    "ast_hash": "41d4d414aee3a5776ee817a6651ca737",
     "semantic_hash": ""
   },
   "src/components/FontesReferenciasSection.jsx": {
@@ -216,15 +216,15 @@
     "semantic_hash": ""
   },
   "src/components/RelatorioPage.jsx": {
-    "mtime": 1795451698.2846704,
-    "seen": 1795451854.418107,
-    "ast_hash": "a3ac0bcd7eee235703f0c57334dc79b8",
+    "mtime": 1795626340.5506124,
+    "seen": 1795627344.8878496,
+    "ast_hash": "0b1b3a043e6c0415247e5c6dab6bb5b5",
     "semantic_hash": ""
   },
   "src/components/Sidebar.jsx": {
-    "mtime": 1795458612.2299044,
-    "seen": 1795458766.9078095,
-    "ast_hash": "1d735d5910dc2a9e898347eef04bfee3",
+    "mtime": 1795630120.5112586,
+    "seen": 1795630720.9305444,
+    "ast_hash": "9d18b29b504e6cbea2133ce8cac6a73a",
     "semantic_hash": ""
   },
   "src/components/SobrePage.jsx": {
@@ -288,9 +288,9 @@
     "semantic_hash": ""
   },
   "src/components/graph/StackedBarChart.jsx": {
-    "mtime": 1794593624.6113575,
-    "seen": 1795109874.0258706,
-    "ast_hash": "e7ae3eae9903c27b43baf738a1cc9b8d",
+    "mtime": 1795628820.4809923,
+    "seen": 1795629082.061759,
+    "ast_hash": "dc0e80f66301131333e6ff7cfba2c4d2",
     "semantic_hash": ""
   },
   "src/components/graph/chartTheme.js": {
@@ -342,9 +342,9 @@
     "semantic_hash": ""
   },
   "src/components/maps/side/MapMarkersAndPopups.jsx": {
-    "mtime": 1795109778.491847,
-    "seen": 1795109874.0258706,
-    "ast_hash": "1a79fb330579d99d2841aa221d7ce5fd",
+    "mtime": 1795625255.8719308,
+    "seen": 1795627344.891876,
+    "ast_hash": "e3b790eae3a6f51308dd35303968e056",
     "semantic_hash": ""
   },
   "src/components/maps/side/mapGeoUtils.js": {
@@ -372,15 +372,15 @@
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioAnalise.jsx": {
-    "mtime": 1795451670.1934795,
-    "seen": 1795451854.418107,
-    "ast_hash": "4169c659d8e86e3ac5aade813ece1719",
+    "mtime": 1795628818.2862527,
+    "seen": 1795629082.065665,
+    "ast_hash": "f495ead5c465ae0b901073752d2ea3bc",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioAtivos.jsx": {
-    "mtime": 1794593624.6348732,
-    "seen": 1795109874.0258706,
-    "ast_hash": "25e2bf8766b52d7739d993a6b6c527a2",
+    "mtime": 1795627634.5553825,
+    "seen": 1795628531.4425778,
+    "ast_hash": "b50de63c58ddac063b22ed6d99340ef8",
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioCadeias.jsx": {
@@ -396,9 +396,9 @@
     "semantic_hash": ""
   },
   "src/components/pdf/RelatorioSintese.jsx": {
-    "mtime": 1794593624.6387792,
-    "seen": 1795109874.0258706,
-    "ast_hash": "404daa40d0b92e54b8039d6b4f6d2595",
+    "mtime": 1795626834.5265348,
+    "seen": 1795627344.891876,
+    "ast_hash": "273e1ce13e25b620738658565c3a9a36",
     "semantic_hash": ""
   },
   "src/components/ui/Button.jsx": {
@@ -420,9 +420,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/DetailIsland.jsx": {
-    "mtime": 1795109778.495852,
-    "seen": 1795109874.0258706,
-    "ast_hash": "98d020c3f33caeba50c48b81fa0fecba",
+    "mtime": 1795632697.8226762,
+    "seen": 1795632872.621056,
+    "ast_hash": "8673e4c9406b62b32793a7f16b8e29dc",
     "semantic_hash": ""
   },
   "src/components/ui/Dialog.jsx": {
@@ -432,9 +432,9 @@
     "semantic_hash": ""
   },
   "src/components/ui/Drawer.jsx": {
-    "mtime": 1794593624.647332,
-    "seen": 1795109874.0258706,
-    "ast_hash": "d522e79a0afff23b20c86ce9c25e3b8f",
+    "mtime": 1795623951.6165001,
+    "seen": 1795627344.8957322,
+    "ast_hash": "a54622f5afc7013def886860d1607e49",
     "semantic_hash": ""
   },
   "src/components/ui/Dropdown.jsx": {
@@ -558,9 +558,9 @@
     "semantic_hash": ""
   },
   "src/context/DataContext.jsx": {
-    "mtime": 1795109861.3109713,
-    "seen": 1795109874.0258706,
-    "ast_hash": "fe51559e53b84133e30e5636dac85bc3",
+    "mtime": 1795622773.1321466,
+    "seen": 1795627344.898401,
+    "ast_hash": "8fdbc2ebd84fb841d7b74ddd893578ec",
     "semantic_hash": ""
   },
   "src/context/TelemetryContext.jsx": {
@@ -837,6 +837,30 @@
     "mtime": 1795457559.24212,
     "seen": 1795457589.2584815,
     "ast_hash": "d37e06afa12b4e24702d981282e4171f",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/README.md": {
+    "mtime": 1795536399.909655,
+    "seen": 1795545986.1345463,
+    "ast_hash": "4e0c33bba46dbab7d14bd682b0f37276",
+    "semantic_hash": ""
+  },
+  "src/__tests__/utils/instituicoes.test.js": {
+    "mtime": 1795626345.4160247,
+    "seen": 1795627344.8850162,
+    "ast_hash": "8f049da19d880f8dcba54ab8705611c5",
+    "semantic_hash": ""
+  },
+  "src/components/InstituicoesPage.jsx": {
+    "mtime": 1795624171.7621596,
+    "seen": 1795627344.8878496,
+    "ast_hash": "1ec87577c9285898253c69ec2dba09c9",
+    "semantic_hash": ""
+  },
+  "src/utils/instituicoes.js": {
+    "mtime": 1795626334.2662904,
+    "seen": 1795627344.898401,
+    "ast_hash": "3c2a0ffeb44b6cbcda86061ff1fb452b",
     "semantic_hash": ""
   },
   "package-lock.json": {

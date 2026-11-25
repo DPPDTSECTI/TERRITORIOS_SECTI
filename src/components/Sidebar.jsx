@@ -5,6 +5,7 @@ import {
   FileText,
   Info,
   Database,
+  Building2,
   GraduationCap,
   GitPullRequest,
   Pin,

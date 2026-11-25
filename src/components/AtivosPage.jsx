@@ -12,9 +12,11 @@ import {
     Wifi,
     SunMedium,
     ChevronDown,
-    X
+    X,
+    Building2
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
+import { SEM_INSTITUICAO_FILTER, filterAtivosByInstituicao, formatInstituicaoLabel } from '../utils/instituicoes';
 import { isMunicipioSemiarido } from '../constants/semiarido';
 import { MUNICIPIOS_COORDS } from '../data/municipiosCoords';
 import { municipiosDB } from '../data/municipiosDB';
@@ -78,6 +80,7 @@ export default function AtivosPage() {
     const {
         ativosData = [],
         territoriosData = [],
+        instituicoesData = [],
         loadingStats = false,
         filtroSemiarido = false,
         setFiltroSemiarido
@@ -89,6 +92,7 @@ export default function AtivosPage() {
     const [selectedTipo, setSelectedTipo] = useState('todos');
     const [selectedTipos, setSelectedTipos] = useState([]);
     const [filterRnp, setFilterRnp] = useState('todos'); // 'todos' | 'com_rnp' | 'sem_rnp'
+    const [selectedInstituicao, setSelectedInstituicao] = useState('todas');
     const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
     const filterDropdownRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -147,6 +151,7 @@ export default function AtivosPage() {
         setSelectedTipos([]);
         setSelectedTipo('todos');
         setFilterRnp('todos');
+        setSelectedInstituicao('todas');
     };
 
     const activeFiltersCount = useMemo(() => {
@@ -159,8 +164,11 @@ export default function AtivosPage() {
         if (filterRnp !== 'todos') {
             count += 1;
         }
+        if (selectedInstituicao !== 'todas') {
+            count += 1;
+        }
         return count;
-    }, [selectedTipos, selectedTipo, filterRnp]);
+    }, [selectedTipos, selectedTipo, filterRnp, selectedInstituicao]);
 
     const itemRefs = useRef({});
     const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
@@ -251,7 +259,10 @@ export default function AtivosPage() {
                 corHexDark: configEstilo.corHexDark,
                 urlReferencia: a.url_referencia || '',
                 tituloReferencia: a.titulo_referencia || '',
-                rnp: hasRnp
+                rnp: hasRnp,
+                id_instituicao: a.id_instituicao ?? null,
+                nome_instituicao: a.nome_instituicao || null,
+                sigla_instituicao: a.sigla_instituicao || null
             };
         });
     }, [ativosData]);
@@ -300,6 +311,10 @@ export default function AtivosPage() {
             list = list.filter(a => !a.rnp);
         }
 
+        if (selectedInstituicao !== 'todas') {
+            list = filterAtivosByInstituicao(list, selectedInstituicao);
+        }
+
         if (searchQuery.trim()) {
             const q = normalizeName(searchQuery);
             list = list.filter(a =>
@@ -313,7 +328,7 @@ export default function AtivosPage() {
         }
 
         return list;
-    }, [activeScopedAtivos, selectedTipos, selectedTipo, filterRnp, searchQuery]);
+    }, [activeScopedAtivos, selectedTipos, selectedTipo, filterRnp, selectedInstituicao, searchQuery]);
 
     const compactAtivosList = useMemo(() => {
         if (!sidebarSearch.trim()) return filteredAtivosList;
@@ -1240,7 +1255,7 @@ export default function AtivosPage() {
 
                                             {/* CAIXA COM DROPDOWN FLUTUANTE */}
                                             {isFilterDropdownOpen && (
-                                                <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${
+                                                <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] max-h-[75vh] overflow-y-auto bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${
                                                     filtroSemiarido
                                                         ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
                                                         : 'border-border dark:border-zinc-800'
@@ -1372,6 +1387,51 @@ export default function AtivosPage() {
                                                                 <option value="todos" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Todos (com ou sem RNP)</option>
                                                                 <option value="com_rnp" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Apenas com RNP ({totalRnp})</option>
                                                                 <option value="sem_rnp" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Apenas sem RNP ({Math.max(0, activeScopedAtivos.length - totalRnp)})</option>
+                                                            </select>
+                                                            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* DROPDOWN 3: INSTITUIÇÃO VINCULADA */}
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <label
+                                                            htmlFor="ativos-filter-instituicao"
+                                                            className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]"
+                                                        >
+                                                            <span className="flex items-center gap-1.5">
+                                                                <Building2 size={13} />
+                                                                Instituição
+                                                            </span>
+                                                            <span className={`text-caption font-medium text-emerald-600 dark:text-emerald-400 transition-opacity duration-150 ${selectedInstituicao !== 'todas' ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
+                                                                Ativo
+                                                            </span>
+                                                        </label>
+                                                        <div className="relative">
+                                                            <select
+                                                                id="ativos-filter-instituicao"
+                                                                aria-label="Filtrar por instituição"
+                                                                value={selectedInstituicao}
+                                                                onChange={(e) => setSelectedInstituicao(e.target.value)}
+                                                                className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                                    }`}
+                                                            >
+                                                                <option value="todas" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                    Todas as instituições
+                                                                </option>
+                                                                <option value={SEM_INSTITUICAO_FILTER} className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
+                                                                    Sem instituição vinculada
+                                                                </option>
+                                                                {[...instituicoesData]
+                                                                    .sort((a, b) => String(a?.nome_instituicao || '').localeCompare(String(b?.nome_instituicao || ''), 'pt-BR'))
+                                                                    .map((inst) => (
+                                                                        <option
+                                                                            key={inst.id_instituicao}
+                                                                            value={String(inst.id_instituicao)}
+                                                                            className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100"
+                                                                        >
+                                                                            {formatInstituicaoLabel(inst.nome_instituicao, inst.sigla)}
+                                                                        </option>
+                                                                    ))}
                                                             </select>
                                                             <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                                         </div>
@@ -1528,6 +1588,18 @@ export default function AtivosPage() {
                                                                         <span>•</span>
                                                                         <span className="text-text-muted">{ativo.territorio}</span>
                                                                     </div>
+
+                                                                    {ativo.nome_instituicao && (
+                                                                        <div
+                                                                            className="flex items-center gap-1.5 text-caption text-text-muted mt-1 min-w-0"
+                                                                            title={formatInstituicaoLabel(ativo.nome_instituicao, ativo.sigla_instituicao)}
+                                                                        >
+                                                                            <Building2 size={12} className="shrink-0" />
+                                                                            <span className="truncate">
+                                                                                {formatInstituicaoLabel(ativo.nome_instituicao, ativo.sigla_instituicao)}
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
 

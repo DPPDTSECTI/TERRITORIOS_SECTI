@@ -27,6 +27,7 @@ import { isMunicipioSemiarido, SEMIARIDO_TOTAL_MUNICIPIOS, BAHIA_TOTAL_MUNICIPIO
 import { useReactToPrint } from 'react-to-print';
 import { REPORT_PRINT_PAGE_STYLE, prepareReportForPrint, printWithCanvasSync } from '../../utils/reportPrint';
 import { getSemanticColors, LIGHT_CHART_PALETTE } from '../graph/chartTheme';
+import { computeInstituicoesAnalytics } from '../../utils/instituicoes';
 
 const PALETTE = LIGHT_CHART_PALETTE;
 
@@ -166,6 +167,7 @@ export default function RelatorioAtivosPage() {
   const {
     ativosData = [],
     territoriosData = [],
+    instituicoesData = [],
     loadingStats = false,
     filtroSemiarido,
     setFiltroSemiarido
@@ -272,7 +274,12 @@ export default function RelatorioAtivosPage() {
         urlReferencia: a.url_referencia || '',
         tituloReferencia: a.titulo_referencia || '',
         rnp: a.rnp,
-        semiarido: isSemi
+        semiarido: isSemi,
+        id_instituicao: a.id_instituicao ?? null,
+        nome_instituicao: a.nome_instituicao || null,
+        sigla_instituicao: a.sigla_instituicao || null,
+        ict_status: a.ict_status || null,
+        natureza_instituicao: a.natureza_instituicao || null
       };
     });
   }, [ativosData]);
@@ -308,6 +315,11 @@ export default function RelatorioAtivosPage() {
 
     return list;
   }, [ativosProcessados, selectedTerritory, isSemiarido]);
+
+  const instituicoesAnalytics = useMemo(
+    () => computeInstituicoesAnalytics(instituicoesData, filteredAtivos),
+    [instituicoesData, filteredAtivos]
+  );
 
   // Auto-impressão caso explicitamente solicitado via query param
   useEffect(() => {
@@ -591,7 +603,7 @@ export default function RelatorioAtivosPage() {
       data-ready={!loadingStats ? 'true' : 'false'}
       data-loading={loadingStats ? 'true' : 'false'}
       ref={contentRef}
-      className="flex-1 h-screen overflow-hidden relative p-5 lg:p-6 flex flex-col gap-4 bg-transparent font-sans w-full print:p-0 print:bg-transparent select-none"
+      className="flex-1 h-screen overflow-hidden relative p-4 lg:p-5 flex flex-col gap-3 bg-transparent font-sans w-full print:p-0 print:bg-transparent select-none"
     >
       {/* ================= ATMOSFERA: SOL DO SEMIÁRIDO ================= */}
       <div
@@ -634,7 +646,7 @@ export default function RelatorioAtivosPage() {
             return (
               <div
                 key={index}
-                className={`p-4 sm:p-5 flex flex-col justify-between h-[100px] min-h-[100px] max-h-[100px] rounded-card cursor-default overflow-hidden select-none ${
+                className={`p-3 sm:p-3.5 flex flex-col justify-between h-[84px] min-h-[84px] max-h-[84px] rounded-card cursor-default overflow-hidden select-none ${
                   isHero
                     ? (isSemiarido
                         ? 'bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white border border-amber-400/50 shadow-sm'
@@ -700,6 +712,40 @@ export default function RelatorioAtivosPage() {
         </div>
       </div>
 
+      {/* COBERTURA INSTITUCIONAL DOS ATIVOS (ONDA 3.3.5) */}
+      <section
+        aria-label="Cobertura Institucional dos Ativos"
+        className={`w-full relative z-10 shrink-0 px-4 py-1.5 rounded-card border flex flex-wrap items-center justify-between gap-3 text-caption ${
+          isSemiarido
+            ? 'bg-white/90 dark:bg-zinc-900/90 border-amber-200/70 dark:border-amber-700/35 text-text-primary'
+            : 'bg-surface-soft border-border/70 text-text-primary'
+        }`}
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-text-primary">
+            <Building2 size={14} className={isSemiarido ? 'text-amber-600' : 'text-primary-600'} />
+            <span>Vínculo Institucional dos Ativos:</span>
+          </span>
+          <span className="tnum"><strong>{instituicoesAnalytics.ativosEscopo.vinculados}</strong> vinculados ({instituicoesAnalytics.ativosEscopo.taxaVinculo}%)</span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum"><strong>{instituicoesAnalytics.ativosEscopo.semVinculo}</strong> sem vínculo</span>
+          <span className="text-text-muted">de {instituicoesAnalytics.ativosEscopo.total} ativos</span>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap text-text-secondary">
+          <span className="font-semibold text-text-primary">Base Estadual:</span>
+          <span className="tnum">{instituicoesAnalytics.kpis.total} instituições</span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">ICT Sim: <strong>{instituicoesAnalytics.kpis.sim}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">Não: <strong>{instituicoesAnalytics.kpis.nao}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">Pendente: <strong>{instituicoesAnalytics.kpis.pendente}</strong></span>
+          <span className="text-text-muted">·</span>
+          <span className="tnum">{instituicoesAnalytics.comAtivos} com ativos / {instituicoesAnalytics.semAtivos} sem</span>
+        </div>
+      </section>
+
       {/* GRID PRINCIPAL: SIDEMAP À ESQUERDA (30%) + 4 GRÁFICOS (2x2 À DIREITA) — PADRÃO DO PAINEL */}
       <div className="flex-1 flex flex-col lg:flex-row gap-4 relative z-10 min-h-0 w-full overflow-hidden">
 
@@ -722,7 +768,7 @@ export default function RelatorioAtivosPage() {
         </div>
 
         {/* COLUNA DIREITA: GRID 2x2 DE COMPONENTES DO PAINEL */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-4 h-full min-h-0">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-2 gap-3 h-full min-h-0">
 
           {/* GRÁFICO 1: TOP 10 ENTIDADES POR SIGLA (ESTILO PÍLULAS DO CUSTOMPIECHART) */}
           <div className={`bg-surface rounded-card p-4 border ${isSemiarido ? 'border-amber-200/70 dark:border-amber-700/35' : 'border-border/80'} shadow-card flex flex-col justify-between min-h-0 h-full overflow-hidden`}>

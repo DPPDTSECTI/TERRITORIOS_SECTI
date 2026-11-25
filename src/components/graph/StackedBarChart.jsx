@@ -329,7 +329,7 @@ function StackedBarChart({
         <div className="w-full h-px bg-border shrink-0 my-1" />
 
         {/* ÁREA DOS RÓTULOS DOS TERRITÓRIOS */}
-        <div className="w-full flex items-start justify-between gap-1 shrink-0 h-[28px] overflow-hidden">
+        <div className="w-full flex items-start justify-between gap-1 shrink-0 h-[34px] overflow-hidden">
           {visibleData.map((item, index) => {
             const formattedName = formatTerritoryName(item.label);
             return (

@@ -1,12 +1,13 @@
 import React, { useState, useContext, useMemo } from 'react';
 import {
-  Settings, GraduationCap, TrendingUp, Database, Building2, SunMedium
+  Settings, GraduationCap, TrendingUp, Database, Building2, SunMedium, CheckCircle2, MinusCircle, Clock
 } from 'lucide-react';
 
 // IMPORTAÇÃO DOS DADOS E COMPONENTES
 import { DataContext } from '../context/DataContext';
 import { municipiosDB } from '../data/municipiosDB';
 import { isMunicipioSemiarido, SEMIARIDO_MUNICIPIOS_NORMALIZADOS } from '../constants/semiarido';
+import { computeInstituicoesKpis } from '../utils/instituicoes';
 import PtiMap from './maps/PtiMap.jsx';
 
 // COMPONENTES DE GRÁFICOS MODULARIZADOS
@@ -17,7 +18,7 @@ import ProportionBarChart from './graph/ProportionBarChart.jsx';
 import { useChartTheme } from './graph/chartTheme';
 
 // COMPONENTES DE UI DESIGN SYSTEM
-import { Card, Badge, KpiSkeleton, ChartSkeleton, AnimatedNumber } from './ui';
+import { Card, Badge, KpiCard, KpiSkeleton, ChartSkeleton, AnimatedNumber } from './ui';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../lib/motion';
 
@@ -62,11 +63,17 @@ export default function DashboardPainel() {
     setSelectedTerritory,
     firjanData,
     municipiosTerritorios,
+    instituicoesData = [],
     filtroSemiarido = false,
     setFiltroSemiarido
-  } = useContext(DataContext);
+  } = useContext(DataContext) || {};
   const chartTheme = useChartTheme();
   const territoryName = selectedTerritory ? (selectedTerritory.nome_territorio || selectedTerritory.territorio) : null;
+
+  const instituicoesKpis = useMemo(
+    () => computeInstituicoesKpis(instituicoesData),
+    [instituicoesData]
+  );
 
   // 1. Ativos Filtrados pelo Território Selecionado
   const scopedAtivos = useMemo(() => {
@@ -720,10 +727,10 @@ export default function DashboardPainel() {
       </div>
 
       {/* GRID PRINCIPAL */}
-      <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px]">
+      <div className="shrink-0 lg:shrink lg:flex-1 min-w-0 flex flex-col lg:flex-row gap-5 relative z-10 min-h-[520px]">
 
         {/* LADO ESQUERDO: MAPA INTEGRADO */}
-        <div className={`tour-map shrink-0 w-full lg:w-[calc(40%-10px)] h-full min-h-[480px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        <div className={`tour-map shrink-0 w-full lg:w-[calc(40%-10px)] h-[480px] lg:h-full min-h-[480px] min-w-0 bg-surface rounded-card border shadow-card relative overflow-hidden flex flex-col transition-[width,border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           filtroSemiarido
             ? 'border-amber-400/60 dark:border-amber-500/40 ring-1 ring-amber-400/20 shadow-[0_4px_24px_-2px_rgba(217,119,6,0.12)]'
             : 'border-border'
@@ -746,7 +753,7 @@ export default function DashboardPainel() {
           variants={staggerContainer(0.04)}
           initial="initial"
           animate="animate"
-          className="tour-charts flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 h-full transition-colors duration-500"
+          className="tour-charts shrink-0 lg:shrink lg:flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 auto-rows-[1fr] gap-5 lg:h-full transition-colors duration-500"
         >
           {loadingStats ? (
             Array.from({ length: 4 }).map((_, i) => (
