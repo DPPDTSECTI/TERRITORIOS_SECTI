@@ -180,15 +180,15 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1795633482.1349177,
-    "seen": 1795633497.3909273,
-    "ast_hash": "23d1d42c6e17b5639f77abe20703705a",
+    "mtime": 1795710051.5616498,
+    "seen": 1795710074.1524618,
+    "ast_hash": "e882ebf9fbe35674f4fc7324f1b4f703",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1795633482.773866,
-    "seen": 1795633497.3909273,
-    "ast_hash": "bc3224c12c2bc7ba882e9e98dc60cf17",
+    "mtime": 1795709884.6418164,
+    "seen": 1795709933.650197,
+    "ast_hash": "4f11438d3d47955d2ca4ac604b5250de",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {

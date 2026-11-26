@@ -1,17 +1,17 @@
-# Graph Report - TERRITORIOS_SECTI  (2026-11-25)
+# Graph Report - TERRITORIOS_SECTI  (2026-11-26)
 
 ## Corpus Check
-- 130 files · ~186,183 words
+- 130 files · ~186,191 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 804 nodes · 2619 edges · 48 communities (34 shown, 14 thin omitted)
+- 804 nodes · 2597 edges · 44 communities (31 shown, 13 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9195f52b`
+- Built from commit: `074c6467`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - SideMap.jsx
 - dependencies
 - exportReportClient.js
-- CursosPage.jsx
+- AtivosPage.jsx
 - testReactToPrintComparison.mjs
 - captureReports.mjs
 - scripts
@@ -38,21 +38,17 @@
 - TelemetryContext.jsx
 - vercel.json
 - AdminPage.jsx
-- RelatorioPage.jsx
+- Modulos e rotas (/territorios, /ativos, /cadeia, /cursos, /relatorio)
 - @vercel/analytics@^2.0.1
 - xlsx
 - Histórico Local de Migrations — `db_territorios` (`vicaqpcluxkwbbbwdpkg`)
 - @fontsource-variable/lexend
 - DataContext.jsx
-- ThemeContext.jsx
+- DashboardPainel.jsx
 - AUDITORIA.md Auditoria do repositorio
-- optimize-images.mjs
 - playwright
 - package.json
-- main.jsx
 - motion.js
-- AppWrapper
-- Acessibilidade e micro-interacoes
 - Arquitetura SPA sem backend, somente leitura
 - notes
 - @dnd-kit/modifiers@^9.0.0
@@ -68,11 +64,11 @@
 3. `lucide-react` - 41 edges
 4. `normalize()` - 38 edges
 5. `useTheme()` - 37 edges
-6. `SideMap()` - 32 edges
+6. `SideMap()` - 31 edges
 7. `getSemanticColors()` - 30 edges
 8. `isMunicipioSemiarido()` - 28 edges
-9. `CadeiaPage()` - 25 edges
-10. `AUDITORIA.md Auditoria do repositorio` - 25 edges
+9. `AUDITORIA.md Auditoria do repositorio` - 25 edges
+10. `UiShowcasePage()` - 24 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Obrigatorios (min 12px, AA, tabular-nums, invisible, diffs minimos, build+test)` --semantically_similar_to--> `Tipografia Plus Jakarta Sans e tabular-nums`  [INFERRED] [semantically similar]
@@ -89,15 +85,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (48 total, 14 thin omitted)
+## Communities (44 total, 13 thin omitted)
 
 ### Community 0 - "react"
-Cohesion: 0.07
-Nodes (81): [Media] Acessibilidade: div onClick, graficos so mouse, Tabs/Dialog/Dropdown sem foco/aria, Layout, sidebar, scroll navigator e tour guiado, framer-motion, lucide-react, @radix-ui/react-dialog, react, LoginPage(), CadeiaPage() (+73 more)
+Cohesion: 0.08
+Nodes (67): [Media] Acessibilidade: div onClick, graficos so mouse, Tabs/Dialog/Dropdown sem foco/aria, Layout, sidebar, scroll navigator e tour guiado, framer-motion, lucide-react, @radix-ui/react-dialog, react, LoginPage(), FontesReferenciasSection() (+59 more)
 
 ### Community 1 - "exportReportClient.js"
 Cohesion: 0.06
-Nodes (72): [Media] lib/format.js nao usado (~38 formatacoes manuais), [Alta] ~25% de codigo identico nos 4 relatorios, [Alta] enrichedCadeias duplicado e KPIs divergentes entre relatorios, Dados estaticos versionados e consistencia dupla, Dados estaticos embutidos, react-router-dom, react-to-print, DashboardPainel() (+64 more)
+Nodes (67): [Media] lib/format.js nao usado (~38 formatacoes manuais), [Alta] ~25% de codigo identico nos 4 relatorios, [Alta] enrichedCadeias duplicado e KPIs divergentes entre relatorios, Dados estaticos versionados e consistencia dupla, Dados estaticos embutidos, react-router-dom, react-to-print, DARK_BLUE_PALETTE (+59 more)
 
 ### Community 2 - "AccessibilityBar.jsx"
 Cohesion: 0.26
@@ -115,17 +111,17 @@ Nodes (21): dependencies, @dnd-kit/core@^6.3.1, framer-motion@^12.43.0, leaflet@
 Cohesion: 0.16
 Nodes (18): Exportacoes com tema claro forcado, html2canvas@^1.4.1, jspdf@^4.2.0, html2canvas, jspdf, captureDomElement(), captureReportViaIframe(), downloadCanvasAsPdf() (+10 more)
 
-### Community 6 - "CursosPage.jsx"
-Cohesion: 0.11
-Nodes (10): [Baixa] Dados: assetTypes acoplado, heuristica cache, provider, O(n*m), [Alta] Contagens fixas (88 cadeias, 417 municipios) no codigo, [Media] Filtros de Ativos/Cursos/Cadeia em useState local, fora da URL, [Alta] Paginas monoliticas com ~65% de repeticao (Cursos, Ativos, Cadeia, Relatorio), [Media] Performance: agregacoes O(n2) em map, enrichedCadeias/tema, typewriter, contextos sem useMemo, Auditoria: secao Paginas e UI, Filtro do Semiarido (278 municipios), Modulos e rotas (/territorios, /ativos, /cadeia, /cursos, /relatorio) (+2 more)
+### Community 6 - "AtivosPage.jsx"
+Cohesion: 0.12
+Nodes (16): [Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes, [Alta] ETL e correcoes de dados hard-coded na UI, fallback silencioso para Salvador, CadeiaPage(), cleanTerritorioName(), findMunicipioCoords(), getAlphaColor(), getSemiaridoArrangementColor(), getTipoBadgeVariant() (+8 more)
 
 ### Community 7 - "testReactToPrintComparison.mjs"
-Cohesion: 0.20
-Nodes (6): __dirname, __filename, OUTPUT_DIR, REPORTS_TO_TEST, ROOT_DIR, runComparison()
+Cohesion: 0.22
+Nodes (5): __dirname, __filename, OUTPUT_DIR, REPORTS_TO_TEST, ROOT_DIR
 
 ### Community 8 - "captureReports.mjs"
-Cohesion: 0.22
-Nodes (14): handler(), handler(), [Alta] reportAggregation e funcoes de normalization so usados por testes, [Baixa] Relatorios: logica repetida, heatmap duplicado, memos mortos, testes, [Media] Relatorios: PDF raster, laco autoPrint, codigo morto, deps pesadas, artefatos em scripts/, [Alta] Timeouts Playwright >210s vs maxDuration 60s, [Alta] Endpoints export-pdf/png anonimos sem rate limit (Seguranca e Relatorios), [Alta] SSRF: baseUrl do Chromium via x-forwarded-host sem allowlist (+6 more)
+Cohesion: 0.24
+Nodes (13): handler(), handler(), [Baixa] Relatorios: logica repetida, heatmap duplicado, memos mortos, testes, [Alta] Timeouts Playwright >210s vs maxDuration 60s, [Alta] Endpoints export-pdf/png anonimos sem rate limit (Seguranca e Relatorios), [Alta] SSRF: baseUrl do Chromium via x-forwarded-host sem allowlist, Relatorios 16:9 e exportacao PDF/PNG (cliente e Playwright), captureReportWithPlaywright() (+5 more)
 
 ### Community 9 - "scripts"
 Cohesion: 0.20
@@ -136,19 +132,19 @@ Cohesion: 0.12
 Nodes (16): devDependencies, autoprefixer@^10.4.20, mapshaper@^0.7.49, postcss@^8.4.49, sharp@^0.35.3, tailwindcss@^3.4.0, vite@^6.4.3, @vitejs/plugin-react@^4.3.4 (+8 more)
 
 ### Community 11 - "testReactToPrintComparison.mjs"
-Cohesion: 0.15
-Nodes (10): exportarDados.mjs (placeholder), generateJson.mjs (legado e quebrado), Scripts do repositorio, __dirname, __filename, projectRoot, __dirname, __filename (+2 more)
+Cohesion: 0.10
+Nodes (19): exportarDados.mjs (placeholder), generateJson.mjs (legado e quebrado), Scripts do repositorio, README Painel Territorial CT&I, Painel Territorial CT&I SECTI Bahia, Scripts npm (dev, build, test, simplify-map, optimize-images), __dirname, __filename (+11 more)
 
 ### Community 12 - "RelatorioPage.jsx"
-Cohesion: 0.12
-Nodes (31): [Alta] classificarInstituicao erra (UNILAB, nit, typo espacoDinamizadoress), vitest, CardLista(), MUN_LOOKUP, addCountedEntry(), buildEntitySearchData(), deduplicateSuggestions(), getNormalizedCharMap() (+23 more)
+Cohesion: 0.09
+Nodes (39): [Alta] classificarInstituicao erra (UNILAB, nit, typo espacoDinamizadoress), vitest, CardLista(), MUN_LOOKUP, cleanIes(), findMunicipioCoords(), getTipoCadeiaConfig(), MUN_LOOKUP (+31 more)
 
 ### Community 13 - "App.jsx"
-Cohesion: 0.15
-Nodes (21): AdminPage, AnimatedRoutes(), AtivosPage, CadeiaPage, CursosPage, DashboardPainel, generateRandomState(), LandingHero (+13 more)
+Cohesion: 0.08
+Nodes (31): [Baixa] Paginas/UI: codigo morto, imports nao usados, dnd-kit, GlobalScroll, Tour, docs desatualizadas, [Media] Robustez: localStorage sem try/catch, ErrorBoundary/404, SW removido mas registrado, AdminPage, AnimatedRoutes(), AppWrapper(), AtivosPage, CadeiaPage, CursosPage (+23 more)
 
 ### Community 15 - "InstituicoesPage.jsx"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (16): ICT_FILTER_OPTIONS, ICT_STATUS_META, IctStatusBadge(), InstituicoesPage(), SAMPLE_ATIVOS, SAMPLE_INSTITUICOES, buildAtivosByInstituicaoMap(), computeInstituicoesAnalytics() (+8 more)
 
 ### Community 16 - "capture-redesign.mjs"
@@ -172,12 +168,12 @@ Cohesion: 0.18
 Nodes (10): maxDuration, memory, maxDuration, memory, crons, functions, api/export-pdf.js, api/export-png.js (+2 more)
 
 ### Community 21 - "AdminPage.jsx"
-Cohesion: 0.10
-Nodes (23): [Alta] /admin e mock publico (CRUD em useState, sem auth), Pagina /admin (maquete sem autenticacao), AdminPage(), buildPayloadFromForm(), cleanTerritoryLabel(), CrudStatusPill(), DEFAULT_ATIVO_TYPES, DEFAULT_CADEIA_TYPES (+15 more)
+Cohesion: 0.11
+Nodes (21): AdminPage(), buildPayloadFromForm(), cleanTerritoryLabel(), CrudStatusPill(), DEFAULT_ATIVO_TYPES, DEFAULT_CADEIA_TYPES, DEFAULT_CURSO_CATEGORIES, FieldError() (+13 more)
 
-### Community 22 - "RelatorioPage.jsx"
-Cohesion: 0.27
-Nodes (8): cleanIes(), findMunicipioCoords(), getTipoCadeiaConfig(), MUN_LOOKUP, RelatorioPage(), SEMIARIDO_MUNICIPIOS, buildAtivosExportRows(), filterAtivosByInstituicao()
+### Community 22 - "Modulos e rotas (/territorios, /ativos, /cadeia, /cursos, /relatorio)"
+Cohesion: 0.29
+Nodes (7): [Alta] /admin e mock publico (CRUD em useState, sem auth), [Media] Filtros de Ativos/Cursos/Cadeia em useState local, fora da URL, Pagina /admin (maquete sem autenticacao), Filtro do Semiarido (278 municipios), Modulos e rotas (/territorios, /ativos, /cadeia, /cursos, /relatorio), selectedTerritory compartilhado, Utilitarios src/utils
 
 ### Community 26 - "Histórico Local de Migrations — `db_territorios` (`vicaqpcluxkwbbbwdpkg`)"
 Cohesion: 0.50
@@ -187,17 +183,13 @@ Nodes (3): Alerta Operacional, Contexto do Schema Legado, Histórico Local de Mi
 Cohesion: 0.14
 Nodes (31): [Alta] Falhas de consulta silenciosas e cache parcial por 10 min, [Alta] .range sem order/paginacao trunca em 1000 linhas e corrompe EAD, INGESTAO-DE-DADOS.md Ingestao e fluxo de dados, Cache: versao da chave e heuristica distCadeias>88, Carga do Supabase no DataContext (12 consultas), Glossario (IFDM, CT&I, PTI, EAD, RLS), Lacunas: ETL, esquema, RLS fora do repositorio, Limites de paginacao .range vs max rows 1000 (+23 more)
 
-### Community 29 - "ThemeContext.jsx"
-Cohesion: 0.29
-Nodes (6): [Media] Adocao do DS: props inexistentes, button crus, cards ad-hoc, hex cru e zinc/amber, [Baixa] Paginas/UI: codigo morto, imports nao usados, dnd-kit, GlobalScroll, Tour, docs desatualizadas, Pendencias e Excecoes de Redesign, resolveCssRgb(), TourGuide(), ThemeContext
+### Community 29 - "DashboardPainel.jsx"
+Cohesion: 0.15
+Nodes (15): [Baixa] Dados: assetTypes acoplado, heuristica cache, provider, O(n*m), [Media] Adocao do DS: props inexistentes, button crus, cards ad-hoc, hex cru e zinc/amber, [Alta] Contagens fixas (88 cadeias, 417 municipios) no codigo, [Media] Contraste text-muted e KPI ambar abaixo de AA, [Alta] Paginas monoliticas com ~65% de repeticao (Cursos, Ativos, Cadeia, Relatorio), [Media] Performance: agregacoes O(n2) em map, enrichedCadeias/tema, typewriter, contextos sem useMemo, Auditoria: secao Paginas e UI, Acessibilidade e micro-interacoes (+7 more)
 
 ### Community 30 - "AUDITORIA.md Auditoria do repositorio"
-Cohesion: 0.20
-Nodes (15): AUDITORIA.md Auditoria do repositorio, [Media] Dados: RLS/chave no .env.example, scripts SharePoint, referenciasDB, estaticos inconsistentes, docs divergentes, [Alta] isMunicipioSemiarido(Xique-Xique) retorna false, Evolucao entre branches (dev, main, redesign) e funcionalidades perdidas, [Alta] ETL e correcoes de dados hard-coded na UI, fallback silencioso para Salvador, [Media] SEO (yourdomain.com, mesmo title) e layout nao responsivo, [Baixa] Seguranca (keep-alive fail-open, /admin, postMessage, cache immutable), [Media] Seguranca: RLS nao versionada, npm audit, xlsx, sem CSP, Content-Disposition (+7 more)
-
-### Community 32 - "optimize-images.mjs"
-Cohesion: 0.22
-Nodes (9): README Painel Territorial CT&I, Painel Territorial CT&I SECTI Bahia, Scripts npm (dev, build, test, simplify-map, optimize-images), __dirname, __filename, getFilesRecursively(), optimizeImages(), PUBLIC_IMG (+1 more)
+Cohesion: 0.18
+Nodes (15): AUDITORIA.md Auditoria do repositorio, [Alta] reportAggregation e funcoes de normalization so usados por testes, [Alta] isMunicipioSemiarido(Xique-Xique) retorna false, Evolucao entre branches (dev, main, redesign) e funcionalidades perdidas, [Media] SEO (yourdomain.com, mesmo title) e layout nao responsivo, [Media] Relatorios: PDF raster, laco autoPrint, codigo morto, deps pesadas, artefatos em scripts/, [Baixa] Seguranca (keep-alive fail-open, /admin, postMessage, cache immutable), [Media] Seguranca: RLS nao versionada, npm audit, xlsx, sem CSP, Content-Disposition (+7 more)
 
 ### Community 33 - "playwright"
 Cohesion: 0.25
@@ -210,14 +202,6 @@ Nodes (14): clsx@^2.1.1, @dnd-kit/sortable@^10.0.0, @fontsource-variable/plus-ja
 ### Community 36 - "motion.js"
 Cohesion: 0.29
 Nodes (6): DURATIONS, EASINGS, fadeIn, scaleIn, SPRING_DEFAULT, SPRING_FLUID
-
-### Community 37 - "AppWrapper"
-Cohesion: 0.50
-Nodes (4): AppWrapper(), GlobalScroll(), MainApp(), ThemeProvider()
-
-### Community 38 - "Acessibilidade e micro-interacoes"
-Cohesion: 0.67
-Nodes (3): [Media] Contraste text-muted e KPI ambar abaixo de AA, Acessibilidade e micro-interacoes, QA final: 48 screenshots Playwright, foco visivel, reduced-motion
 
 ### Community 39 - "Arquitetura SPA sem backend, somente leitura"
 Cohesion: 0.67
@@ -236,21 +220,21 @@ Nodes (3): notes, tailwind, topojson
 ## Knowledge Gaps
 - **7 isolated node(s):** `Badges semanticos de status`, `Geometria Bento Grid (card, sub-card, pilula)`, `Tabelas e listagens`, `Workflow frontend.md (regras de acabamento)`, `Glossario (IFDM, CT&I, PTI, EAD, RLS)` (+2 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 164 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `exportReportClient.js`, `package.json`, `AccessibilityBar.jsx`, `dependencies`, `SideMap.jsx`, `CursosPage.jsx`, `main.jsx`, `RelatorioPage.jsx`, `App.jsx`, `InstituicoesPage.jsx`, `TelemetryContext.jsx`, `AdminPage.jsx`, `RelatorioPage.jsx`, `DataContext.jsx`, `ThemeContext.jsx`?**
-  _High betweenness centrality (0.146) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `exportReportClient.js`, `package.json`, `AccessibilityBar.jsx`, `dependencies`, `SideMap.jsx`, `AtivosPage.jsx`, `RelatorioPage.jsx`, `App.jsx`, `InstituicoesPage.jsx`, `TelemetryContext.jsx`, `AdminPage.jsx`, `DataContext.jsx`, `DashboardPainel.jsx`?**
+  _High betweenness centrality (0.149) - this node is a cross-community bridge._
 - **What connects `Badges semanticos de status`, `Geometria Bento Grid (card, sub-card, pilula)`, `Tabelas e listagens` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `react` be split into smaller, more focused modules?**
-  _Cohesion score 0.06753609687936656 - nodes in this community are weakly interconnected._
-- **Why does `lucide-react` connect `react` to `exportReportClient.js`, `package.json`, `AccessibilityBar.jsx`, `dependencies`, `SideMap.jsx`, `CursosPage.jsx`, `RelatorioPage.jsx`, `InstituicoesPage.jsx`, `AdminPage.jsx`, `RelatorioPage.jsx`, `ThemeContext.jsx`?**
-  _High betweenness centrality (0.065) - this node is a cross-community bridge._
+  _Cohesion score 0.07973911213970124 - nodes in this community are weakly interconnected._
+- **Why does `lucide-react` connect `react` to `exportReportClient.js`, `package.json`, `AccessibilityBar.jsx`, `dependencies`, `SideMap.jsx`, `AtivosPage.jsx`, `RelatorioPage.jsx`, `App.jsx`, `InstituicoesPage.jsx`, `AdminPage.jsx`, `DashboardPainel.jsx`?**
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Should `exportReportClient.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.05960729312762973 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06386554621848739 - nodes in this community are weakly interconnected._
 
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._
