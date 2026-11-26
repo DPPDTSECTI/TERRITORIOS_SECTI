@@ -777,7 +777,7 @@ export default function RelatorioSintese() {
               data={ecosystemData}
               topList={topTerritoriosOuMunicipiosAtivos}
               title={isSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
-              subtitle={isSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
+              subtitle={isSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral dos tipos de ativos e ranking')}
               listTitle={isSemiarido ? 'Top Municípios' : (selectedTerritory ? 'Top Municípios' : 'Top 5 territórios')}
               defaultCenterLabel="Ativos Mapeados"
               labelKey="region"

@@ -856,7 +856,7 @@ export default function RelatorioAtivosPage() {
               data={concentracaoTipologiaStackedData}
               categories={tipologiaCategories}
               title={isSemiarido ? 'Concentração no Semiárido' : (selectedTerritory ? `Municípios em ${territoryName}` : 'Concentração por Território')}
-              subtitle={isSemiarido ? 'Principais territórios do Semiárido' : 'Top 4 categorias + Outros'}
+              subtitle={isSemiarido ? 'Principais territórios do Semiárido' : 'Top 4 tipos de ativos + Outros'}
               allowToggleView={false}
               showTotalLabel={true}
               showTopBadge={false}
@@ -874,7 +874,7 @@ export default function RelatorioAtivosPage() {
                     : (selectedTerritory ? `Tipologias em ${territoryName}` : 'Distribuição por Tipologia')}
                 </h2>
                 <p className="text-text-muted text-caption font-medium mt-0.5 truncate">
-                  {isSemiarido ? 'Principais categorias instaladas no Semiárido' : 'Volume de ativos por categoria na Bahia'}
+                  {isSemiarido ? 'Principais tipos de ativos instalados no Semiárido' : 'Volume de ativos por tipo na Bahia'}
                 </p>
               </div>
             </div>

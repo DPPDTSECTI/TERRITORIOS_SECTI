@@ -209,8 +209,8 @@ export const TIPOS_ATIVOS_CATALOG = [
   {
     id: 1,
     key: 'pesquisa',
-    shortLabel: 'Entidade Pesquisa',
-    label: 'Entidade de Pesquisa',
+    shortLabel: 'Centro de Pesquisa',
+    label: 'Centros e Unidades de Pesquisa',
     corHex: ASSET_THEME_COLORS.pesquisa,
     corHexDark: ASSET_DARK_THEME_COLORS.pesquisa,
     bgClass: 'bg-asset-pesquisa',

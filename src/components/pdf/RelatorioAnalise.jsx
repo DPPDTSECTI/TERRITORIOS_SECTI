@@ -1145,7 +1145,7 @@ export default function RelatorioAnalisePage() {
                       <tr>
                         <th className="w-8 text-center">#</th>
                         <th className="text-left">Nome do Ativo / Sigla</th>
-                        <th className="text-left w-28">Tipo / Categoria</th>
+                        <th className="text-left w-28">Tipo de Ativo</th>
                         <th className="text-left w-24">Município</th>
                         <th className="text-left w-28">Território</th>
                         <th className="text-center w-20">RNP</th>

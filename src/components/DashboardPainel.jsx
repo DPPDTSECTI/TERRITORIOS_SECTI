@@ -785,7 +785,7 @@ export default function DashboardPainel() {
                   data={ecosystemData}
                   topList={topTerritoriosOuMunicipiosAtivos}
                   title={filtroSemiarido ? (selectedTerritory ? `Ativos no Semiárido · ${territoryName}` : 'Ativos no Semiárido') : (selectedTerritory ? `Ativos em ${territoryName}` : 'Distribuição dos Ativos de CT&I')}
-                  subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral das categorias e ranking')}
+                  subtitle={filtroSemiarido ? `${activeScopedAtivos.length} no Semiárido · ${Math.max(0, scopedAtivos.length - activeScopedAtivos.length)} fora (${semiaridoMetrics.pctAtivos}%)` : (selectedTerritory ? `${scopedAtivos.length} ativos distribuídos por tipologia` : 'Visão geral dos tipos de ativos e ranking')}
                   listTitle={filtroSemiarido ? 'Top Municípios' : (selectedTerritory ? 'Top Municípios' : 'Top 5 territórios')}
                   defaultCenterLabel="Ativos Mapeados"
                   labelKey="region"
