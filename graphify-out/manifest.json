@@ -881,6 +881,18 @@
     "ast_hash": "71d0543e89e2c1a425a21ab29b7db47b",
     "semantic_hash": ""
   },
+  "supabase/migrations/20261126135000_onda_4_reclassificacao_tipos_ativos_e_hubs.sql": {
+    "mtime": 1795711833.8506863,
+    "seen": 1795714115.2985942,
+    "ast_hash": "4d136881510a10ab250f836909bc0525",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20261126135500_onda_4_1_cadastro_novos_ativos_cetab_irt_bahiafarma_cepedi.sql": {
+    "mtime": 1795712116.8758414,
+    "seen": 1795714115.2985942,
+    "ast_hash": "6f085e56fad3c9874a5e830b89ebfebe",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
     "mtime": 1794593624.5801165,
     "seen": 1795109874.0258706,
