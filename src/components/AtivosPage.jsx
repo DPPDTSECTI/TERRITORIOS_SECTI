@@ -1207,44 +1207,46 @@ export default function AtivosPage() {
                                         variant="pill"
                                         className="shrink-0"
                                         isSemiarido={filtroSemiarido}
-                                        trailing={activeTab === 'catalogo' ? (
-                                            <div className="relative h-full inline-flex items-center" ref={filterDropdownRef}>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsFilterDropdownOpen(prev => !prev)}
-                                                    className={`h-full inline-flex items-center justify-center gap-1.5 px-3 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${activeFiltersCount > 0 || isFilterDropdownOpen
-                                                        ? (filtroSemiarido
-                                                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
-                                                            : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
-                                                        : (filtroSemiarido
-                                                            ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
-                                                            : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
-                                                        }`}
-                                                    title="Filtros por Tipo de Ativo e Conectividade RNP"
-                                                >
+                                    />
+
+                                    {activeTab === 'catalogo' && (
+                                        <div className="relative inline-flex items-center shrink-0" ref={filterDropdownRef}>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsFilterDropdownOpen(prev => !prev)}
+                                                className={`h-9 inline-flex items-center justify-center gap-2 px-3.5 rounded-full text-caption transition-colors duration-120 whitespace-nowrap select-none cursor-pointer shadow-xs ${activeFiltersCount > 0 || isFilterDropdownOpen
+                                                    ? (filtroSemiarido
+                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold'
+                                                        : 'bg-carbon dark:bg-primary-600 text-white font-semibold')
+                                                    : (filtroSemiarido
+                                                        ? 'bg-amber-50/50 dark:bg-amber-950/30 border border-amber-300/70 dark:border-amber-700/60 text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 font-medium'
+                                                        : 'bg-surface-soft dark:bg-surface-raised border border-border text-text-secondary hover:text-text-primary hover:bg-surface dark:hover:bg-surface-raised/70 font-medium')
+                                                    }`}
+                                                title="Filtros por Tipo de Ativo, Instituição e Conectividade RNP"
+                                            >
+                                                {activeFiltersCount > 0 ? (
+                                                    <span className={`w-4 h-4 rounded-full text-2xs font-bold inline-flex items-center justify-center shrink-0 tabular-nums ${filtroSemiarido ? 'bg-white text-amber-800' : 'bg-white text-primary-700'}`}>
+                                                        {activeFiltersCount}
+                                                    </span>
+                                                ) : (
                                                     <Filter
                                                         size={14}
                                                         className={
-                                                            activeFiltersCount > 0 || isFilterDropdownOpen
+                                                            isFilterDropdownOpen
                                                                 ? 'text-white'
                                                                 : (filtroSemiarido ? 'text-amber-800 dark:text-amber-300' : 'text-text-muted')
                                                         }
                                                     />
-                                                    <span>Filtros</span>
-                                                    {activeFiltersCount > 0 && (
-                                                        <span className={`w-4 h-4 rounded-full text-2xs font-bold inline-flex items-center justify-center shrink-0 ${filtroSemiarido ? 'bg-white text-amber-800' : 'bg-white text-primary-700'
-                                                            }`}>
-                                                            {activeFiltersCount}
-                                                        </span>
-                                                    )}
-                                                    <ChevronDown
-                                                        size={13}
-                                                        className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${activeFiltersCount > 0 || isFilterDropdownOpen
-                                                            ? 'text-white/80'
-                                                            : (filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted')
-                                                            }`}
-                                                    />
-                                                </button>
+                                                )}
+                                                <span>Filtros</span>
+                                                <ChevronDown
+                                                    size={13}
+                                                    className={`transition-transform duration-200 ${isFilterDropdownOpen ? 'rotate-180' : ''} ${activeFiltersCount > 0 || isFilterDropdownOpen
+                                                        ? 'text-white/80'
+                                                        : (filtroSemiarido ? 'text-amber-800/80 dark:text-amber-300/80' : 'text-text-muted')
+                                                        }`}
+                                                />
+                                            </button>
 
                                                 {/* CAIXA COM DROPDOWN FLUTUANTE */}
                                                 {isFilterDropdownOpen && (
@@ -1442,8 +1444,7 @@ export default function AtivosPage() {
                                                     </div>
                                                 )}
                                             </div>
-                                        ) : null}
-                                    />
+                                        )}
                                 </div>
 
                                 {/* INPUT DE BUSCA (DO TAMANHO DA KPI ACIMA) */}

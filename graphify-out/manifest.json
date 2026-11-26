@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1795630124.5267136,
-    "seen": 1795630720.9251635,
-    "ast_hash": "c00202273cf703191378fbbe3f59b150",
+    "mtime": 1795714006.3948758,
+    "seen": 1795714031.5847363,
+    "ast_hash": "3058a5c349d206135fd1bb91d3dbef66",
     "semantic_hash": ""
   },
   "src/__tests__/auth/authContext.test.js": {
@@ -180,15 +180,15 @@
     "semantic_hash": ""
   },
   "src/components/AtivosPage.jsx": {
-    "mtime": 1795710051.5616498,
-    "seen": 1795710074.1524618,
-    "ast_hash": "e882ebf9fbe35674f4fc7324f1b4f703",
+    "mtime": 1795713541.3287635,
+    "seen": 1795713572.6501496,
+    "ast_hash": "9613866784da8450541e3ac0bfe11be1",
     "semantic_hash": ""
   },
   "src/components/CadeiaPage.jsx": {
-    "mtime": 1795709884.6418164,
-    "seen": 1795709933.650197,
-    "ast_hash": "4f11438d3d47955d2ca4ac604b5250de",
+    "mtime": 1795713542.616379,
+    "seen": 1795713572.6501496,
+    "ast_hash": "108e2c170056419f486f9cf392d73b4e",
     "semantic_hash": ""
   },
   "src/components/CursosPage.jsx": {

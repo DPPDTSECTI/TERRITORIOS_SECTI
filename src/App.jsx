@@ -294,6 +294,9 @@ function AnimatedRoutes() {
             {import.meta.env.DEV && (
               <Route path="/__ui" element={<PageWrapper><UiShowcasePage /></PageWrapper>} />
             )}
+
+            {/* FALLBACK PARA ROTAS NÃO ENCONTRADAS */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AnimatePresence>
       </div>

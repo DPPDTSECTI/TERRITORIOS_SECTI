@@ -1,17 +1,17 @@
 # Graph Report - TERRITORIOS_SECTI  (2026-11-26)
 
 ## Corpus Check
-- 130 files · ~186,191 words
+- 132 files · ~187,117 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 804 nodes · 2597 edges · 44 communities (31 shown, 13 thin omitted)
+- 804 nodes · 2596 edges · 44 communities (31 shown, 13 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.83)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `074c6467`
+- Built from commit: `7c39350f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

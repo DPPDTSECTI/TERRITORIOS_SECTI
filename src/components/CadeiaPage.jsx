@@ -1189,7 +1189,7 @@ export default function CadeiaPage() {
                             {/* BARRA SUPERIOR: TABS + FILTROS AO LADO + BUSCA */}
                             <div className="flex flex-col gap-2.5 shrink-0 relative z-30">
                                 <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 min-w-0">
-                                    <div className="flex items-center gap-2.5 flex-nowrap min-w-0 overflow-x-auto scrollbar-none">
+                                    <div className="flex items-center gap-2 flex-wrap min-w-0 shrink-0">
                                         <Tabs
                                             items={[
                                                 {
@@ -1213,45 +1213,49 @@ export default function CadeiaPage() {
                                             variant="pill"
                                             className="shrink-0"
                                             isSemiarido={filtroSemiarido}
-                                            trailing={activeTab === 'catalogo' ? (
-                                                <div className="h-full inline-flex items-center gap-1">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setSelectedTipo('todos')}
-                                                        className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${selectedTipo === 'todos'
-                                                            ? (filtroSemiarido
-                                                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
-                                                                : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
-                                                            : (filtroSemiarido
-                                                                ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
-                                                                : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
-                                                            }`}
-                                                    >
-                                                        Todos
-                                                    </button>
-                                                    {availableTipos.map((tipo) => {
-                                                        const isSelected = selectedTipo === tipo;
-                                                        return (
-                                                            <button
-                                                                key={tipo}
-                                                                type="button"
-                                                                onClick={() => setSelectedTipo(isSelected ? 'todos' : tipo)}
-                                                                className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${isSelected
-                                                                    ? (filtroSemiarido
-                                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
-                                                                        : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
-                                                                    : (filtroSemiarido
-                                                                        ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
-                                                                        : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
-                                                                    }`}
-                                                            >
-                                                                {tipo}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            ) : null}
                                         />
+
+                                        {activeTab === 'catalogo' && (
+                                            <div className={`h-9 inline-flex items-center gap-1 p-1 rounded-full border shadow-xs shrink-0 ${filtroSemiarido
+                                                ? 'bg-amber-50/50 dark:bg-amber-950/30 border-amber-300/70 dark:border-amber-700/60'
+                                                : 'bg-surface-soft dark:bg-surface-raised border-border'
+                                                }`}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedTipo('todos')}
+                                                    className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${selectedTipo === 'todos'
+                                                        ? (filtroSemiarido
+                                                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
+                                                            : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                        : (filtroSemiarido
+                                                            ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
+                                                            : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                        }`}
+                                                >
+                                                    Todos
+                                                </button>
+                                                {availableTipos.map((tipo) => {
+                                                    const isSelected = selectedTipo === tipo;
+                                                    return (
+                                                        <button
+                                                            key={tipo}
+                                                            type="button"
+                                                            onClick={() => setSelectedTipo(isSelected ? 'todos' : tipo)}
+                                                            className={`relative h-full inline-flex items-center justify-center px-3.5 rounded-full text-caption font-medium transition-colors duration-120 whitespace-nowrap select-none cursor-pointer ${isSelected
+                                                                ? (filtroSemiarido
+                                                                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white font-semibold shadow-xs'
+                                                                    : 'bg-carbon dark:bg-primary-600 text-white font-semibold shadow-xs')
+                                                                : (filtroSemiarido
+                                                                    ? 'text-amber-900/80 dark:text-amber-200/80 hover:text-amber-950 dark:hover:text-amber-100 hover:bg-amber-100/60 dark:hover:bg-amber-950/40'
+                                                                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-soft dark:hover:bg-surface-raised/70')
+                                                                }`}
+                                                        >
+                                                            {tipo}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* BUSCA COM ATALHO "/" E BOTÃO LIMPAR */}
