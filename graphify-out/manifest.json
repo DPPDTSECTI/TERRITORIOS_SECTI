@@ -875,6 +875,12 @@
     "ast_hash": "0c6f8f92b77137088806cc40cec4302b",
     "semantic_hash": ""
   },
+  "supabase/migrations/20261125160557_onda_3_1_view_lista_ativos_cti_institucional.sql": {
+    "mtime": 1795623048.8418474,
+    "seen": 1795711276.8288689,
+    "ast_hash": "71d0543e89e2c1a425a21ab29b7db47b",
+    "semantic_hash": ""
+  },
   "package-lock.json": {
     "mtime": 1794593624.5801165,
     "seen": 1795109874.0258706,
