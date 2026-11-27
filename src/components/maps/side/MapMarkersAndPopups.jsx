@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import { Marker, Popup, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import Supercluster from 'supercluster';
 import { BookOpen, Building2 } from 'lucide-react';
@@ -138,78 +138,22 @@ export function SingleCadeiaPopupContent({ cadeia, filtroSemiarido = false, getS
   );
 }
 
-export function SingleUniversityPopupContent({ ativo, filtroSemiarido = false, onCourseClick = null }) {
-  const { isDark } = useTheme();
+export function SingleUniversityPopupContent({ ativo }) {
   if (!ativo || !Array.isArray(ativo.cursos)) return null;
-
-  const semantic = getSemanticColors(isDark);
-  const dotColor = filtroSemiarido
-    ? getSemiaridoPointColor(isDark ? (ativo.corHexDark || ativo.corHex) : ativo.corHex, 'Instituição de Ensino', isDark)
-    : (isDark ? (ativo.corHexDark || ativo.corHex || semantic.primaryLight) : (ativo.corHex || semantic.primaryBase));
-  const cursosList = ativo.cursos;
 
   return (
     <div
       data-no-map-zoom="true"
-      className="p-3.5 min-w-[250px] max-w-[310px] flex flex-col gap-2 font-sans bg-surface text-text-primary select-text"
+      className="px-2.5 py-1.5 font-sans bg-surface text-text-primary select-text"
     >
-      <div className="flex items-center justify-between gap-2 pr-6">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span
-            className="w-1.5 h-1.5 rounded-full shrink-0"
-            style={{ backgroundColor: dotColor }}
-          />
-          <span className="text-[11px] font-semibold text-text-secondary truncate">
-            {ativo.sigla || 'IES'}
-          </span>
-        </div>
-        <span className="text-[11px] font-medium text-text-muted tabular-nums shrink-0">
-          {cursosList.length} {cursosList.length === 1 ? 'curso' : 'cursos'}
-        </span>
-      </div>
-
-      <div className="border-b border-border/70 pb-2">
-        <h4 className="font-semibold text-text-primary text-sm leading-snug tracking-tight">
-          {ativo.iesNome || ativo.nome}
-        </h4>
-        {ativo.municipio && (
-          <p className="text-xs text-text-muted truncate mt-0.5">
-            {ativo.municipio}
-          </p>
-        )}
-      </div>
-
-      <div
-        className="flex flex-col gap-0.5 max-h-[196px] overflow-y-auto pr-1"
-        onWheel={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-      >
-        {cursosList.map((cursoItem, idx) => (
-          <button
-            key={cursoItem.id || `${cursoItem.nome}-${idx}`}
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onCourseClick?.(cursoItem.raw);
-            }}
-            className="w-full text-left py-1.5 px-2 rounded-md hover:bg-surface-soft/90 dark:hover:bg-zinc-800/60 transition-colors flex items-center justify-between gap-2 cursor-pointer group"
-          >
-            <span className="text-xs font-medium text-text-primary group-hover:text-primary-600 dark:group-hover:text-primary-400 leading-snug truncate">
-              {cursoItem.nome}
-            </span>
-            {cursoItem.ead && (
-              <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-zinc-500/10 text-zinc-600 dark:text-zinc-300 shrink-0">
-                EaD
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      <h4 className="font-semibold text-text-primary text-xs leading-snug tracking-tight">
+        {ativo.iesNome || ativo.nome}
+      </h4>
     </div>
   );
 }
 
-export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({ elem, ativo, setPinnedAssetId, onAssetClick, onAssetHover, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
+export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({ elem, ativo, setPinnedAssetId, onAssetClick, onAssetHover, onSelectIES = null, isSelected, mode, filtroSemiarido = false, getSegmentColor = null }) {
   const { isDark } = useTheme();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const isUniversityPoint = Array.isArray(ativo?.cursos);
@@ -226,7 +170,14 @@ export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({
       click: (e) => {
         L.DomEvent.stopPropagation(e);
         if (isUniversityPoint) {
-          setPinnedAssetId(isSelected ? null : ativo.id);
+          const iesFilterValue = ativo.sigla || ativo.iesNome || ativo.nome;
+          if (isSelected) {
+            setPinnedAssetId(null);
+            onSelectIES?.(null);
+          } else {
+            setPinnedAssetId(ativo.id);
+            onSelectIES?.(iesFilterValue);
+          }
           return;
         }
         if (isSelected) {
@@ -243,7 +194,7 @@ export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({
       handlers.mouseout = () => onAssetHover(null);
     }
     return handlers;
-  }, [isSelected, isUniversityPoint, ativo, setPinnedAssetId, onAssetClick, onAssetHover]);
+  }, [isSelected, isUniversityPoint, ativo, setPinnedAssetId, onAssetClick, onAssetHover, onSelectIES]);
 
   return (
     <Marker
@@ -260,22 +211,41 @@ export const SingleAssetMarkerItem = React.memo(function SingleAssetMarkerItem({
       )}
       eventHandlers={eventHandlers}
     >
-      <Popup className="custom-premium-popup" autoPan={mode !== 'cadeias'}>
-        {(isPopupOpen || isSelected) ? (
-          isUniversityPoint ? (
-            <SingleUniversityPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} onCourseClick={onAssetClick} />
-          ) : mode !== 'cadeias' ? (
-            <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
-          ) : (
-            <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} getSegmentColor={getSegmentColor} />
-          )
-        ) : null}
-      </Popup>
+      {isUniversityPoint ? (
+        <Tooltip
+          direction="top"
+          offset={[0, -14]}
+          opacity={1}
+          className="clean-city-tooltip"
+        >
+          <div
+            className={`px-2.5 py-1 rounded-lg border shadow-sm backdrop-blur-md text-xs font-semibold whitespace-nowrap max-w-[240px] truncate ${
+              isSelected
+                ? (filtroSemiarido
+                    ? 'bg-amber-600 text-white border-amber-500'
+                    : 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-800 dark:border-zinc-200')
+                : 'bg-white/95 dark:bg-zinc-900/95 text-zinc-900 dark:text-zinc-100 border-zinc-200/80 dark:border-zinc-700/80'
+            }`}
+          >
+            {ativo.iesNome || ativo.nome}
+          </div>
+        </Tooltip>
+      ) : (
+        <Popup className="custom-premium-popup" autoPan={mode !== 'cadeias'}>
+          {(isPopupOpen || isSelected) ? (
+            mode !== 'cadeias' ? (
+              <SingleAssetPopupContent ativo={ativo} filtroSemiarido={filtroSemiarido} />
+            ) : (
+              <SingleCadeiaPopupContent cadeia={ativo} filtroSemiarido={filtroSemiarido} getSegmentColor={getSegmentColor} />
+            )
+          ) : null}
+        </Popup>
+      )}
     </Marker>
   );
 });
 
-export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, onAssetHover, selectedCadeia, mode, filtroSemiarido = false, getSegmentColor = null, modoGeografico = false }) {
+export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, setPinnedAssetId, onAssetClick, onAssetHover, selectedCadeia, selectedIES = null, onSelectIES = null, mode, filtroSemiarido = false, getSegmentColor = null, modoGeografico = false }) {
   const map = useMap();
   const { isDark } = useTheme();
   const [bounds, setBounds] = useState(null);
@@ -485,7 +455,17 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
 
         const ativo = elem.ativo;
         if (!ativo) return null;
+        const isUniversitySelected = Boolean(
+          Array.isArray(ativo?.cursos) &&
+          selectedIES &&
+          (
+            (ativo.sigla && ativo.sigla.toUpperCase() === String(selectedIES).trim().toUpperCase()) ||
+            (ativo.iesNome && ativo.iesNome === selectedIES) ||
+            (ativo.nome && ativo.nome === selectedIES)
+          )
+        );
         const isSelected = Boolean(
+          isUniversitySelected ||
           (selectedCadeia && (selectedCadeia.id_cadeia === ativo.id_cadeia || selectedCadeia.id === ativo.id)) ||
           (pinnedAssetId != null && (pinnedAssetId === ativo.id || pinnedAssetId === ativo.id_ativo))
         );
@@ -499,6 +479,7 @@ export function SuperclusteredMarkers({ processedAtivos = [], pinnedAssetId, set
             setPinnedAssetId={setPinnedAssetId}
             onAssetClick={onAssetClick}
             onAssetHover={onAssetHover}
+            onSelectIES={onSelectIES}
             isSelected={isSelected}
             mode={mode}
             filtroSemiarido={filtroSemiarido}

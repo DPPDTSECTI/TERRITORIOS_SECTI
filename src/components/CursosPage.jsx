@@ -1187,7 +1187,14 @@ export default function CursosPage() {
                             selectedTerritory={selectedTerritory}
                             onSelectTerritory={setSelectedTerritory}
                             selectedIES={selectedIES}
-                            onSelectIES={setSelectedIES}
+                            onSelectIES={(iesValue) => {
+                                setSelectedIES(iesValue);
+                                setSelectedCurso(null);
+                                setSelectedCursoId(null);
+                                if (iesValue && activeTab !== 'catalogo' && activeTab !== 'ead') {
+                                    setActiveTab('catalogo');
+                                }
+                            }}
                             onAssetClick={(curso) => {
                                 if (curso) {
                                     setSelectedCurso(curso);

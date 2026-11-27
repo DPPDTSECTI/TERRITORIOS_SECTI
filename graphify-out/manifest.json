@@ -36,9 +36,9 @@
     "semantic_hash": ""
   },
   "src/App.jsx": {
-    "mtime": 1795803695.4037373,
-    "seen": 1795804149.1309392,
-    "ast_hash": "7d3b25e12300418745a6ba72c478129b",
+    "mtime": 1795804504.8733928,
+    "seen": 1795804631.8267593,
+    "ast_hash": "52e0927475838c3cae158c22d78006b4",
     "semantic_hash": ""
   },
   "src/__tests__/auth/authContext.test.js": {

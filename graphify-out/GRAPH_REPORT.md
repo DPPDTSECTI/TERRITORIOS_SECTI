@@ -1,17 +1,17 @@
 # Graph Report - TERRITORIOS_SECTI  (2026-11-27)
 
 ## Corpus Check
-- 101 files · ~156,736 words
+- 101 files · ~156,779 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: (none) 2, .example 1, .xml 1)
 
 ## Summary
-- 166 nodes · 231 edges · 34 communities (11 shown, 23 thin omitted)
+- 167 nodes · 243 edges · 35 communities (11 shown, 24 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f6f09889`
+- Built from commit: `480a1e25`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -44,41 +44,42 @@
 - vite-plugin-node-polyfills@^0.28.0
 - xlsx@^0.18.5
 - CadeiaPage
-- CursosPage
+- DashboardPainel
 - RelatorioAnalisePage
 - RelatorioCadeias
-- RelatorioCursosPage
+- PageWrapper
 - RelatorioPage
-- RelatorioSintesePage
+- RelatorioAtivosPage
+- SobrePage
 
 ## God Nodes (most connected - your core abstractions)
 1. `AnimatedRoutes()` - 16 edges
 2. `scripts` - 10 edges
 3. `Painel Territorial CT&I — SECTI Bahia` - 5 edges
-4. `framer-motion` - 4 edges
-5. `react` - 4 edges
-6. `react-router-dom` - 4 edges
-7. `MagmaLampBackground()` - 4 edges
-8. `MainApp()` - 4 edges
-9. `lucide-react` - 3 edges
-10. `react-helmet-async` - 3 edges
+4. `MagmaLampBackground()` - 4 edges
+5. `MainApp()` - 4 edges
+6. `framer-motion` - 4 edges
+7. `react` - 4 edges
+8. `react-router-dom` - 4 edges
+9. `LandingHero` - 3 edges
+10. `SobrePage` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `AnimatedRoutes()` --calls--> `SobrePage`  [EXTRACTED]
+  src/App.jsx → src/App.jsx  _Bridges community 34 → community 4_
+- `AnimatedRoutes()` --calls--> `DashboardPainel`  [EXTRACTED]
+  src/App.jsx → src/App.jsx  _Bridges community 28 → community 4_
+- `AnimatedRoutes()` --calls--> `AtivosPage`  [EXTRACTED]
+  src/App.jsx → src/App.jsx  _Bridges community 2 → community 4_
 - `AnimatedRoutes()` --calls--> `CadeiaPage`  [EXTRACTED]
   src/App.jsx → src/App.jsx  _Bridges community 27 → community 4_
-- `AnimatedRoutes()` --calls--> `CursosPage`  [EXTRACTED]
-  src/App.jsx → src/App.jsx  _Bridges community 28 → community 4_
 - `AnimatedRoutes()` --calls--> `RelatorioPage`  [EXTRACTED]
   src/App.jsx → src/App.jsx  _Bridges community 32 → community 4_
-- `AnimatedRoutes()` --calls--> `RelatorioCursosPage`  [EXTRACTED]
-  src/App.jsx → src/App.jsx  _Bridges community 31 → community 4_
-- `AnimatedRoutes()` --calls--> `RelatorioCadeias`  [EXTRACTED]
-  src/App.jsx → src/App.jsx  _Bridges community 30 → community 4_
 
 ## Import Cycles
 - None detected.
 
-## Communities (34 total, 23 thin omitted)
+## Communities (35 total, 24 thin omitted)
 
 ### Community 0 - "Hero.jsx"
 Cohesion: 0.07
@@ -90,15 +91,15 @@ Nodes (19): devDependencies, autoprefixer@^10.4.20, mapshaper@^0.7.49, playwrigh
 
 ### Community 2 - "App.jsx"
 Cohesion: 0.12
-Nodes (3): MAGMA_ORBS_CONFIG, PageLoadingFallback(), PageWrapper()
+Nodes (3): AtivosPage, MAGMA_ORBS_CONFIG, ROUTER_BASENAME
 
 ### Community 3 - "scripts"
 Cohesion: 0.20
 Nodes (10): scripts, build, dev, generate-json, generate-json:file, optimize-images, preview, simplify-map (+2 more)
 
 ### Community 4 - "AnimatedRoutes"
-Cohesion: 0.20
-Nodes (6): AnimatedRoutes(), AtivosPage, DashboardPainel, LandingHero, RelatorioAtivosPage, SobrePage
+Cohesion: 0.25
+Nodes (5): AnimatedRoutes(), CursosPage, LandingHero, RelatorioCursosPage, RelatorioSintesePage
 
 ### Community 5 - "package.json"
 Cohesion: 0.22
@@ -125,13 +126,13 @@ Cohesion: 1.00
 Nodes (3): generateRandomState(), MagmaLampBackground(), randomBetween()
 
 ## Knowledge Gaps
-- **23 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **24 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dependencies` connect `dependencies` to `Hero.jsx`, `package.json`, `@fontsource-variable/lexend@^5.3.0`, `@fontsource-variable/plus-jakarta-sans@^5.3.0`, `html2canvas@^1.4.1`, `jspdf@^4.2.0`, `lucide-react`, `playwright-core@^1.63.0`, `@radix-ui/react-dialog@^1.3.1`, `@radix-ui/react-dropdown-menu@^2.2.1`, `@radix-ui/react-tooltip@^1.4.1`, `react-helmet-async`, `react-leaflet@^4.2.1`, `react-to-print@^3.3.0`, `supercluster@^9.0.0`, `topojson-client@^3.1.0`, `vite-plugin-node-polyfills@^0.28.0`, `xlsx@^0.18.5`?**
-  _High betweenness centrality (0.157) - this node is a cross-community bridge._
+  _High betweenness centrality (0.156) - this node is a cross-community bridge._
 - **Should `Hero.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
 - **Why does `framer-motion` connect `Hero.jsx` to `App.jsx`, `package.json`?**
@@ -141,4 +142,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `react` connect `Hero.jsx` to `App.jsx`, `package.json`?**
   _High betweenness centrality (0.111) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.125 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._

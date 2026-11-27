@@ -1678,6 +1678,8 @@ export default function SideMap({
             setPinnedAssetId={setPinnedAssetId}
             onAssetClick={onAssetClick}
             selectedCadeia={selectedCadeia}
+            selectedIES={selectedIES}
+            onSelectIES={onSelectIES}
             mode={mode}
             filtroSemiarido={filtroSemiarido}
             getSegmentColor={getSegmentColor}
