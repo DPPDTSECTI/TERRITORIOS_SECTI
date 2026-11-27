@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://secti-territorios.vercel.app/sitemap.xml
+Sitemap: https://observatoriocti.secti.ba.gov.br/territorios/sitemap.xml

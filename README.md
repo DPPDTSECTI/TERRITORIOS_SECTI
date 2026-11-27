@@ -2,7 +2,7 @@
 
 Painel web com ativos de CT&I, cadeias produtivas, cursos de ensino superior e indicadores (IFDM/FIRJAN) dos 27 Territórios de Identidade e 417 municípios da Bahia.
 
-Produção: https://territorios-secti.vercel.app
+Produção: https://observatoriocti.secti.ba.gov.br/territorios/
 
 ## Documentação
 
@@ -18,7 +18,7 @@ npm run build
 npm test
 ```
 
-As variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` são opcionais (há valores padrão em `src/services/supabase.js`). Para usar outro projeto Supabase, copie `.env.example` para `.env` e ajuste os valores; na Vercel, configure as mesmas chaves em **Settings → Environment Variables**.
+As variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` são opcionais (há valores padrão em `src/services/supabase.js`). Para usar outro projeto Supabase, copie `.env.example` para `.env` e ajuste os valores.
 
 ## Grafo de conhecimento (graphify)
 

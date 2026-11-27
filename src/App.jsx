@@ -10,15 +10,12 @@ import { TelemetryProvider } from './context/TelemetryContext';
 import Sidebar from './components/Sidebar';
 import TourGuide from './components/TourGuide';
 import AccessibilityBar from './components/AccessibilityBar';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import LoginPage from './components/auth/LoginPage';
 import { ToastProvider, Skeleton, KpiSkeleton } from './components/ui';
 
 // CARREGAMENTO PREGUIÇOSO (LAZY LOADING)
-const LandingHero = lazy(() => import('./components/hero'));
+const LandingHero = lazy(() => import('./components/Hero'));
 const SobrePage = lazy(() => import('./components/SobrePage'));
 const DashboardPainel = lazy(() => import('./components/DashboardPainel'));
-const AdminPage = lazy(() => import('./components/AdminPage'));
 const AtivosPage = lazy(() => import('./components/AtivosPage'));
 const CadeiaPage = lazy(() => import('./components/CadeiaPage'));
 const CursosPage = lazy(() => import('./components/CursosPage'));
@@ -28,7 +25,6 @@ const RelatorioAtivosPage = lazy(() => import('./components/pdf/RelatorioAtivos'
 const RelatorioCadeias = lazy(() => import('./components/pdf/RelatorioCadeias'));
 const RelatorioSintesePage = lazy(() => import('./components/pdf/RelatorioSintese'));
 const RelatorioAnalisePage = lazy(() => import('./components/pdf/RelatorioAnalise'));
-const UiShowcasePage = lazy(() => import('./components/ui/UiShowcasePage'));
 
 // ================= GERENCIADOR GLOBAL DE SCROLL =================
 function GlobalScroll() {
@@ -289,11 +285,6 @@ function AnimatedRoutes() {
             <Route path="/relatorio/ativos" element={<PageWrapper><RelatorioAtivosPage /></PageWrapper>} />
             <Route path="/relatorio/cadeias" element={<PageWrapper><RelatorioCadeias /></PageWrapper>} />
             <Route path="/relatorio/analise" element={<PageWrapper><RelatorioAnalisePage /></PageWrapper>} />
-
-            {/* VITRINE DE COMPONENTES UI (DEV ONLY) */}
-            {import.meta.env.DEV && (
-              <Route path="/__ui" element={<PageWrapper><UiShowcasePage /></PageWrapper>} />
-            )}
 
             {/* FALLBACK PARA ROTAS NÃO ENCONTRADAS */}
             <Route path="*" element={<Navigate to="/" replace />} />
