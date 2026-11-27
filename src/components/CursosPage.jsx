@@ -1657,8 +1657,8 @@ export default function CursosPage() {
                                     })()}
                                 </div>
 
-                                {/* INPUT DE BUSCA */}
-                                <div className="w-full lg:w-[190px] xl:w-[220px] shrink-0 min-w-0">
+                                {/* INPUT DE BUSCA (DO TAMANHO DA KPI ACIMA) */}
+                                <div className="w-full lg:w-[calc((100%-26px)/3)] min-w-0 shrink-0">
                                     {activeTab === 'ies' ? (
                                         <SearchInput
                                             value={instSearch}

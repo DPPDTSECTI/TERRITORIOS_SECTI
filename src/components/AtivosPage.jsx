@@ -13,6 +13,7 @@ import {
     SunMedium,
     ChevronDown,
     X,
+    Check,
     Building2
 } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
@@ -74,6 +75,43 @@ const MUN_LOOKUP = (() => {
     });
     return { byName };
 })();
+
+function FilterCheckRow({ label, count, checked, onToggle, isSemiarido }) {
+    return (
+        <button
+            type="button"
+            role="checkbox"
+            aria-checked={checked}
+            onClick={onToggle}
+            title={label}
+            className={`w-full h-8 shrink-0 px-2 rounded-md flex items-center justify-between gap-2 text-caption text-left cursor-pointer select-none transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 ${isSemiarido ? 'focus-visible:ring-amber-500/30' : 'focus-visible:ring-primary-500/30'} ${checked
+                ? (isSemiarido
+                    ? 'bg-amber-500/10 text-amber-900 dark:text-amber-100 font-medium'
+                    : 'bg-primary-500/[0.08] dark:bg-primary-400/10 text-text-primary dark:text-zinc-100 font-medium')
+                : 'text-text-secondary dark:text-zinc-300 hover:bg-surface-soft dark:hover:bg-zinc-800/70 hover:text-text-primary'
+                }`}
+        >
+            <span className="flex items-center gap-2.5 min-w-0">
+                <span
+                    aria-hidden="true"
+                    className={`w-4 h-4 rounded-[5px] border inline-flex items-center justify-center shrink-0 transition-colors duration-150 ${checked
+                        ? (isSemiarido ? 'bg-amber-600 border-amber-600 text-white' : 'bg-primary-600 border-primary-600 text-white')
+                        : 'bg-surface dark:bg-zinc-900 border-zinc-300 dark:border-zinc-600'
+                        }`}
+                >
+                    {checked && <Check size={11} strokeWidth={3} />}
+                </span>
+                <span className="truncate">{label}</span>
+            </span>
+            <span className={`text-caption font-medium tabular-nums shrink-0 ${checked
+                ? (isSemiarido ? 'text-amber-700 dark:text-amber-300' : 'text-primary-700 dark:text-primary-300')
+                : 'text-text-muted'
+                }`}>
+                {count}
+            </span>
+        </button>
+    );
+}
 
 export default function AtivosPage() {
     const { isDark } = useTheme();
@@ -1250,22 +1288,22 @@ export default function AtivosPage() {
 
                                                 {/* CAIXA COM DROPDOWN FLUTUANTE */}
                                                 {isFilterDropdownOpen && (
-                                                    <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[380px] max-h-[75vh] overflow-y-auto bg-surface dark:bg-zinc-900 border shadow-float rounded-panel p-4 z-50 flex flex-col gap-3.5 animate-in fade-in zoom-in-95 duration-150 ${filtroSemiarido
-                                                        ? 'border-amber-400/60 dark:border-amber-600/40 ring-1 ring-amber-400/20'
+                                                    <div className={`absolute left-0 top-full mt-2 w-[340px] sm:w-[360px] max-h-[75vh] overflow-y-auto bg-surface dark:bg-zinc-900 border rounded-panel shadow-float p-4 z-50 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150 ${filtroSemiarido
+                                                        ? 'border-amber-300/70 dark:border-amber-700/50'
                                                         : 'border-border dark:border-zinc-800'
                                                         }`}>
                                                         {/* TOPO DA CAIXA */}
-                                                        <div className="flex items-center justify-between pb-2 border-b border-border/70 dark:border-zinc-800 min-h-[28px]">
+                                                        <div className="flex items-center justify-between pb-3 border-b border-border/70 dark:border-zinc-800">
                                                             <div className="flex items-center gap-2">
-                                                                <Filter size={14} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
-                                                                <span className="text-xs font-bold text-text-primary dark:text-zinc-100">Filtros</span>
+                                                                <Filter size={14} strokeWidth={1.75} className={filtroSemiarido ? 'text-amber-600' : 'text-primary-600 dark:text-primary-400'} />
+                                                                <span className="text-sm font-semibold text-text-primary dark:text-zinc-100">Filtros</span>
                                                             </div>
-                                                            <div className="flex items-center gap-2">
+                                                            <div className="flex items-center gap-1">
                                                                 {activeFiltersCount > 0 && (
                                                                     <button
                                                                         type="button"
                                                                         onClick={handleClearAllFilters}
-                                                                        className="text-caption text-text-muted hover:text-danger-600 cursor-pointer"
+                                                                        className="h-7 px-2 rounded-md text-caption font-medium text-text-muted hover:text-text-primary hover:bg-surface-soft dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                                                                     >
                                                                         Limpar ({activeFiltersCount})
                                                                     </button>
@@ -1273,128 +1311,90 @@ export default function AtivosPage() {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => setIsFilterDropdownOpen(false)}
-                                                                    className="text-text-muted hover:text-text-primary p-0.5 rounded cursor-pointer"
+                                                                    aria-label="Fechar filtros"
+                                                                    className="w-7 h-7 rounded-md inline-flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-soft dark:hover:bg-zinc-800 transition-colors cursor-pointer"
                                                                 >
-                                                                    <X size={15} />
+                                                                    <X size={15} strokeWidth={1.75} />
                                                                 </button>
                                                             </div>
                                                         </div>
 
                                                         {/* DROPDOWN 1: TIPOS DE ATIVOS */}
-                                                        <div className="flex flex-col gap-1.5">
-                                                            <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label className="text-[11px] font-medium uppercase tracking-wider text-text-muted dark:text-zinc-400 flex items-center justify-between min-h-[18px]">
                                                                 <span className="flex items-center gap-1.5">
-                                                                    <Layers size={13} />
+                                                                    <Layers size={12} strokeWidth={1.75} />
                                                                     Tipo de Ativo
                                                                 </span>
                                                             </label>
 
                                                             {/* LISTA COM SCROLL DE TIPOS */}
-                                                            <div className="flex flex-col gap-1 max-h-[160px] overflow-y-auto pr-1">
-                                                                <div
-                                                                    onClick={() => handleToggleTipo('todos')}
-                                                                    className={`text-caption px-2 py-1.5 rounded-lg border flex items-center justify-between cursor-pointer transition-colors ${selectedTipos.length === 0 || selectedTipos.includes('todos')
-                                                                        ? (filtroSemiarido ? 'bg-amber-500/20 text-amber-900 dark:text-amber-100 font-semibold border-amber-500/40' : 'bg-primary-50 dark:bg-primary-950/60 text-primary-900 dark:text-primary-100 font-semibold border-primary-200 dark:border-primary-800')
-                                                                        : 'border-transparent text-text-secondary dark:text-zinc-300 hover:bg-surface-soft dark:hover:bg-zinc-800'
-                                                                        }`}
-                                                                >
-                                                                    <div className="flex items-center gap-2">
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={selectedTipos.length === 0 || selectedTipos.includes('todos')}
-                                                                            onChange={() => { }}
-                                                                            className={`rounded cursor-pointer w-3.5 h-3.5 shrink-0 ${filtroSemiarido ? 'accent-amber-600' : 'accent-primary-600 dark:accent-primary-500'
-                                                                                }`}
-                                                                        />
-                                                                        <span>Todos os tipos</span>
-                                                                    </div>
-                                                                    <span className={`w-9 min-w-[36px] h-5.5 inline-flex items-center justify-center text-center text-caption font-bold tabular-nums rounded-md shrink-0 ml-1.5 transition-colors ${filtroSemiarido && (selectedTipos.length === 0 || selectedTipos.includes('todos'))
-                                                                        ? 'bg-amber-600 text-white border border-amber-600 shadow-xs'
-                                                                        : (filtroSemiarido
-                                                                            ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200/90 dark:border-zinc-700 shadow-2xs'
-                                                                            : ((selectedTipos.length === 0 || selectedTipos.includes('todos'))
-                                                                                ? 'bg-primary-600 text-white border border-primary-600 shadow-xs'
-                                                                                : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200/90 dark:border-zinc-700 shadow-2xs'))
-                                                                        }`}>
-                                                                        {activeScopedAtivos.length}
-                                                                    </span>
-                                                                </div>
-                                                                {categoryStats.map((cat) => {
-                                                                    const isChecked = selectedTipos.includes(cat.name);
-                                                                    return (
-                                                                        <div
-                                                                            key={cat.name}
-                                                                            onClick={() => handleToggleTipo(cat.name)}
-                                                                            className={`text-caption px-2 py-1.5 rounded-lg border flex items-center justify-between cursor-pointer transition-colors ${isChecked
-                                                                                ? (filtroSemiarido ? 'bg-amber-500/20 text-amber-900 dark:text-amber-100 font-semibold border-amber-500/40' : 'bg-primary-50 dark:bg-primary-950/60 text-primary-900 dark:text-primary-100 font-semibold border-primary-200 dark:border-primary-800')
-                                                                                : 'border-transparent text-text-secondary dark:text-zinc-300 hover:bg-surface-soft dark:hover:bg-zinc-800'
-                                                                                }`}
-                                                                        >
-                                                                            <div className="flex items-center gap-2 min-w-0">
-                                                                                <input
-                                                                                    type="checkbox"
-                                                                                    checked={isChecked}
-                                                                                    onChange={() => { }}
-                                                                                    className={`rounded cursor-pointer w-3.5 h-3.5 shrink-0 ${filtroSemiarido ? 'accent-amber-600' : 'accent-primary-600 dark:accent-primary-500'
-                                                                                        }`}
-                                                                                />
-                                                                                <span className="truncate">{cat.shortName || cat.name}</span>
-                                                                            </div>
-                                                                            <span className={`w-9 min-w-[36px] h-5.5 inline-flex items-center justify-center text-center text-caption font-bold tabular-nums rounded-md shrink-0 ml-1.5 transition-colors ${filtroSemiarido && isChecked
-                                                                                ? 'bg-amber-600 text-white border border-amber-600 shadow-xs'
-                                                                                : (filtroSemiarido
-                                                                                    ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200/90 dark:border-zinc-700 shadow-2xs'
-                                                                                    : (isChecked
-                                                                                        ? 'bg-primary-600 text-white border border-primary-600 shadow-xs'
-                                                                                        : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200/90 dark:border-zinc-700 shadow-2xs'))
-                                                                                }`}>
-                                                                                {cat.count}
-                                                                            </span>
-                                                                        </div>
-                                                                    );
-                                                                })}
+                                                            <div className="flex flex-col gap-0.5 max-h-[208px] overflow-y-auto overscroll-contain -mx-1 px-1">
+                                                                <FilterCheckRow
+                                                                    label="Todos os tipos"
+                                                                    count={activeScopedAtivos.length}
+                                                                    checked={selectedTipos.length === 0 || selectedTipos.includes('todos')}
+                                                                    onToggle={() => handleToggleTipo('todos')}
+                                                                    isSemiarido={filtroSemiarido}
+                                                                />
+                                                                {categoryStats.map((cat) => (
+                                                                    <FilterCheckRow
+                                                                        key={cat.name}
+                                                                        label={cat.shortName || cat.name}
+                                                                        count={cat.count}
+                                                                        checked={selectedTipos.includes(cat.name)}
+                                                                        onToggle={() => handleToggleTipo(cat.name)}
+                                                                        isSemiarido={filtroSemiarido}
+                                                                    />
+                                                                ))}
                                                             </div>
                                                         </div>
 
                                                         {/* DROPDOWN 2: CONECTIVIDADE RNP */}
-                                                        <div className="flex flex-col gap-1.5">
-                                                            <label className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]">
+                                                        <div className="flex flex-col gap-2">
+                                                            <label
+                                                                htmlFor="ativos-filter-rnp"
+                                                                className="text-[11px] font-medium uppercase tracking-wider text-text-muted dark:text-zinc-400 flex items-center justify-between min-h-[18px]"
+                                                            >
                                                                 <span className="flex items-center gap-1.5">
-                                                                    <Network size={13} />
+                                                                    <Network size={12} strokeWidth={1.75} />
                                                                     Conectividade RNP
                                                                 </span>
-                                                                <span className={`text-caption font-medium text-emerald-600 dark:text-emerald-400 transition-opacity duration-150 ${filterRnp !== 'todos' ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
-                                                                    Ativo
-                                                                </span>
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className={`w-1.5 h-1.5 rounded-full transition-opacity duration-150 ${filtroSemiarido ? 'bg-amber-500' : 'bg-emerald-500'} ${filterRnp !== 'todos' ? 'opacity-100' : 'opacity-0'}`}
+                                                                />
                                                             </label>
                                                             <div className="relative">
                                                                 <select
+                                                                    id="ativos-filter-rnp"
                                                                     value={filterRnp}
                                                                     onChange={(e) => setFilterRnp(e.target.value)}
-                                                                    className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                                    className={`w-full h-9 appearance-none pl-3 pr-8 rounded-lg bg-surface dark:bg-zinc-900 border border-border dark:border-zinc-700 shadow-2xs text-xs font-medium text-text-primary dark:text-zinc-100 transition-colors duration-150 cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:outline-none focus-visible:ring-2 ${filtroSemiarido ? 'focus-visible:ring-amber-500/25 focus:border-amber-500' : 'focus-visible:ring-primary-500/20 focus:border-primary-500'
                                                                         }`}
                                                                 >
                                                                     <option value="todos" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Todos (com ou sem RNP)</option>
                                                                     <option value="com_rnp" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Apenas com RNP ({totalRnp})</option>
                                                                     <option value="sem_rnp" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">Apenas sem RNP ({Math.max(0, activeScopedAtivos.length - totalRnp)})</option>
                                                                 </select>
-                                                                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                                <ChevronDown size={14} strokeWidth={1.75} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                                             </div>
                                                         </div>
 
                                                         {/* DROPDOWN 3: INSTITUIÇÃO VINCULADA */}
-                                                        <div className="flex flex-col gap-1.5">
+                                                        <div className="flex flex-col gap-2">
                                                             <label
                                                                 htmlFor="ativos-filter-instituicao"
-                                                                className="text-caption font-medium text-text-secondary dark:text-zinc-300 flex items-center justify-between min-h-[20px]"
+                                                                className="text-[11px] font-medium uppercase tracking-wider text-text-muted dark:text-zinc-400 flex items-center justify-between min-h-[18px]"
                                                             >
                                                                 <span className="flex items-center gap-1.5">
-                                                                    <Building2 size={13} />
+                                                                    <Building2 size={12} strokeWidth={1.75} />
                                                                     Instituição
                                                                 </span>
-                                                                <span className={`text-caption font-medium text-emerald-600 dark:text-emerald-400 transition-opacity duration-150 ${selectedInstituicao !== 'todas' ? 'opacity-100' : 'opacity-0 select-none pointer-events-none'}`}>
-                                                                    Ativo
-                                                                </span>
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className={`w-1.5 h-1.5 rounded-full transition-opacity duration-150 ${filtroSemiarido ? 'bg-amber-500' : 'bg-emerald-500'} ${selectedInstituicao !== 'todas' ? 'opacity-100' : 'opacity-0'}`}
+                                                                />
                                                             </label>
                                                             <div className="relative">
                                                                 <select
@@ -1402,7 +1402,7 @@ export default function AtivosPage() {
                                                                     aria-label="Filtrar por instituição"
                                                                     value={selectedInstituicao}
                                                                     onChange={(e) => setSelectedInstituicao(e.target.value)}
-                                                                    className={`w-full appearance-none pl-3 pr-8 py-2 rounded-xl bg-surface-soft dark:bg-zinc-800/90 border border-border dark:border-zinc-700 text-xs text-text-primary dark:text-zinc-100 font-medium focus:bg-surface focus:outline-none transition-colors cursor-pointer ${filtroSemiarido ? 'focus:border-amber-500' : 'focus:border-primary-600'
+                                                                    className={`w-full h-9 appearance-none pl-3 pr-8 rounded-lg bg-surface dark:bg-zinc-900 border border-border dark:border-zinc-700 shadow-2xs text-xs font-medium text-text-primary dark:text-zinc-100 transition-colors duration-150 cursor-pointer hover:border-zinc-300 dark:hover:border-zinc-600 focus-visible:outline-none focus-visible:ring-2 ${filtroSemiarido ? 'focus-visible:ring-amber-500/25 focus:border-amber-500' : 'focus-visible:ring-primary-500/20 focus:border-primary-500'
                                                                         }`}
                                                                 >
                                                                     <option value="todas" className="bg-surface dark:bg-zinc-900 text-text-primary dark:text-zinc-100">
@@ -1423,19 +1423,19 @@ export default function AtivosPage() {
                                                                             </option>
                                                                         ))}
                                                                 </select>
-                                                                <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                                                <ChevronDown size={14} strokeWidth={1.75} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                                             </div>
                                                         </div>
 
                                                         {/* STATUS E FECHAR */}
-                                                        <div className="flex items-center justify-between pt-2 border-t border-border/70 dark:border-zinc-800 text-caption font-medium">
-                                                            <span className="text-text-secondary dark:text-zinc-300">
-                                                                <strong className="text-text-primary dark:text-zinc-100">{filteredAtivosList.length}</strong> de {activeScopedAtivos.length} ativos
+                                                        <div className="flex items-center justify-between pt-3 border-t border-border/70 dark:border-zinc-800 text-caption">
+                                                            <span className="text-text-secondary dark:text-zinc-400 tabular-nums">
+                                                                <strong className="font-semibold text-text-primary dark:text-zinc-100">{filteredAtivosList.length}</strong> de {activeScopedAtivos.length} ativos
                                                             </span>
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setIsFilterDropdownOpen(false)}
-                                                                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white transition-colors cursor-pointer shadow-xs ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-600 hover:bg-primary-500'
+                                                                className={`h-8 px-3.5 rounded-lg text-xs font-semibold text-white shadow-xs transition-all duration-150 ease-out active:scale-[0.98] cursor-pointer ${filtroSemiarido ? 'bg-amber-600 hover:bg-amber-700' : 'bg-primary-600 hover:bg-primary-500'
                                                                     }`}
                                                             >
                                                                 Fechar
