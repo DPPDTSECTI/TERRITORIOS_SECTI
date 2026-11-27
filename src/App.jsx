@@ -310,13 +310,30 @@ function MainApp() {
   );
 }
 
+const ROUTER_BASENAME = (() => {
+  const base = import.meta.env.BASE_URL || '/';
+  return base.endsWith('/') ? base : `${base}/`;
+})();
+
 export default function AppWrapper() {
+  if (
+    typeof window !== 'undefined' &&
+    ROUTER_BASENAME !== '/' &&
+    window.location.pathname === ROUTER_BASENAME.slice(0, -1)
+  ) {
+    window.history.replaceState(
+      null,
+      '',
+      ROUTER_BASENAME + window.location.search + window.location.hash
+    );
+  }
+
   return (
     <MotionConfig reducedMotion="user">
       <HelmetProvider>
         <ThemeProvider>
           <AuthProvider>
-            <Router basename={import.meta.env.BASE_URL.replace(/\/+$/, '') || '/'}>
+            <Router basename={ROUTER_BASENAME}>
               <DataProvider>
                 <TelemetryProvider>
                   <ToastProvider>
